@@ -10,8 +10,9 @@ import {
   followerPostStart,
   followerPostSuccess,
 } from "../../redux/Slice/postSlice";
-import { axiosInstance } from "../../Config";
+
 import SearchFreind from "../SearchFreind";
+import axios from "axios";
 
 function Home() {
   const { followerPost, loading } = useSelector((state) => state.post);
@@ -31,10 +32,7 @@ function Home() {
     const getUser = async () => {
       try {
         setSloading(true);
-        const { data } = await axiosInstance.get(
-          "/user/suggesteduser/user",
-          config
-        );
+        const { data } = await axios.get("/user/suggesteduser/user", config);
         setSearch(data);
         setSloading(false);
       } catch (error) {
@@ -42,16 +40,14 @@ function Home() {
       }
     };
     getUser();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     const getFollowersPost = async () => {
       try {
         dispatch(followerPostStart());
-        const { data } = await axiosInstance.get(
-          "/post/following/Post",
-          config
-        );
+        const { data } = await axios.get("/post/following/Post", config);
         dispatch(followerPostSuccess(data));
       } catch (error) {
         dispatch(followerPostError());
@@ -59,6 +55,7 @@ function Home() {
       }
     };
     getFollowersPost();
+    // eslint-disable-next-line
   }, []);
 
   return (

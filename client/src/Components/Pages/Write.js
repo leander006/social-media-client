@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../Navbar'
 import Cookie from "js-cookie"
-import {axiosInstance} from '../../Config'
+
 import toast from 'react-hot-toast';
 import { SpinnerCircular } from 'spinners-react';
+import axios from 'axios'
 
 function Write() {
 
@@ -55,7 +56,7 @@ const handleImage = (e) => {
 const uploadImage = async (base64EncodedImage) => {
   try {
       setLoading(true)
-      const {data}= await axiosInstance.post('/post/postUpload/postImg',{data: base64EncodedImage }
+      const {data}= await axios.post('/post/postUpload/postImg',{data: base64EncodedImage }
       ,config);
       setFileInputState('');
       setPreviewSource('');
@@ -74,11 +75,11 @@ const recalculate = e => {
   setCaption(e.target.value)
 };
 
-console.log(textAreaCount);
+
 const handleSubmit = async(e) =>{
   e.preventDefault()
   try {
-        const post = await axiosInstance.post("/post",{content:profile,caption:caption},config); 
+        await axios.post("/post",{content:profile,caption:caption},config); 
         navigate("/home")
 
         }
@@ -104,7 +105,7 @@ const handleSubmit = async(e) =>{
                 </div>
 
                 <div className='flex flex-col justify-center items-center' >
-                     {!loading ? <img className='image w-28 h-28 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80 ' src={previewSource?previewSource:profile?profile:'/images/noImage.png'} alt='image'/>:<SpinnerCircular size="90" className='bg-[#2D3B58] w-full flex items-center xl:h-80  md:h-64 h-28 lg:h-72 flex-col  mx-auto' thickness='100'  speed="600" color='white' secondaryColor="black"/>}
+                     {!loading ? <img className='image w-28 h-28 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80 '  src={previewSource?previewSource:profile?profile:'/images/noImage.png'} alt='write'/>:<SpinnerCircular size="90" className='bg-[#2D3B58] w-full flex items-center xl:h-80  md:h-64 h-28 lg:h-72 flex-col  mx-auto' thickness='100'  speed="600" color='white' secondaryColor="black"/>}
                       <label className='text-[#8aaaeb] cursor-pointer font-bold text-2xl mt-2 hover:text-[#6795f1]' htmlFor='forFile'>Upload</label>
                       <input type="file" id='forFile' accept='image/png , image/jpg, image/jpeg ,video/mp4' value={fileInputState} onChange={handleFileInputChange}style={{display:"none"}}  name="file"/>
                 </div>

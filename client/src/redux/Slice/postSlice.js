@@ -35,24 +35,11 @@ export const PostSlice = createSlice({
     followerPostError:(state) =>{
         state.loading=false
         state.error=true
-    }, 
-    getfollowerStart:(state) =>{
-        state.loading=true
-        
-    },
-    getfollowerSuccess:(state) =>{
-        state.loading=false
-        state.followerPost=state.followerPost
-    },
-    getfollowerError:(state) =>{
-        state.loading=false
-        state.error=true
-    },
-
+    }
 },
 })
     
-export const { postStart,postSuccess,postError,followerPostStart,followerPostSuccess,followerPostError,getfollowerStart,getfollowerSuccess,getfollowerError} = PostSlice.actions
+export const { postStart,postSuccess,postError,followerPostStart,followerPostSuccess,followerPostError} = PostSlice.actions
 
 
 export default PostSlice.reducer    

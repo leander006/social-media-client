@@ -1,6 +1,7 @@
-import {axiosInstance} from '../../Config';
+
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 
 function EmailVerificatiion() {
@@ -11,7 +12,7 @@ function EmailVerificatiion() {
 		const verifyEmailUrl = async () => {
 
 			try {
-				const data = await axiosInstance.get(`/user/${param.id}/verify/${param.token}`);
+				 await axios.get(`/user/${param.id}/verify/${param.token}`);
 				setValidUrl(true);
 			} catch (error) {
 				console.log(error.message);

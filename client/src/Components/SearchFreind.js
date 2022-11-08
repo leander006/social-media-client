@@ -6,7 +6,7 @@ function SearchFreind({search,setSearch}) {
       const navigate =useNavigate()
   return (
       <div className='flex py-3 ml-2 items-center'>
-      <Link to={"/profile/"+search._id}><img src={search.profile} className="rounded-full h-8 w-8 cursor-pointer" onClick={ () =>{
+      <Link to={"/profile/"+search._id}><img src={search.profile} className="rounded-full h-8 w-8 cursor-pointer" alt='searchFreind' onClick={ () =>{
             setSearch([]);
             navigate("/profile/"+search._id)
       }}/></Link>

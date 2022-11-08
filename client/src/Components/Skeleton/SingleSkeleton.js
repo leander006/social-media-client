@@ -10,8 +10,8 @@ function SingleSkeleton() {
           <div className='flex p-1 ' >
                   <div className='w-10 h-10 bg-slate-50 rounded-full  border'></div>
                   <div className='main '>
-                  <h1 className='capitalize ml-2 font-sans  font-bold bg-white' ></h1>
-                  <p className='ml-2 text-sm mt-3 bg-slate-300 '></p>
+                  <div className='capitalize ml-2 font-sans  font-bold bg-white' ></div>
+                  <div className='ml-2 text-sm mt-3 bg-slate-300 '></div>
                   </div>
           </div>
           <div className='border-x-0 border-t-2 border-[#BED7F8] lg:h-3/4 border-b-0 overflow-y-scroll'>
@@ -23,7 +23,7 @@ function SingleSkeleton() {
               </div>
                 <div>
                       <i className="fa-regular fa-2xl fa-comment " ></i>
-                      <h1></h1>
+                      <div></div>
                 </div>
                 
         </div>
