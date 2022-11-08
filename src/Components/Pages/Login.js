@@ -35,7 +35,10 @@ function Login() {
   };
   const google = (e) => {
     e.preventDefault();
-    window.open("http://localhost:3001/api/auth/google", "_self");
+    window.open(
+      "https://leander-socail-media.herokuapp.com/api/auth/google",
+      "_self"
+    );
   };
   return (
     <>
