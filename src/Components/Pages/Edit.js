@@ -55,7 +55,10 @@ function Edit() {
     const getPost = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get("/user/" + editId, config);
+        const { data } = await axios.get(
+          "https://leander-socail-media.herokuapp.com/api/user/" + editId,
+          config
+        );
         setUser(data.user);
         setLoading(false);
       } catch (error) {
@@ -84,7 +87,7 @@ function Edit() {
     try {
       setLoad(true);
       const { data } = await axios.post(
-        "/user/upload",
+        "https://leander-socail-media.herokuapp.com/api/user/upload",
         { data: base64EncodedImage },
         config
       );
@@ -104,7 +107,7 @@ function Edit() {
     dispatch(loginStart());
     try {
       const user = await axios.put(
-        "/user/update/" + editId,
+        "https://leander-socail-media.herokuapp.com/api/user/update/" + editId,
         {
           username: username,
           bio: bio,

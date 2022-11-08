@@ -26,7 +26,10 @@ function LikedPost() {
     const getPost = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get("/post/liked/Post", config);
+        const { data } = await axios.get(
+          "https://leander-socail-media.herokuapp.com/api/post/liked/Post",
+          config
+        );
         setLoading(false);
         setLikePost(data);
       } catch (error) {
@@ -40,7 +43,10 @@ function LikedPost() {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const { data } = await axios.get("/user/followers/getAll", config);
+        const { data } = await axios.get(
+          "https://leander-socail-media.herokuapp.com/api/user/followers/getAll",
+          config
+        );
         setSearch(data);
       } catch (error) {
         console.log(error);

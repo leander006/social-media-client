@@ -30,7 +30,11 @@ function Explore() {
       return;
     }
     try {
-      const { data } = await axios.get("/user/oneUser?name=" + search, config);
+      const { data } = await axios.get(
+        "https://leander-socail-media.herokuapp.com/api/user/oneUser?name=" +
+          search,
+        config
+      );
       setSearched(data);
     } catch (error) {
       console.log(error);
@@ -41,7 +45,10 @@ function Explore() {
     const getAllPost = async () => {
       try {
         dispatch(postStart());
-        const { data } = await axios.get("/post", config);
+        const { data } = await axios.get(
+          "https://leander-socail-media.herokuapp.com/api/post",
+          config
+        );
         dispatch(postSuccess(data));
       } catch (error) {
         dispatch(postError());

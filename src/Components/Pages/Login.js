@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -19,10 +18,13 @@ function Login() {
     e.preventDefault();
     dispatch(loginStart());
     try {
-      const { data } = await axios.post("/auth/login", {
-        username,
-        password,
-      });
+      const { data } = await axios.post(
+        "https://leander-socail-media.herokuapp.com/api/auth/login",
+        {
+          username,
+          password,
+        }
+      );
       dispatch(loginSuccess(data));
       navigate("/home");
     } catch (err) {

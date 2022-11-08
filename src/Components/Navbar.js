@@ -36,7 +36,8 @@ function Navbar() {
     }
     try {
       const { data } = await axios.get(
-        "/user/oneUser?name=" + searched,
+        "https://leander-socail-media.herokuapp.com/api/user/oneUser?name=" +
+          searched,
         config
       );
       setSearch(data);
@@ -95,7 +96,11 @@ function Navbar() {
             className="mr-2 cursor-pointer"
             onClick={(e) => setVisible(!visible)}
           >
-            <img className="rounded-full w-10 h-10 p-1" src={current.profile} alt="navbar" />
+            <img
+              className="rounded-full w-10 h-10 p-1"
+              src={current.profile}
+              alt="navbar"
+            />
           </div>
           {visible && (
             <div className="z-50 fixed bg-[#98aef0] flex justify-center flex-col text-black  px-2 h-48 mt-56 w-44 right-3 rounded-md">

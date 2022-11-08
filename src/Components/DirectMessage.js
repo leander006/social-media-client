@@ -23,7 +23,11 @@ function DirectMessage({ search, setSearched, setSearch }) {
     e.preventDefault();
     try {
       dispatch(chatStart());
-      const { data } = await axios.post("/chat/" + search._id, {}, config);
+      const { data } = await axios.post(
+        "https://leander-socail-media.herokuapp.com/api/chat/" + search._id,
+        {},
+        config
+      );
       if (typeof data.res === "string") {
         dispatch(setCurrentChat(data.chat));
         setSearched([]);

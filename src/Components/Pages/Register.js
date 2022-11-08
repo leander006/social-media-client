@@ -11,12 +11,15 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post("/auth/register", {
-        username,
-        password,
-        name,
-        email,
-      });
+      const { data } = await axios.post(
+        "https://leander-socail-media.herokuapp.com/api/auth/register",
+        {
+          username,
+          password,
+          name,
+          email,
+        }
+      );
       toast.success(data?.message);
       setName("");
       setPassword("");

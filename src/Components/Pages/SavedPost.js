@@ -24,7 +24,10 @@ function YourPosts() {
     const getPost = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get("/post/bookmark/Post", config);
+        const { data } = await axios.get(
+          "https://leander-socail-media.herokuapp.com/api/post/bookmark/Post",
+          config
+        );
         setBookmarkPost(data);
         setLoading(false);
       } catch (error) {
@@ -38,7 +41,10 @@ function YourPosts() {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const { data } = await axios.get("/user/following/getAll", config);
+        const { data } = await axios.get(
+          "https://leander-socail-media.herokuapp.com/api/user/following/getAll",
+          config
+        );
         setSearch(data);
       } catch (error) {
         console.log(error);

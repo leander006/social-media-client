@@ -30,7 +30,10 @@ function Profile() {
       try {
         setLoading(true);
         setSloading(true);
-        const { data } = await axios.get("/user/" + userId, config);
+        const { data } = await axios.get(
+          "https://leander-socail-media.herokuapp.com/api/user/" + userId,
+          config
+        );
         setUser(data.user);
         setPost(data.post);
         setFollow(current?.following?.includes(data.user._id));
@@ -47,7 +50,11 @@ function Profile() {
   const following = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/user/addFollower/${userId}`, {}, config);
+      await axios.put(
+        `https://leander-socail-media.herokuapp.com/api/user/addFollower/${userId}`,
+        {},
+        config
+      );
       setFollow(!follow);
     } catch (error) {
       console.log(error?.response?.data);

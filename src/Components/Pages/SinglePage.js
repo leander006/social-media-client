@@ -40,7 +40,10 @@ function SinglePage() {
   useEffect(() => {
     const getPost = async () => {
       try {
-        const { data } = await axios.get("/post/" + postId, config);
+        const { data } = await axios.get(
+          "https://leander-socail-media.herokuapp.com/api/post/" + postId,
+          config
+        );
         setPost(data);
         setLoading(true);
       } catch (error) {
@@ -61,7 +64,11 @@ function SinglePage() {
     e.preventDefault();
     try {
       dispatch(loginStart());
-      const { data } = await axios.put(`/post/likePost/${postId}`, {}, config);
+      const { data } = await axios.put(
+        `https://leander-socail-media.herokuapp.com/api/post/likePost/${postId}`,
+        {},
+        config
+      );
       dispatch(loginSuccess(data));
       setLike(isLiked ? like - 1 : like + 1);
       setIsLiked(!isLiked);
@@ -76,7 +83,7 @@ function SinglePage() {
     try {
       dispatch(loginStart());
       const { data } = await axios.put(
-        `/post/bookmarkPost/${postId}`,
+        `https://leander-socail-media.herokuapp.com/api/post/bookmarkPost/${postId}`,
         {},
         config
       );
@@ -91,7 +98,10 @@ function SinglePage() {
     e.preventDefault();
     try {
       dispatch(postStart());
-      await axios.delete(`/post/delete/${postId}`, config);
+      await axios.delete(
+        `https://leander-socail-media.herokuapp.com/api/post/delete/${postId}`,
+        config
+      );
       dispatch(postSuccess(allpost));
       navigate("/home");
     } catch (error) {
@@ -108,7 +118,8 @@ function SinglePage() {
       try {
         dispatch(commentStart());
         const { data } = await axios.get(
-          "/comment/allComment/" + postId,
+          "https://leander-socail-media.herokuapp.com/api/comment/allComment/" +
+            postId,
           config
         );
         dispatch(commentSuccess(data));
@@ -125,7 +136,7 @@ function SinglePage() {
     try {
       dispatch(commentStart());
       const { data } = await axios.post(
-        `/comment/${postId}`,
+        `https://leander-socail-media.herokuapp.com/api/comment/${postId}`,
         { content: comment },
         config
       );

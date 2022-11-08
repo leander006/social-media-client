@@ -32,7 +32,10 @@ function Home() {
     const getUser = async () => {
       try {
         setSloading(true);
-        const { data } = await axios.get("/user/suggesteduser/user", config);
+        const { data } = await axios.get(
+          "https://leander-socail-media.herokuapp.com/api/user/suggesteduser/user",
+          config
+        );
         setSearch(data);
         setSloading(false);
       } catch (error) {
@@ -47,7 +50,10 @@ function Home() {
     const getFollowersPost = async () => {
       try {
         dispatch(followerPostStart());
-        const { data } = await axios.get("/post/following/Post", config);
+        const { data } = await axios.get(
+          "https://leander-socail-media.herokuapp.com/api/post/following/Post",
+          config
+        );
         dispatch(followerPostSuccess(data));
       } catch (error) {
         dispatch(followerPostError());

@@ -25,7 +25,10 @@ function Comment({ comment }) {
     e.preventDefault();
     try {
       dispatch(commentStart());
-      await axios.delete(`/comment/delete/${comment._id}`, config);
+      await axios.delete(
+        `https://leander-socail-media.herokuapp.com/api/comment/delete/${comment._id}`,
+        config
+      );
       dispatch(commentSuccess(allComment.filter((c) => c._id !== comment._id)));
     } catch (error) {
       dispatch(commentError());

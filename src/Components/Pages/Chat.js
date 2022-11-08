@@ -98,7 +98,7 @@ function Chat() {
     const getChat = async () => {
       try {
         dispatch(chatStart());
-        const { data } = await axios.get("/chat", config);
+        const { data } = await axios.get("https://leander-socail-media.herokuapp.com/api/chat", config);
         dispatch(chatSuccess(data));
       } catch (error) {
         dispatch(chatError());
@@ -115,7 +115,7 @@ function Chat() {
         setLoading(true);
         dispatch(messageStart());
         const { data } = await axios.get(
-          "/message/get/" + currentChat._id,
+          "https://leander-socail-media.herokuapp.com/api/message/get/" + currentChat._id,
           config
         );
         dispatch(messageSuccess(data));
@@ -137,7 +137,7 @@ function Chat() {
     try {
       dispatch(messageStart());
       const { data } = await axios.post(
-        "/message/" + currentChat._id,
+        "https://leander-socail-media.herokuapp.com/api/message/" + currentChat._id,
         { content: message },
         config
       );
@@ -153,7 +153,7 @@ function Chat() {
   const handleDelete = async (me) => {
     try {
       dispatch(messageStart());
-      await axios.delete(`/message/delete/${me._id}`, config);
+      await axios.delete(`https://leander-socail-media.herokuapp.com/api/message/delete/${me._id}`, config);
       dispatch(messageSuccess(allmessage.filter((m) => m._id !== me._id)));
       socket.emit("new message delete", me);
       setMessage(" ");
@@ -188,7 +188,7 @@ function Chat() {
     e.preventDefault();
     try {
       dispatch(chatStart());
-      await axios.delete("/chat/delete/" + currentChat._id, config);
+      await axios.delete("https://leander-socail-media.herokuapp.com/api/chat/delete/" + currentChat._id, config);
       dispatch(chatSuccess(allChat.filter((c) => c._id !== currentChat._id)));
       dispatch(setCurrentChat(""));
     } catch (error) {
@@ -211,7 +211,7 @@ function Chat() {
     }
     try {
       const { data } = await axios.get(
-        "/user/freind/search?name=" + groupSearch,
+        "https://leander-socail-media.herokuapp.com/api/user/freind/search?name=" + groupSearch,
         config
       );
       setAddUser(data);
@@ -226,7 +226,7 @@ function Chat() {
     }
     try {
       const { data } = await axios.get(
-        "/user/freind/search?name=" + search,
+        "https://leander-socail-media.herokuapp.com/api/user/freind/search?name=" + search,
         config
       );
       setSearched(data);
@@ -249,7 +249,7 @@ function Chat() {
   const handleRemove = async (deleteUser) => {
     try {
       const { data } = await axios.put(
-        "/chat/remove/" + currentChat._id,
+        "https://leander-socail-media.herokuapp.com/api/chat/remove/" + currentChat._id,
         { userId: deleteUser._id },
         config
       );
@@ -264,7 +264,7 @@ function Chat() {
     try {
       dispatch(chatStart());
       await axios.put(
-        "/chat/remove/" + currentChat._id,
+        "https://leander-socail-media.herokuapp.com/api/chat/remove/" + currentChat._id,
         { userId: removeUser._id },
         config
       );
@@ -284,7 +284,7 @@ function Chat() {
         return;
       } else {
         const { data } = await axios.put(
-          "/chat/add/" + currentChat._id,
+          "https://leander-socail-media.herokuapp.com/api/chat/add/" + currentChat._id,
           { userId: addUser._id },
           config
         );
@@ -301,7 +301,7 @@ function Chat() {
     e.preventDefault();
     try {
       const { data } = await axios.put(
-        "/chat/rename/" + currentChat._id,
+        "https://leander-socail-media.herokuapp.com/api/chat/rename/" + currentChat._id,
         { chatname: chatname },
         config
       );
@@ -317,7 +317,7 @@ function Chat() {
     try {
       dispatch(chatStart());
       const { data } = await axios.post(
-        "/chat",
+        "https://leander-socail-media.herokuapp.com/api/chat",
         { name: name, users: JSON.stringify(selectedUser.map((u) => u._id)) },
         config
       );
