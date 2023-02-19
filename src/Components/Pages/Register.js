@@ -33,7 +33,7 @@ function Register() {
   const google = (e) => {
     e.preventDefault();
     window.open(
-      "https://leander-socail-media.onrender.com/api/auth/google",
+      "https://leander-socail-media.onrender.com/api/auth/google/callback",
       "_self"
     );
   };
