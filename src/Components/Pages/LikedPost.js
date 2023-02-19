@@ -27,7 +27,7 @@ function LikedPost() {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          "https://leander-socail-media.herokuapp.com/api/post/liked/Post",
+          "https://leander-socail-media.onrender.com/api/post/liked/Post",
           config
         );
         setLoading(false);
@@ -44,7 +44,7 @@ function LikedPost() {
     const getUsers = async () => {
       try {
         const { data } = await axios.get(
-          "https://leander-socail-media.herokuapp.com/api/user/followers/getAll",
+          "https://leander-socail-media.onrender.com/api/user/followers/getAll",
           config
         );
         setSearch(data);

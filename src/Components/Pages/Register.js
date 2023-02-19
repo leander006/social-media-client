@@ -12,7 +12,7 @@ function Register() {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "https://leander-socail-media.herokuapp.com/api/auth/register",
+        "https://leander-socail-media.onrender.com/api/auth/register",
         {
           username,
           password,
@@ -33,7 +33,7 @@ function Register() {
   const google = (e) => {
     e.preventDefault();
     window.open(
-      "https://leander-socail-media.herokuapp.com/api/auth/google",
+      "https://leander-socail-media.onrender.com/api/auth/google",
       "_self"
     );
   };

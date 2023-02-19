@@ -25,7 +25,7 @@ function YourPosts() {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          "https://leander-socail-media.herokuapp.com/api/post/bookmark/Post",
+          "https://leander-socail-media.onrender.com/api/post/bookmark/Post",
           config
         );
         setBookmarkPost(data);
@@ -42,7 +42,7 @@ function YourPosts() {
     const getUsers = async () => {
       try {
         const { data } = await axios.get(
-          "https://leander-socail-media.herokuapp.com/api/user/following/getAll",
+          "https://leander-socail-media.onrender.com/api/user/following/getAll",
           config
         );
         setSearch(data);

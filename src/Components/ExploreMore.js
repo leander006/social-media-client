@@ -32,7 +32,7 @@ function ExploreMore({ explore }) {
     try {
       dispatch(loginStart());
       const { data } = await axios.put(
-        `https://leander-socail-media.herokuapp.com/api/post/likePost/${explore._id}`,
+        `https://leander-socail-media.onrender.com/api/post/likePost/${explore._id}`,
         {},
         config
       );
@@ -49,7 +49,7 @@ function ExploreMore({ explore }) {
     try {
       dispatch(loginStart());
       const { data } = await axios.put(
-        `https://leander-socail-media.herokuapp.com/api/post/bookmarkPost/${explore?._id}`,
+        `https://leander-socail-media.onrender.com/api/post/bookmarkPost/${explore?._id}`,
         {},
         config
       );

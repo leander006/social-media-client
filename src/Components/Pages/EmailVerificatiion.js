@@ -9,7 +9,7 @@ function EmailVerificatiion() {
     const verifyEmailUrl = async () => {
       try {
         await axios.get(
-          `https://leander-socail-media.herokuapp.com/api/user/${param.id}/verify/${param.token}`
+          `https://leander-socail-media.onrender.com/api/user/${param.id}/verify/${param.token}`
         );
         setValidUrl(true);
       } catch (error) {

@@ -56,7 +56,7 @@ function Edit() {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          "https://leander-socail-media.herokuapp.com/api/user/" + editId,
+          "https://leander-socail-media.onrender.com/api/user/" + editId,
           config
         );
         setUser(data.user);
@@ -87,7 +87,7 @@ function Edit() {
     try {
       setLoad(true);
       const { data } = await axios.post(
-        "https://leander-socail-media.herokuapp.com/api/user/upload",
+        "https://leander-socail-media.onrender.com/api/user/upload",
         { data: base64EncodedImage },
         config
       );
@@ -107,7 +107,7 @@ function Edit() {
     dispatch(loginStart());
     try {
       const user = await axios.put(
-        "https://leander-socail-media.herokuapp.com/api/user/update/" + editId,
+        "https://leander-socail-media.onrender.com/api/user/update/" + editId,
         {
           username: username,
           bio: bio,

@@ -25,7 +25,10 @@ function Navbar() {
   const log = (e) => {
     e.preventDefault();
     dispatch(logout());
-    window.open("http://localhost:3001/api/auth/logout", "_self");
+    window.open(
+      "https://leander-socail-media.onrender.com/api/auth/logout",
+      "_self"
+    );
     navigate("/");
   };
 
@@ -36,7 +39,7 @@ function Navbar() {
     }
     try {
       const { data } = await axios.get(
-        "https://leander-socail-media.herokuapp.com/api/user/oneUser?name=" +
+        "https://leander-socail-media.onrender.com/api/user/oneUser?name=" +
           searched,
         config
       );

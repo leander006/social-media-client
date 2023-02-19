@@ -19,7 +19,7 @@ function Login() {
     dispatch(loginStart());
     try {
       const { data } = await axios.post(
-        "https://leander-socail-media.herokuapp.com/api/auth/login",
+        "https://leander-socail-media.onrender.com/api/auth/login",
         {
           username,
           password,
@@ -36,7 +36,7 @@ function Login() {
   const google = (e) => {
     e.preventDefault();
     window.open(
-      "https://leander-socail-media.herokuapp.com/api/auth/google",
+      "https://leander-socail-media.onrender.com/api/auth/google",
       "_self"
     );
   };

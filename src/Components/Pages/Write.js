@@ -56,7 +56,7 @@ function Write() {
     try {
       setLoading(true);
       const { data } = await axios.post(
-        "https://leander-socail-media.herokuapp.com/api/post/postUpload/postImg",
+        "https://leander-socail-media.onrender.com/api/post/postUpload/postImg",
         { data: base64EncodedImage },
         config
       );
@@ -81,7 +81,7 @@ function Write() {
     e.preventDefault();
     try {
       await axios.post(
-        "https://leander-socail-media.herokuapp.com/api/post",
+        "https://leander-socail-media.onrender.com/api/post",
         { content: profile, caption: caption },
         config
       );

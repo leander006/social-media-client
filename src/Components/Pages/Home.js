@@ -3,7 +3,7 @@ import ExploreMore from "../ExploreMore";
 import Navbar from "../Navbar";
 import SearchFreindSkeleton from "../Skeleton/SearchFreindSkeleton";
 import PostSkeleton from "../Skeleton/PostSkeleton";
-import Cookie from "js-cookie";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
   followerPostError,
@@ -13,6 +13,7 @@ import {
 
 import SearchFreind from "../SearchFreind";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 function Home() {
   const { followerPost, loading } = useSelector((state) => state.post);
@@ -24,7 +25,7 @@ function Home() {
   const config = {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
+      Authorization: `Bearer ${Cookies.get("token")}`,
     },
   };
 
@@ -33,7 +34,7 @@ function Home() {
       try {
         setSloading(true);
         const { data } = await axios.get(
-          "https://leander-socail-media.herokuapp.com/api/user/suggesteduser/user",
+          "https://leander-socail-media.onrender.com/api/user/suggesteduser/user",
           config
         );
         setSearch(data);
@@ -51,7 +52,7 @@ function Home() {
       try {
         dispatch(followerPostStart());
         const { data } = await axios.get(
-          "https://leander-socail-media.herokuapp.com/api/post/following/Post",
+          "https://leander-socail-media.onrender.com/api/post/following/Post",
           config
         );
         dispatch(followerPostSuccess(data));

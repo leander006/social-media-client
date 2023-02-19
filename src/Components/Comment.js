@@ -26,7 +26,7 @@ function Comment({ comment }) {
     try {
       dispatch(commentStart());
       await axios.delete(
-        `https://leander-socail-media.herokuapp.com/api/comment/delete/${comment._id}`,
+        `https://leander-socail-media.onrender.com/api/comment/delete/${comment._id}`,
         config
       );
       dispatch(commentSuccess(allComment.filter((c) => c._id !== comment._id)));

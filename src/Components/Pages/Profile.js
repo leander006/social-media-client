@@ -31,7 +31,7 @@ function Profile() {
         setLoading(true);
         setSloading(true);
         const { data } = await axios.get(
-          "https://leander-socail-media.herokuapp.com/api/user/" + userId,
+          "https://leander-socail-media.onrender.com/api/user/" + userId,
           config
         );
         setUser(data.user);
@@ -51,7 +51,7 @@ function Profile() {
     e.preventDefault();
     try {
       await axios.put(
-        `https://leander-socail-media.herokuapp.com/api/user/addFollower/${userId}`,
+        `https://leander-socail-media.onrender.com/api/user/addFollower/${userId}`,
         {},
         config
       );
