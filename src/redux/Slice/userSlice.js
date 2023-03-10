@@ -4,9 +4,7 @@ import Cookie from "js-cookie";
 console.log("Cookie.get(token) ", Cookie?.get("token"));
 
 const initialState = {
-  currentUser: document.cookie?.get("token")
-    ? JSON.parse(document.cookie?.get("data"))
-    : null,
+  currentUser: Cookie?.get("token") ? JSON.parse(Cookie?.get("data")) : null,
   loading: false,
   error: false,
 };
