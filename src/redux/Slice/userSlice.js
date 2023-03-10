@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookie from "js-cookie";
 const myCookie = document.cookie
-  .split(";")
-  .find((cookie) => cookie.trim().startsWith("myCookie="))
-  .split("=")[1];
+  ?.split(";")
+  ?.find((cookie) => cookie.trim().startsWith("myCookie="))
+  ?.split("=")[1];
 
 console.log(myCookie);
 const initialState = {
