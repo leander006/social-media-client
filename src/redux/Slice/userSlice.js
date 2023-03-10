@@ -1,11 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookie from "js-cookie";
-const myCookie = document.cookie
-  ?.split(";")
-  ?.find((cookie) => cookie.trim().startsWith("myCookie="))
-  ?.split("=")[1];
 
-console.log(myCookie);
+console.log("Cookie.get(token) ", Cookie?.get("token"));
+
 const initialState = {
   currentUser: document.cookie?.get("token")
     ? JSON.parse(document.cookie?.get("data"))
