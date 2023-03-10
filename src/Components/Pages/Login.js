@@ -36,7 +36,7 @@ function Login() {
   const google = (e) => {
     e.preventDefault();
     window.open(
-      "https://leander-socail-media.onrender.com/api/auth/google/callback",
+      "http://localhost:3001/api/auth/google/callback",
       "_self"
     );
   };

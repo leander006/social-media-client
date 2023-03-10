@@ -48,7 +48,7 @@ function Chat() {
   const [chatname, setChatname] = useState("");
   const currentuser = currentUser._id
     ? currentUser?._id
-    : currentUser.others?._id;
+    : currentUser?.others?._id;
   const dispatch = useDispatch();
   const config = {
     headers: {
