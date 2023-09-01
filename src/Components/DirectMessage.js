@@ -24,7 +24,7 @@ function DirectMessage({ search, setSearched, setSearch }) {
     try {
       dispatch(chatStart());
       const { data } = await axios.post(
-        "https://leander-socail-media.onrender.com/api/chat/" + search._id,
+        "http://localhost:3001/api/chat/" + search._id,
         {},
         config
       );

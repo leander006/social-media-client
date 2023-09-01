@@ -41,7 +41,7 @@ function SinglePage() {
     const getPost = async () => {
       try {
         const { data } = await axios.get(
-          "https://leander-socail-media.onrender.com/api/post/" + postId,
+          "http://localhost:3001/api/post/" + postId,
           config
         );
         setPost(data);
@@ -65,7 +65,7 @@ function SinglePage() {
     try {
       dispatch(loginStart());
       const { data } = await axios.put(
-        `https://leander-socail-media.onrender.com/api/post/likePost/${postId}`,
+        `http://localhost:3001/api/post/likePost/${postId}`,
         {},
         config
       );
@@ -83,7 +83,7 @@ function SinglePage() {
     try {
       dispatch(loginStart());
       const { data } = await axios.put(
-        `https://leander-socail-media.onrender.com/api/post/bookmarkPost/${postId}`,
+        `http://localhost:3001/api/post/bookmarkPost/${postId}`,
         {},
         config
       );
@@ -99,7 +99,7 @@ function SinglePage() {
     try {
       dispatch(postStart());
       await axios.delete(
-        `https://leander-socail-media.onrender.com/api/post/delete/${postId}`,
+        `http://localhost:3001/api/post/delete/${postId}`,
         config
       );
       dispatch(postSuccess(allpost));
@@ -118,7 +118,7 @@ function SinglePage() {
       try {
         dispatch(commentStart());
         const { data } = await axios.get(
-          "https://leander-socail-media.onrender.com/api/comment/allComment/" +
+          "http://localhost:3001/api/comment/allComment/" +
             postId,
           config
         );
@@ -136,7 +136,7 @@ function SinglePage() {
     try {
       dispatch(commentStart());
       const { data } = await axios.post(
-        `https://leander-socail-media.onrender.com/api/comment/${postId}`,
+        `http://localhost:3001/api/comment/${postId}`,
         { content: comment },
         config
       );

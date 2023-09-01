@@ -34,7 +34,7 @@ function Home() {
       try {
         setSloading(true);
         const { data } = await axios.get(
-          "https://leander-socail-media.onrender.com/api/user/suggesteduser/user",
+          "http://localhost:3001/api/user/suggesteduser/user",
           config
         );
         setSearch(data);
@@ -52,7 +52,7 @@ function Home() {
       try {
         dispatch(followerPostStart());
         const { data } = await axios.get(
-          "https://leander-socail-media.onrender.com/api/post/following/Post",
+          "http://localhost:3001/api/post/following/Post",
           config
         );
         dispatch(followerPostSuccess(data));

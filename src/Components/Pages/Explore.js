@@ -31,7 +31,7 @@ function Explore() {
     }
     try {
       const { data } = await axios.get(
-        "https://leander-socail-media.onrender.com/api/user/oneUser?name=" +
+        "http://localhost:3001/api/user/oneUser?name=" +
           search,
         config
       );
@@ -46,7 +46,7 @@ function Explore() {
       try {
         dispatch(postStart());
         const { data } = await axios.get(
-          "https://leander-socail-media.onrender.com/api/post",
+          "http://localhost:3001/api/post",
           config
         );
         dispatch(postSuccess(data));

@@ -26,7 +26,7 @@ function Navbar() {
     e.preventDefault();
     dispatch(logout());
     window.open(
-      "https://leander-socail-media.onrender.com/api/auth/logout",
+      "http://localhost:3001/api/auth/logout",
       "_self"
     );
     navigate("/");
@@ -39,7 +39,7 @@ function Navbar() {
     }
     try {
       const { data } = await axios.get(
-        "https://leander-socail-media.onrender.com/api/user/oneUser?name=" +
+        "http://localhost:3001/api/user/oneUser?name=" +
           searched,
         config
       );

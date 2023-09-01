@@ -28,7 +28,7 @@ import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 
 var socket, selectedChatCompare;
-const Endpoint = "https://leander-socail-media.onrender.com/";
+const Endpoint = "http://localhost:3001/";
 
 function Chat() {
   const scrollRef = useRef();
@@ -61,6 +61,7 @@ function Chat() {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+
   useEffect(() => {
     socket = io(Endpoint);
     socket.emit("setup", currentUser);
@@ -69,7 +70,7 @@ function Chat() {
     socket.on("stop typing", () => setIsTyping(false));
     // eslint-disable-next-line
   }, []);
-
+console.log("socketConnected ",socketConnected);
   const typingHandler = (e) => {
     setMessage(e.target.value);
 
@@ -99,7 +100,7 @@ function Chat() {
       try {
         dispatch(chatStart());
         const { data } = await axios.get(
-          "https://leander-socail-media.onrender.com/api/chat",
+          "http://localhost:3001/api/chat",
           config
         );
         dispatch(chatSuccess(data));
@@ -118,7 +119,7 @@ function Chat() {
         setLoading(true);
         dispatch(messageStart());
         const { data } = await axios.get(
-          "https://leander-socail-media.onrender.com/api/message/get/" +
+          "http://localhost:3001/api/message/get/" +
             currentChat._id,
           config
         );
@@ -141,7 +142,7 @@ function Chat() {
     try {
       dispatch(messageStart());
       const { data } = await axios.post(
-        "https://leander-socail-media.onrender.com/api/message/" +
+        "http://localhost:3001/api/message/" +
           currentChat._id,
         { content: message },
         config
@@ -159,7 +160,7 @@ function Chat() {
     try {
       dispatch(messageStart());
       await axios.delete(
-        `https://leander-socail-media.onrender.com/api/message/delete/${me._id}`,
+        `http://localhost:3001/api/message/delete/${me._id}`,
         config
       );
       dispatch(messageSuccess(allmessage.filter((m) => m._id !== me._id)));
@@ -197,7 +198,7 @@ function Chat() {
     try {
       dispatch(chatStart());
       await axios.delete(
-        "https://leander-socail-media.onrender.com/api/chat/delete/" +
+        "http://localhost:3001/api/chat/delete/" +
           currentChat._id,
         config
       );
@@ -223,7 +224,7 @@ function Chat() {
     }
     try {
       const { data } = await axios.get(
-        "https://leander-socail-media.onrender.com/api/user/freind/search?name=" +
+        "http://localhost:3001/api/user/freind/search?name=" +
           groupSearch,
         config
       );
@@ -239,7 +240,7 @@ function Chat() {
     }
     try {
       const { data } = await axios.get(
-        "https://leander-socail-media.onrender.com/api/user/freind/search?name=" +
+        "http://localhost:3001/api/user/freind/search?name=" +
           search,
         config
       );
@@ -263,7 +264,7 @@ function Chat() {
   const handleRemove = async (deleteUser) => {
     try {
       const { data } = await axios.put(
-        "https://leander-socail-media.onrender.com/api/chat/remove/" +
+        "http://localhost:3001/api/chat/remove/" +
           currentChat._id,
         { userId: deleteUser._id },
         config
@@ -279,7 +280,7 @@ function Chat() {
     try {
       dispatch(chatStart());
       await axios.put(
-        "https://leander-socail-media.onrender.com/api/chat/remove/" +
+        "http://localhost:3001/api/chat/remove/" +
           currentChat._id,
         { userId: removeUser._id },
         config
@@ -300,7 +301,7 @@ function Chat() {
         return;
       } else {
         const { data } = await axios.put(
-          "https://leander-socail-media.onrender.com/api/chat/add/" +
+          "http://localhost:3001/api/chat/add/" +
             currentChat._id,
           { userId: addUser._id },
           config
@@ -318,7 +319,7 @@ function Chat() {
     e.preventDefault();
     try {
       const { data } = await axios.put(
-        "https://leander-socail-media.onrender.com/api/chat/rename/" +
+        "http://localhost:3001/api/chat/rename/" +
           currentChat._id,
         { chatname: chatname },
         config
@@ -335,7 +336,7 @@ function Chat() {
     try {
       dispatch(chatStart());
       const { data } = await axios.post(
-        "https://leander-socail-media.onrender.com/api/chat",
+        "http://localhost:3001/api/chat",
         { name: name, users: JSON.stringify(selectedUser.map((u) => u._id)) },
         config
       );
@@ -521,7 +522,7 @@ function Chat() {
                   {allmessage?.map((m) => (
                     <div key={m._id} ref={scrollRef}>
                       <Messages
-                        own={m.sender._id === currentuser}
+                        own={m?.sender?._id === currentuser}
                         handleFunction={() => handleDelete(m)}
                         messages={m}
                         setMessage={setMessage}
@@ -730,7 +731,7 @@ function Chat() {
                   {allmessage?.map((m) => (
                     <div key={m._id} ref={scrollRef}>
                       <Messages
-                        own={m.sender._id === currentuser}
+                        own={m?.sender?._id === currentuser}
                         messages={m}
                         handleFunction={() => handleDelete(m)}
                         setMessage={setMessage}

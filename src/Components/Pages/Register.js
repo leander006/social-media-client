@@ -12,7 +12,7 @@ function Register() {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "https://leander-socail-media.onrender.com/api/auth/register",
+        "http://localhost:3001/api/auth/register",
         {
           username,
           password,
@@ -32,10 +32,7 @@ function Register() {
 
   const google = (e) => {
     e.preventDefault();
-    window.open(
-      "https://leander-socail-media.onrender.com/api/auth/google/callback",
-      "_self"
-    );
+    window.open("http://localhost:3001/api/auth/google/callback", "_self");
   };
   return (
     <>

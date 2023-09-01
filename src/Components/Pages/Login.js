@@ -19,7 +19,7 @@ function Login() {
     dispatch(loginStart());
     try {
       const { data } = await axios.post(
-        "https://leander-socail-media.onrender.com/api/auth/login",
+        "http://localhost:3001/api/auth/login",
         {
           username,
           password,
@@ -35,10 +35,8 @@ function Login() {
   };
   const google = (e) => {
     e.preventDefault();
-    window.open(
-      "https://leander-socail-media.onrender.com/api/auth/google/callback",
-      "_self"
-    );
+    const data = window.open("http://localhost:3001/auth/google", "_self");
+    console.log("data ", data);
   };
   return (
     <>

@@ -27,7 +27,7 @@ function LikedPost() {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          "https://leander-socail-media.onrender.com/api/post/liked/Post",
+          "http://localhost:3001/api/post/liked/Post",
           config
         );
         setLoading(false);
@@ -44,7 +44,7 @@ function LikedPost() {
     const getUsers = async () => {
       try {
         const { data } = await axios.get(
-          "https://leander-socail-media.onrender.com/api/user/followers/getAll",
+          "http://localhost:3001/api/user/followers/getAll",
           config
         );
         setSearch(data);
