@@ -25,10 +25,7 @@ function Navbar() {
   const log = (e) => {
     e.preventDefault();
     dispatch(logout());
-    window.open(
-      "http://localhost:3001/api/auth/logout",
-      "_self"
-    );
+    window.open("http://localhost:3001/auth/google/logout", "_self");
     navigate("/");
   };
 
@@ -39,8 +36,7 @@ function Navbar() {
     }
     try {
       const { data } = await axios.get(
-        "http://localhost:3001/api/user/oneUser?name=" +
-          searched,
+        "http://localhost:3001/api/user/oneUser?name=" + searched,
         config
       );
       setSearch(data);

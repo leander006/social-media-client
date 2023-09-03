@@ -60,9 +60,10 @@ function Write() {
         { data: base64EncodedImage },
         config
       );
+      console.log("data ", data);
       setFileInputState("");
       setPreviewSource("");
-      setProfile(data.url);
+      setProfile(data);
       setLoading(false);
       toast.success("Image uploaded");
     } catch (err) {
@@ -79,6 +80,7 @@ function Write() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("profile ", profile);
     try {
       await axios.post(
         "http://localhost:3001/api/post",

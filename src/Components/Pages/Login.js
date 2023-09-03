@@ -36,7 +36,6 @@ function Login() {
   const google = (e) => {
     e.preventDefault();
     const data = window.open("http://localhost:3001/auth/google", "_self");
-    console.log("data ", data);
   };
   return (
     <>
