@@ -25,7 +25,7 @@ function Navbar() {
   const log = (e) => {
     e.preventDefault();
     dispatch(logout());
-    window.open("http://localhost:3001/auth/google/logout", "_self");
+    window.open("http://localhost:3001/api/auth/google/logout", "_self");
     navigate("/");
   };
 

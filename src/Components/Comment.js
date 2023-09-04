@@ -41,18 +41,18 @@ function Comment({ comment }) {
       <div className="flex ">
         <div className="flex basis-1/2 p-1 mt-1 mr-2">
           <img
-            src={comment?.username?.profile}
+            src={comment?.user?.profile}
             className="w-9 h-9 rounded-full cursor-pointer border"
             alt="comments"
           />
           <Link to="/profile">
             <h1 className="capitalize ml-1 md:mr-12 cursor-pointer text-white">
-              {comment?.username?.username}
+              {comment?.user?.user}
             </h1>
           </Link>
         </div>
         <div className="mt-1 basis-9/12 text-white mb-4">
-          {visible && comment?.username?._id === currentUser._id && (
+          {visible && comment?.user?._id === currentUser._id && (
             <h1
               className="cursor-pointer mt-7 fixed z-40 bg-gray-300 rounded p-1"
               onClick={handledelete}
@@ -62,7 +62,7 @@ function Comment({ comment }) {
           )}
           <p
             className={
-              comment?.username?._id === currentUser._id
+              comment?.user?._id === currentUser._id
                 ? "mt-1 cursor-pointer pr-2 lg:w-52"
                 : "mt-1 pr-2 lg:w-52"
             }

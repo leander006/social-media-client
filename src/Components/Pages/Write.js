@@ -60,10 +60,10 @@ function Write() {
         { data: base64EncodedImage },
         config
       );
-      console.log("data ", data);
+      console.log("data ", data.data);
       setFileInputState("");
       setPreviewSource("");
-      setProfile(data);
+      setProfile(data.data);
       setLoading(false);
       toast.success("Image uploaded");
     } catch (err) {

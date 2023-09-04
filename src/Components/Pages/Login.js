@@ -21,8 +21,8 @@ function Login() {
       const { data } = await axios.post(
         "http://localhost:3001/api/auth/login",
         {
-          username,
-          password,
+          username: username,
+          password: password,
         }
       );
       dispatch(loginSuccess(data));
@@ -35,7 +35,7 @@ function Login() {
   };
   const google = (e) => {
     e.preventDefault();
-    const data = window.open("http://localhost:3001/auth/google", "_self");
+    window.open("http://localhost:3001/api/auth/google", "_self");
   };
   return (
     <>

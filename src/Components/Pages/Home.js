@@ -56,6 +56,7 @@ function Home() {
           config
         );
         dispatch(followerPostSuccess(data));
+        console.log("data", data);
       } catch (error) {
         dispatch(followerPostError());
         console.log(error?.response?.data);

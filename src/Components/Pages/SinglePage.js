@@ -33,10 +33,12 @@ function SinglePage() {
   const navigate = useNavigate();
   const config = {
     headers: {
-      "Content-Type": "application/json",
+      "Content-type": "application/json",
       Authorization: `Bearer ${Cookie.get("token")}`,
     },
   };
+  const user = currentUser?.others ? currentUser?.others : currentUser;
+  console.log("user ", user);
   useEffect(() => {
     const getPost = async () => {
       try {
@@ -52,26 +54,28 @@ function SinglePage() {
     };
     getPost();
     // eslint-disable-next-line
-  }, [currentUser]);
+  }, [user, setLike]);
 
   useEffect(() => {
     setLike(post?.likes?.length);
-    setIsLiked(currentUser.likedPost?.includes(postId));
-    setBookmark(currentUser.bookmarkedPost?.includes(postId));
-  }, [post?.likes, currentUser, postId]);
+    setIsLiked(user.likedPost?.includes(postId));
+    setBookmark(user.bookmarkedPost?.includes(postId));
+  }, [post?.likes, user, postId]);
 
   const handleLikes = async (e) => {
     e.preventDefault();
     try {
       dispatch(loginStart());
-      const { data } = await axios.put(
-        `http://localhost:3001/api/post/likePost/${postId}`,
-        {},
+      const { data } = await axios.post(
+        `http://localhost:3001/api/like/${postId}`,
+        { modelType: "Post" },
         config
       );
-      dispatch(loginSuccess(data));
+      console.log("likes ", like);
       setLike(isLiked ? like - 1 : like + 1);
       setIsLiked(!isLiked);
+      console.log("data", data);
+      dispatch(loginSuccess(data));
     } catch (error) {
       dispatch(loginError());
       console.log(error?.response?.data);
@@ -87,10 +91,11 @@ function SinglePage() {
         {},
         config
       );
+      console.log("data", data);
       dispatch(loginSuccess(data));
     } catch (error) {
       dispatch(loginError());
-      console.log(error?.response?.data);
+      console.log(error);
     }
   };
 
@@ -109,7 +114,7 @@ function SinglePage() {
       console.log(error?.response?.data);
     }
   };
-
+  console.log("post ", post);
   const click = () => {
     navigate("/profile/" + post?.owner?._id);
   };
@@ -118,8 +123,7 @@ function SinglePage() {
       try {
         dispatch(commentStart());
         const { data } = await axios.get(
-          "http://localhost:3001/api/comment/allComment/" +
-            postId,
+          "http://localhost:3001/api/comment/allComment/" + postId,
           config
         );
         dispatch(commentSuccess(data));
@@ -137,7 +141,7 @@ function SinglePage() {
       dispatch(commentStart());
       const { data } = await axios.post(
         `http://localhost:3001/api/comment/${postId}`,
-        { content: comment },
+        { content: comment, modelType: "Post" },
         config
       );
       dispatch(commentSuccess([data, ...allComment]));
@@ -183,7 +187,7 @@ function SinglePage() {
                       {post?.caption}
                     </p>
                   </div>
-                  {post?.owner?._id === currentUser?._id && (
+                  {post?.owner?._id === user?._id && (
                     <div onClick={handleDelete}>
                       <i className="fa-solid text-black fa-xl fa-trash-can cursor-pointer"></i>
                     </div>

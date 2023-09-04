@@ -15,16 +15,17 @@ import Edit from "./Components/Pages/Edit";
 import EmailVerificatiion from "./Components/Pages/EmailVerificatiion";
 import SinglePage from "./Components/Pages/SinglePage";
 import { useSelector } from "react-redux";
+
 axios.defaults.withCredentials = true;
 
 function App() {
   const { currentUser } = useSelector((state) => state.user);
-  console.log("currentUser", currentUser);
+
   return (
     <>
       <Router>
         <Routes>
-          <Route exact path="/" element={<Login />} />
+          <Route exact path="/" element={currentUser ? <Home /> : <Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/home" element={currentUser ? <Home /> : <Login />} />
           <Route path="/like" element={<LikedPost />} />

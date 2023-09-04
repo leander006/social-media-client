@@ -27,6 +27,7 @@ function Edit() {
   const [previewSource, setPreviewSource] = useState("");
   const [fileInputState, setFileInputState] = useState("");
   const [status, setStatus] = useState("");
+  const [password, setPassword] = useState("");
   const { editId } = useParams();
 
   const config = {
@@ -114,6 +115,7 @@ function Edit() {
           name: name,
           profile: profile,
           status: status,
+          password: password,
         },
         config
       );
@@ -220,6 +222,16 @@ function Edit() {
                   className="bg-[#2D3B58] border-b w-full mt-2 outline-none"
                   placeholder={user?.username}
                   onChange={(e) => setUsername(e.target.value)}
+                  type="text"
+                ></input>
+              </div>
+
+              <div className="p-2">
+                <h1 className="text-[#8aaaeb] ">Password</h1>
+                <input
+                  className="bg-[#2D3B58] border-b w-full mt-2 outline-none"
+                  placeholder={"*****"}
+                  onChange={(e) => setPassword(e.target.value)}
                   type="text"
                 ></input>
               </div>
