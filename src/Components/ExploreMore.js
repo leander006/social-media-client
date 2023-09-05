@@ -8,20 +8,45 @@ import axios from "axios";
 function ExploreMore({ explore }) {
   const { currentUser } = useSelector((state) => state.user);
   const [like, setLike] = useState(explore?.likes?.length);
-  const [isLiked, setIsLiked] = useState(
-    explore.likes?.includes(currentUser._id)
-  );
-  const [bookmark, setBookmark] = useState(
-    explore.bookmark?.includes(currentUser._id)
-  );
+  const user = currentUser?.others ? currentUser?.others : currentUser;
+  const [isLiked, setIsLiked] = useState(false);
+  const [bookmark, setBookmark] = useState(false);
+  const [post, setPost] = useState();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const config = {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${Cookie.get("token")}`,
     },
   };
+
+  useEffect(() => {
+    const getPost = async () => {
+      try {
+        const { data } = await axios.get(
+          "http://localhost:3001/api/post/" + explore?._id,
+          config
+        );
+        setPost(data);
+        setLike(data?.likes?.length);
+        setIsLiked(user.likedPost?.includes(explore?._id));
+        setBookmark(user.bookmarkedPost?.includes(explore?._id));
+      } catch (error) {
+        console.log(error?.response?.data);
+      }
+    };
+    getPost();
+    // eslint-disable-next-line
+  }, [user]);
+
+  useEffect(() => {
+    setLike(post?.likes?.length);
+    setIsLiked(user.likedPost?.includes(explore?._id));
+    setBookmark(user.bookmarkedPost?.includes(explore?._id));
+  }, [user, explore?._id, like]);
 
   const click = () => {
     navigate("/profile/" + explore?.owner?._id);
@@ -31,19 +56,19 @@ function ExploreMore({ explore }) {
     e.preventDefault();
     try {
       dispatch(loginStart());
-      const { data } = await axios.put(
-        `http://localhost:3001/api/post/likePost/${explore._id}`,
-        {},
+      const { data } = await axios.post(
+        `http://localhost:3001/api/like/${explore?._id}`,
+        { modelType: "Post" },
         config
       );
       dispatch(loginSuccess(data));
       setLike(isLiked ? like - 1 : like + 1);
-      setIsLiked(!isLiked);
     } catch (error) {
       dispatch(loginError());
       console.log(error?.response?.data);
     }
   };
+
   const handleSaved = async (e) => {
     e.preventDefault();
     try {
@@ -72,7 +97,7 @@ function ExploreMore({ explore }) {
         ? currentUser?.others?.bookmarkedPost?.includes(explore._id)
         : currentUser.bookmarkedPost?.includes(explore._id)
     );
-  }, [explore._id, currentUser]);
+  }, [explore._id, currentUser, like]);
 
   return (
     <>
@@ -95,7 +120,7 @@ function ExploreMore({ explore }) {
           <Link to={"/singlePage/" + explore?._id}>
             <img
               src={explore?.content}
-              className="w-screen rounded-lg  object-contain cursor-pointer "
+              className="rounded-lg  object-contain cursor-pointer "
               alt="ExploreMore"
             />
           </Link>
@@ -113,12 +138,12 @@ function ExploreMore({ explore }) {
               )}
               <h1 className="mt-3 ml-1">{like}</h1>
             </div>
-            <Link to={"/singlePage/" + explore?._id}>
-              <div>
-                <i className="fa-regular fa-2xl fa-comment cursor-pointer"></i>
-                <h1>{explore?.comments?.length}</h1>
-              </div>
-            </Link>
+            {/* <Link to={"/singlePage/" + explore?._id}> */}
+            <div>
+              <i className="fa-regular fa-2xl fa-comment cursor-pointer"></i>
+              <h1>{explore?.comments?.length}</h1>
+            </div>
+            {/* </Link> */}
           </div>
           <div>
             {bookmark ? (
