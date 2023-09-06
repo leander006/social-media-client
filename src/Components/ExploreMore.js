@@ -120,30 +120,30 @@ function ExploreMore({ explore }) {
           <Link to={"/singlePage/" + explore?._id}>
             <img
               src={explore?.content}
-              className="rounded-lg  object-contain cursor-pointer "
+              className="rounded-lg cursor-pointer "
               alt="ExploreMore"
             />
           </Link>
         </div>
         <div className="flex my-3 mx-3 items-center justify-between">
-          <div
-            className="flex likes cursor-pointer items-center"
-            onClick={handleLikes}
-          >
-            <div className="flex flex-col justify-center mt-3">
+          <div className="flex items-center">
+            <div
+              className="flex flex-col justify-center mt-3"
+              onClick={handleLikes}
+            >
               {isLiked ? (
-                <i className="fa-solid fa-heart fa-2xl pr-3 text-red-700" />
+                <i className="fa-solid fa-heart cursor-pointer fa-2xl pr-3 text-red-700" />
               ) : (
-                <i className="fa-regular fa-heart fa-2xl pr-3" />
+                <i className="fa-regular fa-heart cursor-pointer fa-2xl pr-3" />
               )}
               <h1 className="mt-3 ml-1">{like}</h1>
             </div>
-            {/* <Link to={"/singlePage/" + explore?._id}> */}
-            <div>
-              <i className="fa-regular fa-2xl fa-comment cursor-pointer"></i>
-              <h1>{explore?.comments?.length}</h1>
-            </div>
-            {/* </Link> */}
+            <Link to={"/singlePage/" + explore?._id}>
+              <div>
+                <i className="fa-regular fa-2xl fa-comment cursor-pointer"></i>
+                <h1>{explore?.comments?.length}</h1>
+              </div>
+            </Link>
           </div>
           <div>
             {bookmark ? (

@@ -6,11 +6,6 @@ import Cookie from "js-cookie";
 import SingleSkeleton from "../Skeleton/SingleSkeleton";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  loginError,
-  loginStart,
-  loginSuccess,
-} from "../../redux/Slice/userSlice";
-import {
   commentError,
   commentStart,
   commentSuccess,
@@ -31,6 +26,8 @@ function SinglePage() {
   // const [like, setLike] = useState();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [textAreaCount, setTextAreaCount] = useState("0/45");
+  const max = 45;
   const config = {
     headers: {
       "Content-type": "application/json",
@@ -48,56 +45,18 @@ function SinglePage() {
         );
         setPost(data);
         setLoading(true);
-        // setLike(data?.likes?.length);
-        // setIsLiked(user.likedPost?.includes(postId));
-        // setBookmark(user.bookmarkedPost?.includes(postId));
       } catch (error) {
         console.log(error?.response?.data);
       }
     };
     getPost();
     // eslint-disable-next-line
-  }, [user, comment]);
-
-  // useEffect(() => {
-  //   setLike(post?.likes?.length);
-  //   setIsLiked(user.likedPost?.includes(postId));
-  //   setBookmark(user.bookmarkedPost?.includes(postId));
-  // }, [user, postId, like]);
-
-  // const handleLikes = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     dispatch(loginStart());
-  //     const { data } = await axios.post(
-  //       `http://localhost:3001/api/like/${postId}`,
-  //       { modelType: "Post" },
-  //       config
-  //     );
-  //     dispatch(loginSuccess(data));
-  //     setLike(isLiked ? like - 1 : like + 1);
-  //   } catch (error) {
-  //     dispatch(loginError());
-  //     console.log(error?.response?.data);
-  //   }
-  // };
-
-  // const handleSaved = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     dispatch(loginStart());
-  //     const { data } = await axios.put(
-  //       `http://localhost:3001/api/post/bookmarkPost/${postId}`,
-  //       {},
-  //       config
-  //     );
-  //     console.log("data", data);
-  //     dispatch(loginSuccess(data));
-  //   } catch (error) {
-  //     dispatch(loginError());
-  //     console.log(error);
-  //   }
-  // };
+  }, [user]);
+  const recalculate = (e) => {
+    const currentLength = e.target.value.length;
+    setTextAreaCount(`${currentLength}/${max}`);
+    setComment(e.target.value);
+  };
 
   const handleDelete = async (e) => {
     e.preventDefault();
@@ -128,7 +87,6 @@ function SinglePage() {
           config
         );
         dispatch(commentSuccess(data));
-        console.log();
       } catch (error) {
         dispatch(commentError());
         console.log(error?.response?.data);
@@ -136,7 +94,7 @@ function SinglePage() {
     };
     getCommet();
     // eslint-disable-next-line
-  }, [postId, comment]);
+  }, [postId]);
 
   const handleComment = async (e) => {
     e.preventDefault();
@@ -147,6 +105,7 @@ function SinglePage() {
         { content: comment, modelType: "Post" },
         config
       );
+      console.log("data", data);
       dispatch(commentSuccess([data, ...allComment]));
       setComment("");
     } catch (error) {
@@ -168,18 +127,18 @@ function SinglePage() {
                 alt="singlePost"
               />
             </div>
-            <div className="flex flex-col justify-between lg:border border-[#BED7F8] pt-1 px-2 lg:h-5/6 lg:w-2/5  overflow-y-scroll  ">
+            <div className="flex flex-col justify-between lg:border border-[#BED7F8] pt-1 px-2 lg:h-5/6 xl:w-2/5 lg:w-3/5  overflow-y-scroll  ">
               <div className="flex p-1 flex-col justify-between ">
-                <div className="flex items-center">
+                <div className="flex">
                   <div className="flex p-1 basis-10 rounded-full">
                     <img
                       src={post?.owner?.profile}
                       alt="singlePost"
-                      className="rounded-full h-fit cursor-pointer"
+                      className="rounded-full h-8 w-8 cursor-pointer"
                       onClick={click}
                     />
                   </div>
-                  <div className="flex lg:flex-col basis-10/12">
+                  <div className="flex flex-col basis-10/12">
                     <h1
                       className="capitalize ml-2 font-sans cursor-pointer font-bold text-white"
                       onClick={click}
@@ -190,38 +149,11 @@ function SinglePage() {
                   </div>
                   {post?.owner?._id === user?._id && (
                     <div onClick={handleDelete}>
-                      <i className="fa-solid text-black fa-xl fa-trash-can cursor-pointer"></i>
+                      <i className="fa-solid items-start text-black fa-xl fa-trash-can cursor-pointer"></i>
                     </div>
                   )}
                 </div>
-                {/* <div className="flex pl-3 mt-2">
-                  <div className="flex items-center ">
-                    <div
-                      className="flex likes cursor-pointer flex-col justify-center mt-3"
-                      onClick={handleLikes}
-                    >
-                      {isLiked ? (
-                        <i className="fa-solid fa-heart fa-2xl pr-3 text-red-700" />
-                      ) : (
-                        <i className="fa-regular fa-heart fa-2xl pr-3" />
-                      )}
-                      <h1 className="mt-3 ml-3">{like}</h1>
-                    </div>
-                  </div>
-                  <div className="mb-6 cursor-pointer">
-                    {bookmark ? (
-                      <i
-                        className="fa-solid fa-xl fa-bookmark cursor-pointer"
-                        onClick={handleSaved}
-                      ></i>
-                    ) : (
-                      <i
-                        className="fa-regular fa-xl fa-bookmark cursor-pointer"
-                        onClick={handleSaved}
-                      ></i>
-                    )}
-                  </div>
-                </div> */}
+
               </div>
               <div className="flex flex-col justify-between lg:h-fit h-screen lg:basis-2/3">
                 {allComment.length === 0 ? (
@@ -237,13 +169,18 @@ function SinglePage() {
                 )}
 
                 <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md">
-                  <input
-                    className="w-full rounded-md p-1"
-                    value={comment}
-                    placeholder="Comment here"
-                    onChange={(e) => setComment(e.target.value)}
-                    type="text"
-                  ></input>
+                  <div className="flex w-full items-center">
+                    <input
+                      className="w-full rounded-md p-1"
+                      value={comment}
+                      maxLength={max}
+                      placeholder="Comment here"
+                      onChange={recalculate}
+                      type="text"
+                    ></input>
+                    <p className="text-end mx-2">{textAreaCount}</p>
+                  </div>
+
                   <i
                     className="fa-solid fa-xl fa-paper-plane p-2 text-[#BED7F8] cursor-pointer "
                     onClick={handleComment}

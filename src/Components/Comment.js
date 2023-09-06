@@ -45,27 +45,29 @@ function Comment({ comment }) {
             alt="comments"
           />
           <Link to="/profile">
-            <h1 className="capitalize ml-3 md:mr-3 cursor-pointer text-white">
+            <h1 className="capitalize font-bold mx-3 md:mr-3 cursor-pointer text-white">
               {comment?.user?.username}
             </h1>
           </Link>
         </div>
-        <div className="relative group basis-9/12 text-white">
+        <div className="relative ml-4 group basis-[90%] text-white">
           <p
             className={
               comment?.user?._id === currentUser._id
                 ? "mt-1 cursor-pointer pr-2 ml-2 group-hover:block absolute"
-                : "mt-1 pr-2 group-hover:block absolute"
+                : "mt-1 pr-2 ml-2 group-hover:block absolute"
             }
           >
             {comment?.content}
           </p>
-          <h1
-            className="hidden cursor-pointer group-hover:block absolute bottom-[3.3rem] bg-gray-300 rounded p-1"
-            onClick={handledelete}
-          >
-            Delete comment
-          </h1>
+          {comment?.user?._id === currentUser._id && (
+            <h1
+              className="hidden cursor-pointer group-hover:block absolute bottom-[2.5rem] bg-gray-300 rounded p-1"
+              onClick={handledelete}
+            >
+              Delete comment
+            </h1>
+          )}
         </div>
       </div>
     </>

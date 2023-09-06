@@ -14,6 +14,7 @@ import {
 import SearchFreind from "../SearchFreind";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 function Home() {
   const { followerPost, loading } = useSelector((state) => state.post);
@@ -40,6 +41,7 @@ function Home() {
         setSearch(data);
         setSloading(false);
       } catch (error) {
+        toast.error("error?.response?.data");
         console.log(error);
       }
     };
@@ -59,7 +61,9 @@ function Home() {
         console.log("data", data);
       } catch (error) {
         dispatch(followerPostError());
-        console.log(error?.response?.data);
+        toast.error("error?.response?.data");
+        // alert("error?.response?.data")
+        console.log("error ", error?.response?.data);
       }
     };
     getFollowersPost();

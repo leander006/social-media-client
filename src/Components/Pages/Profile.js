@@ -71,7 +71,7 @@ function Profile() {
               <div className="flex lg:mx-36">
                 <div className="p-1 pl-2  md:px-8 flex flex-col items-center">
                   <img
-                    className="rounded-full w-[80px] lg:w-[120px] "
+                    className="rounded-full w-12 h-12 lg:w-[70px] lg:h-[60px]"
                     src={user?.profile}
                     alt="profile"
                   />

@@ -94,7 +94,7 @@ function Edit() {
       );
       setFileInputState("");
       setPreviewSource("");
-      setProfile(data.url);
+      setProfile(data.data);
       setLoad(false);
       toast.success("Image uploaded");
     } catch (err) {
@@ -157,7 +157,7 @@ function Edit() {
             <div className="flex flex-col justify-center items-center">
               {!load ? (
                 <img
-                  className="image w-16 rounded-full "
+                  className="image h-16 w-16 rounded-full "
                   src={
                     previewSource
                       ? previewSource

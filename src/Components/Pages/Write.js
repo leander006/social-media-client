@@ -60,7 +60,6 @@ function Write() {
         { data: base64EncodedImage },
         config
       );
-      console.log("data ", data.data);
       setFileInputState("");
       setPreviewSource("");
       setProfile(data.data);

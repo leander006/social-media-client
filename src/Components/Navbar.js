@@ -46,6 +46,7 @@ function Navbar() {
   };
 
   const current = currentUser?.others ? currentUser?.others : currentUser;
+  console.log("user ", current);
   return (
     <div className="container fixed top-0 z-50 ">
       <div className="flex justify-between md:justify-evenly bg-[#455175] w-screen">
