@@ -6,7 +6,6 @@ import Messages from "../Mesaages";
 import NopPreview from "../NopPreview";
 import Cookie from "js-cookie";
 
-import { io } from "socket.io-client";
 import DirectMessage from "../DirectMessage";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -399,7 +398,7 @@ function Chat({ socket }) {
                         name={
                           c?.isGroupChat
                             ? c?.chatname
-                            : user._id == c?.users[0]?._id
+                            : user._id === c?.users[0]?._id
                             ? c?.users[1]?.username
                             : c?.users[0]?.username
                         }

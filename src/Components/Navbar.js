@@ -13,6 +13,7 @@ import {
   notifcationStart,
   notifcationSuccess,
 } from "../redux/Slice/notificationSlice";
+import Notifcations from "./Notifcations";
 
 function Navbar({ socket }) {
   const [searched, setSearched] = useState("");
@@ -40,7 +41,6 @@ function Navbar({ socket }) {
           "http://localhost:3001/api/notification",
           config
         );
-        console.log(data);
         dispatch(notifcationSuccess(data));
       } catch (error) {
         dispatch(notifcationError());
@@ -48,14 +48,14 @@ function Navbar({ socket }) {
       }
     };
     getNotifications();
-  }, [currentUser]);
+  }, [currentUser, notify]);
 
   const log = (e) => {
     e.preventDefault();
+    socket.emit("removeUser", { userId: currentUser?._id });
     dispatch(logout());
     window.open("http://localhost:3001/api/auth/google/logout", "_self");
     navigate("/");
-    socket.emit("removeUser");
   };
 
   const handleSearch = async (query) => {
@@ -75,7 +75,7 @@ function Navbar({ socket }) {
   };
 
   const current = currentUser?.others ? currentUser?.others : currentUser;
-  console.log("count", allNoti.length);
+
   return (
     <div className="container fixed top-0 z-50 ">
       <div className="flex justify-between md:justify-evenly bg-[#455175] w-screen">
@@ -102,7 +102,7 @@ function Navbar({ socket }) {
             ))}
           </div>
         </div>
-        <div className="flex items-center text-white mx-4 lg:space-x-4">
+        <div className="flex items-center text-white mx-2 lg:space-x-4">
           <div className="flex mr-2 ">
             <Link to="/home">
               <i className="fa-solid  text-[#BED7F8] cursor-pointer fa-xl  fa-house"></i>
@@ -124,10 +124,7 @@ function Navbar({ socket }) {
               <i className="fa-solid fa-xl fa-square-plus"></i>
             </Link>
           </div>
-          <div
-            className="mr-2 pr-4 cursor-pointer"
-            onClick={(e) => setVisible(!visible)}
-          >
+          <div className="cursor-pointer" onClick={(e) => setVisible(!visible)}>
             <img
               className="rounded-full w-10 h-10 p-1"
               src={current.profile}
@@ -135,12 +132,32 @@ function Navbar({ socket }) {
             />
           </div>
           <div
-            className="mx-2 text-[#BED7F8] cursor-pointer"
+            className="relative text-[#BED7F8] cursor-pointer"
             onClick={() => setNotify(!notify)}
           >
-            <h1 className="font-bold">{allNoti.length}</h1>
-            <i className="fa-regular fa-xl fa-bell"></i>
+            <i className="fa-solid fa-xl fa-bell"></i>
+            {allNoti.length > 0 && (
+              <h1 className="font-bold absolute -top-1 bg-red-600 rounded-full w-4 h-4 text-white flex justify-center items-center">
+                {allNoti.length}
+              </h1>
+            )}
           </div>
+
+          {notify && allNoti.length > 0 && (
+            <div className="flex fixed z-30 right-3 top-8 bg-[#a1bcf1]">
+              <div className="px-3 py-1">
+                {allNoti?.map((n) => (
+                  <Notifcations
+                    setNotify={setNotify}
+                    notify={notify}
+                    n={n}
+                    key={n?._id}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           {visible && (
             <div className="z-50 fixed bg-[#98aef0] flex justify-center flex-col text-black  px-2 h-48 mt-56 w-44 right-3 rounded-md">
               <Link to={"/profile/" + current._id}>
