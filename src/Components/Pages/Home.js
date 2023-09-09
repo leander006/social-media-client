@@ -16,11 +16,11 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
-function Home() {
+function Home({ socket }) {
   const { followerPost, loading } = useSelector((state) => state.post);
+  const { currentUser } = useSelector((state) => state.user);
   const [search, setSearch] = useState([]);
   const [sloading, setSloading] = useState(false);
-
   const dispatch = useDispatch();
 
   const config = {
@@ -29,6 +29,10 @@ function Home() {
       Authorization: `Bearer ${Cookies.get("token")}`,
     },
   };
+  useEffect(() => {
+    socket.emit("login", { userId: currentUser?._id });
+    // eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     const getUser = async () => {
@@ -58,7 +62,7 @@ function Home() {
           config
         );
         dispatch(followerPostSuccess(data));
-        console.log("data", data);
+        // console.log("data", data);
       } catch (error) {
         dispatch(followerPostError());
         toast.error("error?.response?.data");
@@ -72,7 +76,7 @@ function Home() {
 
   return (
     <>
-      <Navbar />
+      <Navbar socket={socket} />
       <div className="flex bg-[#2D3B58] z-50 mt-10 ">
         {!loading ? (
           <div className="main md:flex mx-auto lg:basis-[70%] md:basis-[60%] ">

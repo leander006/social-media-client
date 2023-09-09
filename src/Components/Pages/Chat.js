@@ -27,10 +27,9 @@ import ListItems from "../ListItems";
 import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 
-var socket, selectedChatCompare;
-const Endpoint = "http://localhost:3001/";
+var selectedChatCompare;
 
-function Chat() {
+function Chat({ socket }) {
   const scrollRef = useRef();
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
@@ -46,9 +45,7 @@ function Chat() {
   const [loading, setLoading] = useState(false);
   const { currentUser, chatloading } = useSelector((state) => state.user);
   const [chatname, setChatname] = useState("");
-  const currentuser = currentUser._id
-    ? currentUser?._id
-    : currentUser?.others?._id;
+  const user = currentUser?.others ? currentUser?.others : currentUser;
   const dispatch = useDispatch();
   const config = {
     headers: {
@@ -63,14 +60,13 @@ function Chat() {
   const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
-    socket = io(Endpoint);
-    socket.emit("setup", currentUser);
+    socket.emit("setup", user);
     socket.on("connected", () => setSocketConnected(true));
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
     // eslint-disable-next-line
   }, []);
-console.log("socketConnected ",socketConnected);
+
   const typingHandler = (e) => {
     setMessage(e.target.value);
 
@@ -111,7 +107,7 @@ console.log("socketConnected ",socketConnected);
     };
     getChat();
     // eslint-disable-next-line
-  }, [currentUser, message]);
+  }, [user]);
 
   useEffect(() => {
     const getMessage = async () => {
@@ -119,8 +115,7 @@ console.log("socketConnected ",socketConnected);
         setLoading(true);
         dispatch(messageStart());
         const { data } = await axios.get(
-          "http://localhost:3001/api/message/get/" +
-            currentChat._id,
+          "http://localhost:3001/api/message/get/" + currentChat._id,
           config
         );
         dispatch(messageSuccess(data));
@@ -142,12 +137,16 @@ console.log("socketConnected ",socketConnected);
     try {
       dispatch(messageStart());
       const { data } = await axios.post(
-        "http://localhost:3001/api/message/" +
-          currentChat._id,
+        "http://localhost:3001/api/message/" + currentChat._id,
         { content: message },
         config
       );
-      socket.emit("new message", data);
+      socket.emit("send_message", data);
+      // socket.emit("sendNotification", {
+      //   senderName: user,
+      //   receiverName: post.username,
+      //   type,
+      // });
       dispatch(messageSuccess([...allmessage, data]));
       setMessage("");
     } catch (error) {
@@ -173,15 +172,8 @@ console.log("socketConnected ",socketConnected);
   };
 
   useEffect(() => {
-    socket.on("message recieved", (newMessage) => {
-      if (
-        !selectedChatCompare ||
-        selectedChatCompare._id !== newMessage.chat._id
-      ) {
-        // notification
-      } else {
-        dispatch(messageSuccess([...allmessage, newMessage]));
-      }
+    socket.on("message recieved", async (newMessage) => {
+      dispatch(messageSuccess([...allmessage, newMessage]));
     });
   });
 
@@ -198,8 +190,7 @@ console.log("socketConnected ",socketConnected);
     try {
       dispatch(chatStart());
       await axios.delete(
-        "http://localhost:3001/api/chat/delete/" +
-          currentChat._id,
+        "http://localhost:3001/api/chat/delete/" + currentChat._id,
         config
       );
       dispatch(chatSuccess(allChat.filter((c) => c._id !== currentChat._id)));
@@ -224,8 +215,7 @@ console.log("socketConnected ",socketConnected);
     }
     try {
       const { data } = await axios.get(
-        "http://localhost:3001/api/user/freind/search?name=" +
-          groupSearch,
+        "http://localhost:3001/api/user/freind/search?name=" + groupSearch,
         config
       );
       setAddUser(data);
@@ -240,8 +230,7 @@ console.log("socketConnected ",socketConnected);
     }
     try {
       const { data } = await axios.get(
-        "http://localhost:3001/api/user/freind/search?name=" +
-          search,
+        "http://localhost:3001/api/user/freind/search?name=" + search,
         config
       );
       setSearched(data);
@@ -264,8 +253,7 @@ console.log("socketConnected ",socketConnected);
   const handleRemove = async (deleteUser) => {
     try {
       const { data } = await axios.put(
-        "http://localhost:3001/api/chat/remove/" +
-          currentChat._id,
+        "http://localhost:3001/api/chat/remove/" + currentChat._id,
         { userId: deleteUser._id },
         config
       );
@@ -280,8 +268,7 @@ console.log("socketConnected ",socketConnected);
     try {
       dispatch(chatStart());
       await axios.put(
-        "http://localhost:3001/api/chat/remove/" +
-          currentChat._id,
+        "http://localhost:3001/api/chat/remove/" + currentChat._id,
         { userId: removeUser._id },
         config
       );
@@ -301,8 +288,7 @@ console.log("socketConnected ",socketConnected);
         return;
       } else {
         const { data } = await axios.put(
-          "http://localhost:3001/api/chat/add/" +
-            currentChat._id,
+          "http://localhost:3001/api/chat/add/" + currentChat._id,
           { userId: addUser._id },
           config
         );
@@ -319,8 +305,7 @@ console.log("socketConnected ",socketConnected);
     e.preventDefault();
     try {
       const { data } = await axios.put(
-        "http://localhost:3001/api/chat/rename/" +
-          currentChat._id,
+        "http://localhost:3001/api/chat/rename/" + currentChat._id,
         { chatname: chatname },
         config
       );
@@ -407,14 +392,14 @@ console.log("socketConnected ",socketConnected);
                         img={
                           c?.isGroupChat
                             ? "images/noProfile.jpeg"
-                            : currentuser === c?.users[0]?._id
+                            : user._id === c?.users[0]?._id
                             ? c?.users[1]?.profile
                             : c?.users[0]?.profile
                         }
                         name={
                           c?.isGroupChat
                             ? c?.chatname
-                            : currentuser === c?.users[0]?._id
+                            : user._id == c?.users[0]?._id
                             ? c?.users[1]?.username
                             : c?.users[0]?.username
                         }
@@ -446,7 +431,7 @@ console.log("socketConnected ",socketConnected);
                     src={
                       currentChat?.isGroupChat
                         ? "images/noProfile.jpeg"
-                        : currentuser === currentChat?.users[0]?._id
+                        : user === currentChat?.users[0]?._id
                         ? currentChat?.users[1]?.profile
                         : currentChat?.users[0]?.profile
                     }
@@ -457,7 +442,7 @@ console.log("socketConnected ",socketConnected);
                     <h1 className="capitalize text-black ml-4 font-sans ">
                       {currentChat?.isGroupChat
                         ? currentChat?.chatname
-                        : currentuser === currentChat?.users[0]?._id
+                        : user === currentChat?.users[0]?._id
                         ? currentChat?.users[1]?.username
                         : currentChat?.users[0]?.username}
                     </h1>
@@ -465,7 +450,7 @@ console.log("socketConnected ",socketConnected);
                       <div className="flex flex-wrap ml-4">
                         {currentChat?.isGroupChat
                           ? "Someone "
-                          : currentuser === currentChat?.users[0]?._id
+                          : user === currentChat?.users[0]?._id
                           ? currentChat?.users[1]?.username
                           : currentChat?.users[0]?.username}{" "}
                         is typing..
@@ -477,8 +462,8 @@ console.log("socketConnected ",socketConnected);
                 </div>
                 <div className="flex">
                   {!currentChat?.isGroupChat &&
-                    currentChat.users.filter((c) => c._id === currentuser)
-                      ?.length === 1 && (
+                    currentChat.users.filter((c) => c._id === user)?.length ===
+                      1 && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
@@ -487,17 +472,17 @@ console.log("socketConnected ",socketConnected);
                       </div>
                     )}
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id !== currentuser && (
+                    currentChat?.groupAdmin?._id !== user && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-delete-left cursor-pointer"
-                          onClick={() => exit(currentUser)}
+                          onClick={() => exit(user)}
                         ></i>
                       </div>
                     )}
 
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id === currentuser && (
+                    currentChat?.groupAdmin?._id === user && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
@@ -506,7 +491,7 @@ console.log("socketConnected ",socketConnected);
                       </div>
                     )}
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id === currentuser && (
+                    currentChat?.groupAdmin?._id === user && (
                       <div>
                         <i
                           className="fa-solid fa-xl fa-user-plus mr-4 text-black cursor-pointer"
@@ -522,7 +507,7 @@ console.log("socketConnected ",socketConnected);
                   {allmessage?.map((m) => (
                     <div key={m._id} ref={scrollRef}>
                       <Messages
-                        own={m?.sender?._id === currentuser}
+                        own={m?.sender?._id === user?._id}
                         handleFunction={() => handleDelete(m)}
                         messages={m}
                         setMessage={setMessage}
@@ -610,14 +595,14 @@ console.log("socketConnected ",socketConnected);
                           img={
                             c?.isGroupChat
                               ? "images/noProfile.jpeg"
-                              : currentuser === c?.users[0]._id
+                              : user === c?.users[0]._id
                               ? c?.users[1]?.profile
                               : c?.users[0]?.profile
                           }
                           name={
                             c?.isGroupChat
                               ? c?.chatname
-                              : currentuser === c?.users[0]?._id
+                              : user === c?.users[0]?._id
                               ? c?.users[1]?.username
                               : c?.users[0]?.username
                           }
@@ -655,7 +640,7 @@ console.log("socketConnected ",socketConnected);
                       src={
                         currentChat?.isGroupChat
                           ? "images/noProfile.jpeg"
-                          : currentChat?.users[0]?._id === currentuser
+                          : currentChat?.users[0]?._id === user
                           ? currentChat?.users[1]?.profile
                           : currentChat?.users[0]?.profile
                       }
@@ -667,7 +652,7 @@ console.log("socketConnected ",socketConnected);
                     <h1 className="capitalize text-black ml-4 font-sans ">
                       {currentChat?.isGroupChat
                         ? currentChat?.chatname
-                        : currentuser === currentChat?.users[0]?._id
+                        : user === currentChat?.users[0]?._id
                         ? currentChat?.users[1]?.username
                         : currentChat?.users[0]?.username}
                     </h1>
@@ -675,7 +660,7 @@ console.log("socketConnected ",socketConnected);
                       <div className="flex flex-wrap ml-4">
                         {currentChat?.isGroupChat
                           ? "Someone "
-                          : currentuser === currentChat?.users[0]?._id
+                          : user === currentChat?.users[0]?._id
                           ? currentChat?.users[1]?.username
                           : currentChat?.users[0]?.username}{" "}
                         is typing..
@@ -688,8 +673,8 @@ console.log("socketConnected ",socketConnected);
 
                 <div className="flex">
                   {!currentChat?.isGroupChat &&
-                    currentChat.users.filter((c) => c._id === currentuser)
-                      ?.length === 1 && (
+                    currentChat.users.filter((c) => c._id === user)?.length ===
+                      1 && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
@@ -698,16 +683,16 @@ console.log("socketConnected ",socketConnected);
                       </div>
                     )}
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id !== currentuser && (
+                    currentChat?.groupAdmin?._id !== user && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-delete-left cursor-pointer"
-                          onClick={() => exit(currentUser)}
+                          onClick={() => exit(user)}
                         ></i>
                       </div>
                     )}
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id === currentuser && (
+                    currentChat?.groupAdmin?._id === user && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
@@ -716,7 +701,7 @@ console.log("socketConnected ",socketConnected);
                       </div>
                     )}
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id === currentuser && (
+                    currentChat?.groupAdmin?._id === user && (
                       <div>
                         <i
                           className="fa-solid fa-xl fa-user-plus mr-4 text-black cursor-pointer"
@@ -731,7 +716,7 @@ console.log("socketConnected ",socketConnected);
                   {allmessage?.map((m) => (
                     <div key={m._id} ref={scrollRef}>
                       <Messages
-                        own={m?.sender?._id === currentuser}
+                        own={m?.sender?._id === user}
                         messages={m}
                         handleFunction={() => handleDelete(m)}
                         setMessage={setMessage}

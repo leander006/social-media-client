@@ -15,11 +15,13 @@ import Edit from "./Components/Pages/Edit";
 import EmailVerificatiion from "./Components/Pages/EmailVerificatiion";
 import SinglePage from "./Components/Pages/SinglePage";
 import { useSelector } from "react-redux";
-
+import { io } from "socket.io-client";
+import { useEffect } from "react";
 axios.defaults.withCredentials = true;
-
+const Endpoint = "http://localhost:3001/";
 function App() {
   const { currentUser } = useSelector((state) => state.user);
+  const socket = io(Endpoint);
 
   return (
     <>
@@ -27,11 +29,14 @@ function App() {
         <Routes>
           <Route exact path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home" element={currentUser ? <Home /> : <Login />} />
+          <Route
+            path="/home"
+            element={currentUser ? <Home socket={socket} /> : <Login />}
+          />
           <Route path="/like" element={<LikedPost />} />
           <Route path="/profile/:userId" element={<Profile />} />
           <Route path="/savedPost" element={<SavedPost />} />
-          <Route path="/chat" element={<Chat />} />
+          <Route path="/chat" element={<Chat socket={socket} />} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/write" element={<Write />} />
           <Route path="/login" element={<Login />} />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import Cookie from "js-cookie";
@@ -8,13 +8,23 @@ import "react-toastify/dist/ReactToastify.css";
 import { logout } from "../redux/Slice/userSlice";
 import axios from "axios";
 
-function Navbar() {
+import {
+  notifcationError,
+  notifcationStart,
+  notifcationSuccess,
+} from "../redux/Slice/notificationSlice";
+
+function Navbar({ socket }) {
   const [searched, setSearched] = useState("");
   const [search, setSearch] = useState([]);
+
+  const [notify, setNotify] = useState(false);
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
+
   const { currentUser } = useSelector((state) => state.user);
+  const { allNoti } = useSelector((state) => state.notification);
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -22,11 +32,30 @@ function Navbar() {
     },
   };
 
+  useEffect(() => {
+    const getNotifications = async () => {
+      dispatch(notifcationStart());
+      try {
+        const { data } = await axios.get(
+          "http://localhost:3001/api/notification",
+          config
+        );
+        console.log(data);
+        dispatch(notifcationSuccess(data));
+      } catch (error) {
+        dispatch(notifcationError());
+        console.log("error ", error);
+      }
+    };
+    getNotifications();
+  }, [currentUser]);
+
   const log = (e) => {
     e.preventDefault();
     dispatch(logout());
     window.open("http://localhost:3001/api/auth/google/logout", "_self");
     navigate("/");
+    socket.emit("removeUser");
   };
 
   const handleSearch = async (query) => {
@@ -46,12 +75,14 @@ function Navbar() {
   };
 
   const current = currentUser?.others ? currentUser?.others : currentUser;
-  console.log("user ", current);
+  console.log("count", allNoti.length);
   return (
     <div className="container fixed top-0 z-50 ">
       <div className="flex justify-between md:justify-evenly bg-[#455175] w-screen">
         <div className="font-bold p-2 text-white">
-          <h1>Talkology</h1>
+          <Link to="/home">
+            <h1>Talkology</h1>
+          </Link>
         </div>
 
         <div className="md:flex hidden h-8 w-1/3 m-auto mt-1 items-center bg-[#455175] rounded-md">
@@ -71,13 +102,14 @@ function Navbar() {
             ))}
           </div>
         </div>
-        <div className="flex items-center text-white lg:space-x-4">
+        <div className="flex items-center text-white mx-4 lg:space-x-4">
           <div className="flex mr-2 ">
             <Link to="/home">
               <i className="fa-solid  text-[#BED7F8] cursor-pointer fa-xl  fa-house"></i>
             </Link>
           </div>
-          <div className="flex  mr-2 ">
+
+          <div className="flex mr-2 ">
             <Link to="/chat">
               <i className="fa-regular  text-[#BED7F8] cursor-pointer fa-xl  fa-comment"></i>
             </Link>
@@ -93,7 +125,7 @@ function Navbar() {
             </Link>
           </div>
           <div
-            className="mr-2 cursor-pointer"
+            className="mr-2 pr-4 cursor-pointer"
             onClick={(e) => setVisible(!visible)}
           >
             <img
@@ -101,6 +133,13 @@ function Navbar() {
               src={current.profile}
               alt="navbar"
             />
+          </div>
+          <div
+            className="mx-2 text-[#BED7F8] cursor-pointer"
+            onClick={() => setNotify(!notify)}
+          >
+            <h1 className="font-bold">{allNoti.length}</h1>
+            <i className="fa-regular fa-xl fa-bell"></i>
           </div>
           {visible && (
             <div className="z-50 fixed bg-[#98aef0] flex justify-center flex-col text-black  px-2 h-48 mt-56 w-44 right-3 rounded-md">
