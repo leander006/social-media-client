@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Pin from "../GridSystem/Pin";
 import Cookie from "js-cookie";
-import Navbar from "../Navbar";
+import Navbar from "../utils/Navbar";
 import { SpinnerCircular } from "spinners-react";
 import Skeleton from "../Skeleton/Skeleton";
 import axios from "axios";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../Navbar";
+import Navbar from "../utils/Navbar";
 import Cookie from "js-cookie";
 
 import toast from "react-hot-toast";

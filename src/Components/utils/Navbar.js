@@ -5,14 +5,14 @@ import Cookie from "js-cookie";
 import SearchFreind from "./SearchFreind";
 
 import "react-toastify/dist/ReactToastify.css";
-import { logout } from "../redux/Slice/userSlice";
+import { logout } from "../../redux/Slice/userSlice";
 import axios from "axios";
 
 import {
   notifcationError,
   notifcationStart,
   notifcationSuccess,
-} from "../redux/Slice/notificationSlice";
+} from "../../redux/Slice/notificationSlice";
 import Notifcations from "./Notifcations";
 
 function Navbar({ socket }) {

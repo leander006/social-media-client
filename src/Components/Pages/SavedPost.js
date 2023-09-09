@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../Navbar";
+import Navbar from "../utils/Navbar";
 import Cookie from "js-cookie";
 import PostSkeleton from "../Skeleton/PostSkeleton";
-import ExploreMore from "../ExploreMore";
-import SearchFreind from "../SearchFreind";
+import ExploreMore from "../utils/ExploreMore";
+import SearchFreind from "../utils/SearchFreind";
 import { useSelector } from "react-redux";
 import axios from "axios";
 

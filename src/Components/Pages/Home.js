@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ExploreMore from "../ExploreMore";
-import Navbar from "../Navbar";
+import ExploreMore from "../utils/ExploreMore";
+import Navbar from "../utils/Navbar";
 import SearchFreindSkeleton from "../Skeleton/SearchFreindSkeleton";
 import PostSkeleton from "../Skeleton/PostSkeleton";
 
@@ -11,7 +11,7 @@ import {
   followerPostSuccess,
 } from "../../redux/Slice/postSlice";
 
-import SearchFreind from "../SearchFreind";
+import SearchFreind from "../utils/SearchFreind";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";

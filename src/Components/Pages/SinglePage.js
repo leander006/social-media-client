@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Comment from "../Comment";
-import Navbar from "../Navbar";
+import Comment from "../utils/Comment";
+import Navbar from "../utils/Navbar";
 import Cookie from "js-cookie";
 import SingleSkeleton from "../Skeleton/SingleSkeleton";
 import { useDispatch, useSelector } from "react-redux";
@@ -153,7 +153,6 @@ function SinglePage() {
                     </div>
                   )}
                 </div>
-
               </div>
               <div className="flex flex-col justify-between lg:h-fit h-screen lg:basis-2/3">
                 {allComment.length === 0 ? (

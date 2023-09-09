@@ -7,7 +7,7 @@ import {
   loginSuccess,
   logout,
 } from "../../redux/Slice/userSlice";
-import Navbar from "../Navbar";
+import Navbar from "../utils/Navbar";
 import Cookie from "js-cookie";
 import { SpinnerCircular } from "spinners-react";
 import toast from "react-hot-toast";

@@ -2,12 +2,12 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   notifcationError,
   notifcationStart,
   notifcationSuccess,
-} from "../redux/Slice/notificationSlice";
+} from "../../redux/Slice/notificationSlice";
 
 function Notifcations({ n, setNotify, notify }) {
   const dispatch = useDispatch();

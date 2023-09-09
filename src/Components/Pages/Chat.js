@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import Conversation from "../Conversation";
-import Navbar from "../Navbar";
-import Messages from "../Mesaages";
-import NopPreview from "../NopPreview";
+import Conversation from "../utils/Conversation";
+import Navbar from "../utils/Navbar";
+import Messages from "../utils/Mesaages";
+import NopPreview from "../utils/NopPreview";
 import Cookie from "js-cookie";
 
-import DirectMessage from "../DirectMessage";
+import DirectMessage from "../utils/DirectMessage";
 import { useDispatch, useSelector } from "react-redux";
 import {
   chatError,
@@ -21,8 +21,8 @@ import {
 } from "../../redux/Slice/messageSlice";
 import toast from "react-hot-toast";
 import ConversationSkeleton from "../Skeleton/ConversationSkeleton";
-import GroupUser from "../GroupUser";
-import ListItems from "../ListItems";
+import GroupUser from "../utils/GroupUser";
+import ListItems from "../utils/ListItems";
 import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 

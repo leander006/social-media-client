@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Cookie from "js-cookie";
-import Navbar from "../Navbar";
+import Navbar from "../utils/Navbar";
 
 import PostSkeleton from "../Skeleton/PostSkeleton";
-import ExploreMore from "../ExploreMore";
+import ExploreMore from "../utils/ExploreMore";
 import { useSelector } from "react-redux";
-import SearchFreind from "../SearchFreind";
+import SearchFreind from "../utils/SearchFreind";
 import axios from "axios";
 
 function LikedPost() {

@@ -5,7 +5,7 @@ import {
   commentError,
   commentStart,
   commentSuccess,
-} from "../redux/Slice/commentSlice";
+} from "../../redux/Slice/commentSlice";
 import Cookie from "js-cookie";
 import axios from "axios";
 
