@@ -7,7 +7,7 @@ import {
   notifcationError,
   notifcationStart,
   notifcationSuccess,
-} from "../../redux/Slice/notificationSlice";
+} from "../redux/Slice/notificationSlice";
 
 function Notifcations({ n, setNotify, notify }) {
   const dispatch = useDispatch();

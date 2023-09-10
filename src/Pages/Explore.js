@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../utils/Navbar";
 import { useDispatch, useSelector } from "react-redux";
-import { postError, postStart, postSuccess } from "../../redux/Slice/postSlice";
+import { postError, postStart, postSuccess } from "../redux/Slice/postSlice";
 import Cookie from "js-cookie";
 import Pin from "../GridSystem/Pin";
 import Skeleton from "../Skeleton/Skeleton";
@@ -31,8 +31,7 @@ function Explore() {
     }
     try {
       const { data } = await axios.get(
-        "http://localhost:3001/api/user/oneUser?name=" +
-          search,
+        "http://localhost:3001/api/user/oneUser?name=" + search,
         config
       );
       setSearched(data);

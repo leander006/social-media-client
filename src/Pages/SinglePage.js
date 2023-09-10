@@ -9,8 +9,8 @@ import {
   commentError,
   commentStart,
   commentSuccess,
-} from "../../redux/Slice/commentSlice";
-import { postError, postStart, postSuccess } from "../../redux/Slice/postSlice";
+} from "../redux/Slice/commentSlice";
+import { postError, postStart, postSuccess } from "../redux/Slice/postSlice";
 import axios from "axios";
 
 function SinglePage() {

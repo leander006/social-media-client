@@ -5,7 +5,7 @@ import {
   loginError,
   loginStart,
   loginSuccess,
-} from "../../redux/Slice/userSlice";
+} from "../redux/Slice/userSlice";
 import toast from "react-hot-toast";
 import axios from "axios";
 function Login() {

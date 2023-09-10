@@ -13,12 +13,12 @@ import {
   chatStart,
   chatSuccess,
   setCurrentChat,
-} from "../../redux/Slice/chatSlice";
+} from "../redux/Slice/chatSlice";
 import {
   messageError,
   messageStart,
   messageSuccess,
-} from "../../redux/Slice/messageSlice";
+} from "../redux/Slice/messageSlice";
 import toast from "react-hot-toast";
 import ConversationSkeleton from "../Skeleton/ConversationSkeleton";
 import GroupUser from "../utils/GroupUser";

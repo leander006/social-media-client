@@ -5,14 +5,14 @@ import Cookie from "js-cookie";
 import SearchFreind from "./SearchFreind";
 
 import "react-toastify/dist/ReactToastify.css";
-import { logout } from "../../redux/Slice/userSlice";
+import { logout } from "../redux/Slice/userSlice";
 import axios from "axios";
 
 import {
   notifcationError,
   notifcationStart,
   notifcationSuccess,
-} from "../../redux/Slice/notificationSlice";
+} from "../redux/Slice/notificationSlice";
 import Notifcations from "./Notifcations";
 
 function Navbar({ socket }) {
@@ -52,7 +52,7 @@ function Navbar({ socket }) {
 
   const log = (e) => {
     e.preventDefault();
-    socket.emit("removeUser", { userId: currentUser?._id });
+    socket?.emit("removeUser", { userId: currentUser?._id });
     dispatch(logout());
     window.open("http://localhost:3001/api/auth/google/logout", "_self");
     navigate("/");

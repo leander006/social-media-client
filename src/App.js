@@ -1,19 +1,19 @@
-import Explore from "./Components/Pages/Explore";
+import Explore from "./Pages/Explore";
 
-import Home from "./Components/Pages/Home";
+import Home from "./Pages/Home";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./Components/Pages/Login";
-import Register from "./Components/Pages/Register";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
 import axios from "axios";
-import LikedPost from "./Components/Pages/LikedPost";
-import SavedPost from "./Components/Pages/SavedPost";
-import Profile from "./Components/Pages/Profile";
+import LikedPost from "./Pages/LikedPost";
+import SavedPost from "./Pages/SavedPost";
+import Profile from "./Pages/Profile";
 
-import Chat from "./Components/Pages/Chat";
-import Write from "./Components/Pages/Write";
-import Edit from "./Components/Pages/Edit";
-import EmailVerificatiion from "./Components/Pages/EmailVerificatiion";
-import SinglePage from "./Components/Pages/SinglePage";
+import Chat from "./Pages/Chat";
+import Write from "./Pages/Write";
+import Edit from "./Pages/Edit";
+import EmailVerificatiion from "./Pages/EmailVerificatiion";
+import SinglePage from "./Pages/SinglePage";
 import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { useEffect } from "react";

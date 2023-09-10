@@ -6,7 +6,7 @@ import {
   chatStart,
   chatSuccess,
   setCurrentChat,
-} from "../../redux/Slice/chatSlice";
+} from "../redux/Slice/chatSlice";
 import axios from "axios";
 
 function DirectMessage({ search, setSearched, setSearch }) {

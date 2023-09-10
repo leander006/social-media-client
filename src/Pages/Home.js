@@ -9,7 +9,7 @@ import {
   followerPostError,
   followerPostStart,
   followerPostSuccess,
-} from "../../redux/Slice/postSlice";
+} from "../redux/Slice/postSlice";
 
 import SearchFreind from "../utils/SearchFreind";
 import axios from "axios";
