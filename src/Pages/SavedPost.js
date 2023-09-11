@@ -7,7 +7,7 @@ import SearchFreind from "../utils/SearchFreind";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
-function YourPosts() {
+function YourPosts({ socket }) {
   const [loading, setLoading] = useState(false);
   const [bookmarkPost, setBookmarkPost] = useState([]);
 
@@ -56,7 +56,7 @@ function YourPosts() {
 
   return (
     <>
-      <Navbar />
+      <Navbar socket={socket} />
       <div className="flex bg-[#2D3B58]  mt-10">
         {!loading ? (
           <div className="main md:flex mx-auto lg:basis-[70%] md:basis-[60%] ">

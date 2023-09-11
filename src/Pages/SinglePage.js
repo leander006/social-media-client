@@ -13,7 +13,7 @@ import {
 import { postError, postStart, postSuccess } from "../redux/Slice/postSlice";
 import axios from "axios";
 
-function SinglePage() {
+function SinglePage({ socket }) {
   const { postId } = useParams();
   const [post, setPost] = useState();
   const { currentUser } = useSelector((state) => state.user);
@@ -116,14 +116,14 @@ function SinglePage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar socket={socket} />
       <div className="flex w-screen bg-[#2D3B58] pt-9 h-screen">
         {loading ? (
-          <div className="flex flex-col py-4 lg:items-center lg:justify-center lg:p-4 lg:flex-row w-full ">
+          <div className="flex flex-col py-4 lg:items-center lg:px-6 lg:justify-center lg:p-4 lg:flex-row w-full ">
             <div className="hidden lg:flex lg:h-5/6 lg:border border-[#BED7F8] border-x-0 border-y-0 ">
               <img
                 className="lg:w-fit h-full w-screen lg:object-cover object-contain"
-                src={post?.content}
+                src={post?.content?.url}
                 alt="singlePost"
               />
             </div>
@@ -132,7 +132,7 @@ function SinglePage() {
                 <div className="flex">
                   <div className="flex p-1 basis-10 rounded-full">
                     <img
-                      src={post?.owner?.profile}
+                      src={post?.owner?.profile?.url}
                       alt="singlePost"
                       className="rounded-full h-8 w-8 cursor-pointer"
                       onClick={click}

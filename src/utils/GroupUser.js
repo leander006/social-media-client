@@ -7,7 +7,7 @@ function GroupUser({ user, handleFunction }) {
       onClick={handleFunction}
     >
       <img
-        src={user.profile}
+        src={user.profile?.url}
         className="rounded-full h-10 w-10"
         alt="groupUser"
       />

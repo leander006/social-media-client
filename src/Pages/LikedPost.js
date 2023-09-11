@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import SearchFreind from "../utils/SearchFreind";
 import axios from "axios";
 
-function LikedPost() {
+function LikedPost({ socket }) {
   const [loading, setLoading] = useState(false);
 
   const [likePost, setLikePost] = useState([]);
@@ -58,7 +58,7 @@ function LikedPost() {
 
   return (
     <>
-      <Navbar />
+      <Navbar socket={socket} />
       <div className="flex bg-[#2D3B58]  mt-10">
         {!loading ? (
           <div className="main md:flex mx-auto lg:basis-[70%] md:basis-[60%] ">

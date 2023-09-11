@@ -104,7 +104,7 @@ function ExploreMore({ explore }) {
       <div className="flex flex-col w-full bg-[#38487a] hover:scale-105 duration-150 p-1.5 border my-6 rounded-lg">
         <div className="flex p-1 items-center">
           <img
-            src={explore?.owner?.profile}
+            src={explore?.owner?.profile?.url}
             alt="ExploreMore"
             className="w-12 h-12 rounded-full cursor-pointer border"
             onClick={click}
@@ -119,7 +119,7 @@ function ExploreMore({ explore }) {
         <div className="flex justify-center">
           <Link to={"/singlePage/" + explore?._id}>
             <img
-              src={explore?.content}
+              src={explore?.content?.url}
               className="rounded-lg cursor-pointer "
               alt="ExploreMore"
             />

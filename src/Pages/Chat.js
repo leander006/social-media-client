@@ -43,6 +43,7 @@ function Chat({ socket }) {
   const { allmessage } = useSelector((state) => state.message);
   const [loading, setLoading] = useState(false);
   const { currentUser, chatloading } = useSelector((state) => state.user);
+  const { allNoti } = useSelector((state) => state.notification);
   const [chatname, setChatname] = useState("");
   const user = currentUser?.others ? currentUser?.others : currentUser;
   const dispatch = useDispatch();
@@ -106,7 +107,7 @@ function Chat({ socket }) {
     };
     getChat();
     // eslint-disable-next-line
-  }, [user]);
+  }, [user, allNoti]);
 
   useEffect(() => {
     const getMessage = async () => {
@@ -340,7 +341,7 @@ function Chat({ socket }) {
 
   return (
     <>
-      <Navbar />
+      <Navbar socket={socket} />
       <div className="flex bg-[#2D3B58] mt-10">
         {/* Destop view  */}
         <div className="hidden md:flex w-screen ">
@@ -392,8 +393,8 @@ function Chat({ socket }) {
                           c?.isGroupChat
                             ? "images/noProfile.jpeg"
                             : user._id === c?.users[0]?._id
-                            ? c?.users[1]?.profile
-                            : c?.users[0]?.profile
+                            ? c?.users[1]?.profile?.url
+                            : c?.users[0]?.profile?.url
                         }
                         name={
                           c?.isGroupChat
@@ -430,9 +431,9 @@ function Chat({ socket }) {
                     src={
                       currentChat?.isGroupChat
                         ? "images/noProfile.jpeg"
-                        : user === currentChat?.users[0]?._id
-                        ? currentChat?.users[1]?.profile
-                        : currentChat?.users[0]?.profile
+                        : user._id === currentChat?.users[0]?._id
+                        ? currentChat?.users[1]?.profile?.url
+                        : currentChat?.users[0]?.profile?.url
                     }
                     alt="chat"
                     className="w-10 h-10  rounded-full border"
@@ -441,7 +442,7 @@ function Chat({ socket }) {
                     <h1 className="capitalize text-black ml-4 font-sans ">
                       {currentChat?.isGroupChat
                         ? currentChat?.chatname
-                        : user === currentChat?.users[0]?._id
+                        : user._id === currentChat?.users[0]?._id
                         ? currentChat?.users[1]?.username
                         : currentChat?.users[0]?.username}
                     </h1>
@@ -449,7 +450,7 @@ function Chat({ socket }) {
                       <div className="flex flex-wrap ml-4">
                         {currentChat?.isGroupChat
                           ? "Someone "
-                          : user === currentChat?.users[0]?._id
+                          : user._id === currentChat?.users[0]?._id
                           ? currentChat?.users[1]?.username
                           : currentChat?.users[0]?.username}{" "}
                         is typing..
@@ -595,8 +596,8 @@ function Chat({ socket }) {
                             c?.isGroupChat
                               ? "images/noProfile.jpeg"
                               : user === c?.users[0]._id
-                              ? c?.users[1]?.profile
-                              : c?.users[0]?.profile
+                              ? c?.users[1]?.profile?.url
+                              : c?.users[0]?.profile?.url
                           }
                           name={
                             c?.isGroupChat
@@ -640,8 +641,8 @@ function Chat({ socket }) {
                         currentChat?.isGroupChat
                           ? "images/noProfile.jpeg"
                           : currentChat?.users[0]?._id === user
-                          ? currentChat?.users[1]?.profile
-                          : currentChat?.users[0]?.profile
+                          ? currentChat?.users[1]?.profile?.url
+                          : currentChat?.users[0]?.profile?.url
                       }
                       alt="chat"
                       className="w-10 h-10 rounded-full cursor-pointer border"
@@ -651,7 +652,7 @@ function Chat({ socket }) {
                     <h1 className="capitalize text-black ml-4 font-sans ">
                       {currentChat?.isGroupChat
                         ? currentChat?.chatname
-                        : user === currentChat?.users[0]?._id
+                        : user?._id === currentChat?.users[0]?._id
                         ? currentChat?.users[1]?.username
                         : currentChat?.users[0]?.username}
                     </h1>
@@ -659,7 +660,7 @@ function Chat({ socket }) {
                       <div className="flex flex-wrap ml-4">
                         {currentChat?.isGroupChat
                           ? "Someone "
-                          : user === currentChat?.users[0]?._id
+                          : user?._id === currentChat?.users[0]?._id
                           ? currentChat?.users[1]?.username
                           : currentChat?.users[0]?.username}{" "}
                         is typing..
@@ -682,7 +683,7 @@ function Chat({ socket }) {
                       </div>
                     )}
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id !== user && (
+                    currentChat?.groupAdmin?._id !== user?._id && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-delete-left cursor-pointer"
@@ -691,7 +692,7 @@ function Chat({ socket }) {
                       </div>
                     )}
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id === user && (
+                    currentChat?.groupAdmin?._id === user?._id && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
@@ -700,7 +701,7 @@ function Chat({ socket }) {
                       </div>
                     )}
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id === user && (
+                    currentChat?.groupAdmin?._id === user?._id && (
                       <div>
                         <i
                           className="fa-solid fa-xl fa-user-plus mr-4 text-black cursor-pointer"
@@ -715,7 +716,7 @@ function Chat({ socket }) {
                   {allmessage?.map((m) => (
                     <div key={m._id} ref={scrollRef}>
                       <Messages
-                        own={m?.sender?._id === user}
+                        own={m?.sender?._id === user?._id}
                         messages={m}
                         handleFunction={() => handleDelete(m)}
                         setMessage={setMessage}

@@ -11,7 +11,7 @@ import axios from "axios";
 
 const sizeArray = ["sm", "md", "lg"];
 
-function Explore() {
+function Explore({ socket }) {
   const [search, setSearch] = useState("");
   const [searched, setSearched] = useState([]);
 
@@ -60,7 +60,7 @@ function Explore() {
 
   return (
     <>
-      <Navbar />
+      <Navbar socket={socket} />
       <div className="flex bg-[#2D3B58] z-50 pt-9">
         <div className="flex flex-col mb-4">
           <div className="flex md:hidden ml-5 mt-2 w-[90vw] items-center bg-slate-200 rounded-md">
@@ -75,7 +75,7 @@ function Explore() {
           <div className="flex lg:hidden fixed z-30 ml-6 mt-12 bg-[#a1bcf1] ">
             <div className="w-96 ">
               {searched?.map((s) => (
-                <SearchFreind key={s._id} search={s} />
+                <SearchFreind key={s?._id} search={s} />
               ))}
             </div>
           </div>
@@ -85,9 +85,9 @@ function Explore() {
               {allpost?.map((p) => (
                 <Pin
                   display={false}
-                  img={p.content}
-                  id={p._id}
-                  key={p._id}
+                  img={p?.content}
+                  id={p?._id}
+                  key={p?._id}
                   size={sizeArray[Math.floor(Math.random() * 3)]}
                 />
               ))}
@@ -97,9 +97,9 @@ function Explore() {
               {allpost?.map((p) => (
                 <Pin
                   display={true}
-                  url={p.content}
-                  id={p._id}
-                  key={p._id}
+                  url={p?.content}
+                  id={p?._id}
+                  key={p?._id}
                   size={sizeArray[Math.floor(Math.random() * 3)]}
                 />
               ))}
@@ -110,10 +110,10 @@ function Explore() {
             <div className="w-screen md:hidden bg-[#2D3B58] h-[calc(100vh-6.75rem)] overflow-y-scroll p-2 grid grid-rows-3 grid-flow-col gap-4">
               <div className="grid grid-cols-3 gap-2">
                 {allpost.map((p) => (
-                  <Link key={p._id} to={"/singlepage/" + p._id}>
+                  <Link key={p?._id} to={"/singlepage/" + p._id}>
                     <img
                       className="transform transition duration-500 hover:scale-110 h-36 cursor-pointer"
-                      src={p?.content}
+                      src={p?.content?.url}
                       alt="explore"
                     />
                   </Link>

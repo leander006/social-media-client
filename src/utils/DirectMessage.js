@@ -51,7 +51,7 @@ function DirectMessage({ search, setSearched, setSearch }) {
         onClick={openChat}
       >
         <img
-          src={search.profile}
+          src={search?.profile?.url}
           className="rounded-full h-10 w-10"
           alt="directMessage"
         />

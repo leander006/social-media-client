@@ -40,7 +40,7 @@ function Comment({ comment }) {
       <div className="flex mt-1">
         <div className="flex p-1">
           <img
-            src={comment?.user?.profile}
+            src={comment?.user?.profile?.url}
             className="w-9 h-9 rounded-full cursor-pointer"
             alt="comments"
           />
@@ -50,7 +50,7 @@ function Comment({ comment }) {
             </h1>
           </Link>
         </div>
-        <div className="relative ml-4 group basis-[90%] text-white">
+        <div className="relative ml-4 group basis-[70%] text-white">
           <p
             className={
               comment?.user?._id === currentUser._id

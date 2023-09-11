@@ -16,13 +16,11 @@ import EmailVerificatiion from "./Pages/EmailVerificatiion";
 import SinglePage from "./Pages/SinglePage";
 import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
-import { useEffect } from "react";
 axios.defaults.withCredentials = true;
 const Endpoint = "http://localhost:3001/";
 function App() {
   const { currentUser } = useSelector((state) => state.user);
   const socket = io(Endpoint);
-
   return (
     <>
       <Router>
@@ -33,18 +31,42 @@ function App() {
             path="/home"
             element={currentUser ? <Home socket={socket} /> : <Login />}
           />
-          <Route path="/like" element={<LikedPost />} />
-          <Route path="/profile/:userId" element={<Profile />} />
-          <Route path="/savedPost" element={<SavedPost />} />
-          <Route path="/chat" element={<Chat socket={socket} />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/write" element={<Write />} />
+          <Route
+            path="/like"
+            element={currentUser ? <LikedPost socket={socket} /> : <Login />}
+          />
+          <Route
+            path="/profile/:userId"
+            element={currentUser ? <Profile socket={socket} /> : <Login />}
+          />
+          <Route
+            path="/savedPost"
+            element={currentUser ? <SavedPost socket={socket} /> : <Login />}
+          />
+          <Route
+            path="/chat"
+            element={currentUser ? <Chat socket={socket} /> : <Login />}
+          />
+          <Route
+            path="/explore"
+            element={currentUser ? <Explore socket={socket} /> : <Login />}
+          />
+          <Route
+            path="/write"
+            element={currentUser ? <Write socket={socket} /> : <Login />}
+          />
           <Route path="/login" element={<Login />} />
-          <Route path="/edit/:editId" element={<Edit />} />
-          <Route path="/singlepage/:postId" element={<SinglePage />} />
+          <Route
+            path="/edit/:editId"
+            element={currentUser ? <Edit socket={socket} /> : <Login />}
+          />
+          <Route
+            path="/singlepage/:postId"
+            element={currentUser ? <SinglePage socket={socket} /> : <Login />}
+          />
           <Route
             path="/users/:id/verify/:token"
-            element={<EmailVerificatiion />}
+            element={currentUser ? <EmailVerificatiion /> : <Login />}
           />
         </Routes>
       </Router>

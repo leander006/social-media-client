@@ -31,7 +31,7 @@ function Pin({ size, img, id, display }) {
         <Link to={"/singlepage/" + id}>
           <img
             className="w-full h-full rounded-lg object-cover"
-            src={img}
+            src={img?.url}
             alt="img"
           />
         </Link>

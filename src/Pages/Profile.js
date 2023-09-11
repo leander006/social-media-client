@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Pin from "../GridSystem/Pin";
 import Cookie from "js-cookie";
@@ -7,8 +7,9 @@ import Navbar from "../utils/Navbar";
 import { SpinnerCircular } from "spinners-react";
 import Skeleton from "../Skeleton/Skeleton";
 import axios from "axios";
+import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 
-function Profile() {
+function Profile({ socket }) {
   const { currentUser } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
   const [sloading, setSloading] = useState(false);
@@ -16,6 +17,7 @@ function Profile() {
   const [follow, setFollow] = useState(false);
   const [user, setUser] = useState();
   const [post, setPost] = useState([]);
+  const dispatch = useDispatch();
   const current = currentUser.others ? currentUser.others : currentUser;
 
   const config = {
@@ -45,40 +47,43 @@ function Profile() {
     };
     getPost();
     // eslint-disable-next-line
-  }, [userId]);
+  }, [userId, follow]);
 
   const following = async (e) => {
     e.preventDefault();
+    dispatch(loginStart());
     try {
-      await axios.put(
+      const { data } = await axios.put(
         `http://localhost:3001/api/user/addFollower/${userId}`,
         {},
         config
       );
       setFollow(!follow);
+      dispatch(loginSuccess(data));
     } catch (error) {
+      dispatch(loginError());
       console.log(error?.response?.data);
     }
   };
   const sizeArray = ["sm", "md", "lg"];
   return (
     <>
-      <Navbar />
+      <Navbar socket={socket} />
       <div className="flex bg-[#2D3B58] pt-9">
         {!loading ? (
           <div className="bg-[#2D3B58] h-[calc(100vh-2.5rem)] w-full flex flex-col ">
             <div className="flex flex-col w-screen bg-[#2D3B58] md:px-16 pt-6 text-white lg:w-[95vw]">
               <div className="flex lg:mx-36">
-                <div className="p-1 pl-2  md:px-8 flex flex-col items-center">
+                <div className="p-1 pl-2 md:w-full flex justify-center flex-col items-center">
                   <img
-                    className="rounded-full w-12 h-12 lg:w-[70px] lg:h-[60px]"
-                    src={user?.profile}
+                    className="rounded-full w-12 h-12 lg:w-[70px] lg:h-[70px]"
+                    src={user?.profile?.url}
                     alt="profile"
                   />
 
-                  <h1 className="name">{user?.username}</h1>
+                  <h1 className="ml-6 md:ml-0">{user?.username}</h1>
                   {userId !== currentUser?._id && (
-                    <div className="h-6 flex mt-3 items-center">
+                    <div className="flex mt-3 items-center">
                       {userId !== currentUser?._id && (
                         <div>
                           {follow ? (
@@ -126,7 +131,7 @@ function Profile() {
                         <Link key={p._id} to={"/singlepage/" + p._id}>
                           <img
                             className="transform transition duration-500 hover:scale-110 h-36 cursor-pointer"
-                            src={p?.content}
+                            src={p?.content?.url}
                             alt="profile"
                           />
                         </Link>

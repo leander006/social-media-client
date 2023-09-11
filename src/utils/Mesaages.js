@@ -10,7 +10,7 @@ function Mesaages({ messages, own, handleFunction }) {
         <div className="flex items-center">
           <img
             className="w-10 h-10 rounded-full mt-2 mb-2 mr-3 ml-3 border border-navbar"
-            src={messages?.sender?.profile}
+            src={messages?.sender?.profile?.url}
             alt="message"
           />
           <h1 className="text-[#2D3B58]">{messages?.sender?.username}</h1>

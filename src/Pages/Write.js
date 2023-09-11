@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 
-function Write() {
+function Write({ socket }) {
   const navigate = useNavigate();
   const [caption, setCaption] = useState("");
   const [selectedImg, setSelectedImg] = useState("");
@@ -62,7 +62,7 @@ function Write() {
       );
       setFileInputState("");
       setPreviewSource("");
-      setProfile(data.data);
+      setProfile(data);
       setLoading(false);
       toast.success("Image uploaded");
     } catch (err) {
@@ -79,7 +79,6 @@ function Write() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("profile ", profile);
     try {
       await axios.post(
         "http://localhost:3001/api/post",
@@ -94,7 +93,7 @@ function Write() {
 
   return (
     <>
-      <Navbar />
+      <Navbar socket={socket} />
       <div className="flex bg-[#2D3B58] pt-9">
         <form
           className="flex flex-col md:justify-center  md:m-auto w-screen h-[calc(100vh-2.4rem)] lg:w-[60%] md:w-[75%] md:h-[calc(100vh-2.7rem)]"
@@ -118,12 +117,12 @@ function Write() {
           <div className="flex flex-col justify-center items-center">
             {!loading ? (
               <img
-                className="image w-28 h-28 md:w-64 md:h-64 lg:w-72 lg:h-72 xl:w-80 xl:h-80 "
+                className="h-28 md:h-64 lg:h-72 xl:h-80 object-contain"
                 src={
                   previewSource
                     ? previewSource
-                    : profile
-                    ? profile
+                    : profile?.url
+                    ? profile?.url
                     : "/images/noImage.png"
                 }
                 alt="write"
@@ -138,12 +137,14 @@ function Write() {
                 secondaryColor="black"
               />
             )}
-            <label
-              className="text-[#8aaaeb] cursor-pointer font-bold text-2xl mt-2 hover:text-[#6795f1]"
-              htmlFor="forFile"
-            >
-              Upload
-            </label>
+            {!selectedImg && (
+              <label
+                className="bg-blue-600 active:bg-blue-400 cursor-pointer mt-2 text-white p-1 rounded"
+                htmlFor="forFile"
+              >
+                Upload
+              </label>
+            )}
             <input
               type="file"
               id="forFile"
@@ -154,7 +155,7 @@ function Write() {
               name="file"
             />
           </div>
-          {selectedImg && (
+          {selectedImg && !profile && (
             <div className="flex justify-center">
               <h1
                 className="bg-blue-600 active:bg-blue-400 cursor-pointer mt-2 text-white p-1 rounded"

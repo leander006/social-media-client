@@ -13,7 +13,7 @@ import { SpinnerCircular } from "spinners-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-function Edit() {
+function Edit({ socket }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [name, setName] = useState();
@@ -22,7 +22,7 @@ function Edit() {
   const [load, setLoad] = useState(false);
   const [username, setUsername] = useState();
   const [bio, setBio] = useState();
-  const [profile, setProfile] = useState();
+  const [profile, setProfile] = useState("");
   const [selectedImg, setSelectedImg] = useState("");
   const [previewSource, setPreviewSource] = useState("");
   const [fileInputState, setFileInputState] = useState("");
@@ -92,9 +92,10 @@ function Edit() {
         { data: base64EncodedImage },
         config
       );
+      console.log("data", data);
       setFileInputState("");
       setPreviewSource("");
-      setProfile(data.data);
+      setProfile(data);
       setLoad(false);
       toast.success("Image uploaded");
     } catch (err) {
@@ -107,7 +108,8 @@ function Edit() {
     e.preventDefault();
     dispatch(loginStart());
     try {
-      const user = await axios.put(
+      console.log("profile ", profile);
+      const { data } = await axios.put(
         "http://localhost:3001/api/user/update/" + editId,
         {
           username: username,
@@ -119,7 +121,7 @@ function Edit() {
         },
         config
       );
-      dispatch(loginSuccess(user.data));
+      dispatch(loginSuccess(data));
       navigate("/profile/" + editId);
     } catch (error) {
       dispatch(loginError());
@@ -134,7 +136,7 @@ function Edit() {
   };
   return (
     <>
-      <Navbar />
+      <Navbar socket={socket} />
       <div className="flex bg-[#2D3B58] pt-9">
         {!loading ? (
           <div className="flex flex-col md:m-auto w-screen h-[calc(100vh-2.3rem)] md:pt-16 lg:w-[60%] md:w-[75%] md:h-[calc(100vh-2.7rem)] overflow-y-scroll">
@@ -161,9 +163,9 @@ function Edit() {
                   src={
                     previewSource
                       ? previewSource
-                      : profile
-                      ? profile
-                      : user?.profile
+                      : profile?.url
+                      ? profile?.url
+                      : user?.profile?.url
                   }
                   alt="edit"
                 />
@@ -178,12 +180,14 @@ function Edit() {
                 />
               )}
 
-              <label
-                className="text-[#8aaaeb] cursor-pointer hover:text-[#6795f1]"
-                htmlFor="forFile"
-              >
-                Change Profile
-              </label>
+              {!selectedImg && (
+                <label
+                  className="text-[#8aaaeb] cursor-pointer hover:text-[#6795f1]"
+                  htmlFor="forFile"
+                >
+                  Change Profile
+                </label>
+              )}
               <input
                 type="file"
                 id="forFile"
@@ -195,7 +199,7 @@ function Edit() {
                 required
               />
             </div>
-            {selectedImg && (
+            {selectedImg && !profile && (
               <div className="flex justify-center">
                 <h1
                   className="bg-blue-600 active:bg-blue-400 cursor-pointer mt-2 text-white p-1 rounded"

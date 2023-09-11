@@ -55,7 +55,6 @@ function Navbar({ socket }) {
     socket?.emit("removeUser", { userId: currentUser?._id });
     dispatch(logout());
     window.open("http://localhost:3001/api/auth/google/logout", "_self");
-    navigate("/");
   };
 
   const handleSearch = async (query) => {
@@ -127,7 +126,7 @@ function Navbar({ socket }) {
           <div className="cursor-pointer" onClick={(e) => setVisible(!visible)}>
             <img
               className="rounded-full w-10 h-10 p-1"
-              src={current.profile}
+              src={current?.profile?.url}
               alt="navbar"
             />
           </div>

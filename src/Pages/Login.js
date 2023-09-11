@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  loginError,
-  loginStart,
-  loginSuccess,
-} from "../redux/Slice/userSlice";
+import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import toast from "react-hot-toast";
 import axios from "axios";
 function Login() {
@@ -30,7 +26,11 @@ function Login() {
     } catch (err) {
       dispatch(loginError());
       console.log(err?.response?.data?.message);
-      toast.error("Something went wrong login through google account");
+      toast.error(
+        err?.response?.data?.message
+          ? err?.response?.data?.message
+          : "Something went wrong login through google account"
+      );
     }
   };
   const google = (e) => {
