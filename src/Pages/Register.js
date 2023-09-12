@@ -36,12 +36,12 @@ function Register() {
   };
   return (
     <>
-      <div className="flex justify-evenly flex-row-reverse h-screen w-screen md:bg-[#2D3B58]">
+      <div className="flex justify-evenly flex-row-reverse h-screen w-screen">
         <div className="hidden md:flex m-auto flex-1">
           <img src="/images/register.jpeg" alt="register"></img>
         </div>
         <div className="flex flex-1 items-center p-4 lg:p-10">
-          <div className="flex w-[89vw] bg-white rounded-lg xl:w-[720px] lg:w-[500px]  md:w-[370px] md:justify-center">
+          <div className="flex w-[91vw] bg-white rounded-lg xl:w-[720px] lg:w-[500px]  md:w-[370px] md:justify-center">
             <div className="flex flex-col w-full p-4">
               <h1 className="text-black text-xl md:mb-3">CREATE ACCOUNT</h1>
               <h3 className="text-slate-600 mt-2">

@@ -15,6 +15,7 @@ import SearchFreind from "../utils/SearchFreind";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import ProfileComponent from "../utils/ProfileComponent";
 
 function Home({ socket }) {
   const { followerPost, loading } = useSelector((state) => state.post);
@@ -77,28 +78,35 @@ function Home({ socket }) {
   return (
     <>
       <Navbar socket={socket} />
-      <div className="flex bg-[#2D3B58] z-50 mt-10 ">
+      <div className="flex z-50 pt-12 ">
         {!loading ? (
-          <div className="main md:flex mx-auto lg:basis-[70%] md:basis-[60%] ">
+          <div className="hidden md:flex lg:w-1/3 md:w-[40%] p-2">
+            <ProfileComponent currentUser={currentUser} />
+          </div>
+        ) : (
+          <div className="lg:w-1/3 md:w-1/2"></div>
+        )}
+        {!loading ? (
+          <div className="md:flex lg:w-1/3 md:w-[60%] mx-3 h-[calc(100vh-3rem)] w-screen">
             {followerPost?.length !== 0 ? (
-              <div className="flex flex-col lg:pl-[17rem] md:pr-5 md:pt-2 md:pb-10 h-[calc(100vh-2.7rem)] overflow-y-scroll  ">
+              <div className="flex flex-col">
                 {followerPost?.map((p) => (
                   <ExploreMore explore={p} key={p._id} />
                 ))}
               </div>
             ) : (
-              <div className=" lg:basis-[70%] justify-center flex items-center lg:items-start lg:pt-36 m-auto font-bold md:text-3xl h-[calc(100vh-2.7rem)] text-[#547bca]">
+              <div className="flex lg:items-start md:items-start items-center justify-center lg:pt-36 m-auto font-bold md:text-3xl h-[calc(100vh-2.7rem)] text-[#547bca]">
                 No Post!Please Follow Someone
               </div>
             )}
           </div>
         ) : (
-          <div className="flex flex-col h-[calc(100vh-2.3rem)]  lg:border-[#BED7F8]">
+          <div className="flex md:w-1/2 flex-col h-[calc(100vh-2.3rem)]  lg:border-[#BED7F8]">
             <PostSkeleton />
           </div>
         )}
 
-        <div className="hidden lg:flex basis-[30%] lg:mr-[10rem] lg:ml-[2rem] md:w-60 h-[calc(100vh-3.5rem)] overflow-y-scroll lg:w-80 xl:w-96 ml-2 flex-col  mt-3 text-white ">
+        <div className="hidden lg:flex w-1/3 lg:mr-[10rem] lg:ml-[2rem] md:w-60 h-[calc(100vh-3.5rem)] overflow-y-scroll ml-2 flex-col  mt-3 text-white ">
           <h1>Suggested Followers</h1>
           {!sloading ? (
             <div>

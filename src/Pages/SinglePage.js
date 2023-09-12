@@ -117,7 +117,7 @@ function SinglePage({ socket }) {
   return (
     <>
       <Navbar socket={socket} />
-      <div className="flex w-screen bg-[#2D3B58] pt-9 h-screen">
+      <div className="flex w-screen pt-9 h-screen">
         {loading ? (
           <div className="flex flex-col py-4 lg:items-center lg:px-6 lg:justify-center lg:p-4 lg:flex-row w-full ">
             <div className="hidden lg:flex lg:h-5/6 lg:border border-[#BED7F8] border-x-0 border-y-0 ">

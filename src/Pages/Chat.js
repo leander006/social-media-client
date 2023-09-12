@@ -342,7 +342,7 @@ function Chat({ socket }) {
   return (
     <>
       <Navbar socket={socket} />
-      <div className="flex bg-[#2D3B58] mt-10">
+      <div className="flex mt-10">
         {/* Destop view  */}
         <div className="hidden md:flex w-screen ">
           <div className="conversation w-[40%] border border-y-0">

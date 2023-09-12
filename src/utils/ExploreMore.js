@@ -101,7 +101,7 @@ function ExploreMore({ explore }) {
 
   return (
     <>
-      <div className="flex flex-col w-full bg-[#38487a] hover:scale-105 duration-150 p-1.5 border my-6 rounded-lg">
+      <div className="flex flex-col w-fit bg-[#38487a] hover:scale-105 duration-150 px-1.5 border my-3 rounded-lg">
         <div className="flex p-1 items-center">
           <img
             src={explore?.owner?.profile?.url}

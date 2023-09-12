@@ -6,6 +6,7 @@ import ExploreMore from "../utils/ExploreMore";
 import SearchFreind from "../utils/SearchFreind";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import ProfileComponent from "../utils/ProfileComponent";
 
 function YourPosts({ socket }) {
   const [loading, setLoading] = useState(false);
@@ -57,12 +58,19 @@ function YourPosts({ socket }) {
   return (
     <>
       <Navbar socket={socket} />
-      <div className="flex bg-[#2D3B58]  mt-10">
+      <div className="flex mt-10">
         {!loading ? (
-          <div className="main md:flex mx-auto lg:basis-[70%] md:basis-[60%] ">
+          <div className="hidden md:flex lg:w-1/3 md:w-[40%] p-2">
+            <ProfileComponent currentUser={currentUser} />
+          </div>
+        ) : (
+          <div className="lg:w-1/3 md:w-1/2"></div>
+        )}
+        {!loading ? (
+          <div className="md:flex lg:w-1/3 md:w-[60%] mx-3 h-[calc(100vh-2.7rem)] w-screen">
             {bookmarkPost.length !== 0 ? (
-              <div className="flex flex-col md:pt-2 md:pb-12 h-[calc(100vh-2.7rem)] overflow-y-scroll lg:pl-[17rem] md:pr-5 ">
-                <div className="mx-auto font-bold p-1.5 text-xl text-[#547bca]">
+              <div className="md:flex flex-col mx-3">
+                <div className="flex justify-center font-bold text-xl text-[#547bca]">
                   Saved Post
                 </div>
                 {bookmarkPost?.map((p) => (
@@ -70,17 +78,18 @@ function YourPosts({ socket }) {
                 ))}
               </div>
             ) : (
-              <div className="h-[calc(100vh-2.7rem)] lg:basis-[70%]  justify-center flex items-center lg:items-start lg:pt-36 m-auto font-bold md:text-3xl text-[#547bca]">
+              <div className="flex lg:items-start md:items-start lg:mt-0 md:mt-28 items-center lg:pt-36 h-[calc(100vh-2.7rem)] justify-center font-bold md:text-3xl text-[#547bca]">
                 No Post Saved!
               </div>
             )}
           </div>
         ) : (
-          <div className="flex flex-col h-[calc(100vh-2.3rem)]  lg:border-[#BED7F8]">
+          <div className="flex md:w-1/2 flex-col h-[calc(100vh-2.3rem)]  lg:border-[#BED7F8]">
             <PostSkeleton />
           </div>
         )}
-        <div className="hidden lg:flex basis-[30%] lg:mr-[10rem] lg:ml-[2rem] md:w-60  h-[calc(100vh-3.7rem)] overflow-y-scroll lg:w-80 xl:w-96 ml-2 flex-col text-white ">
+
+        <div className="hidden lg:flex w-1/3 lg:mr-[10rem] lg:ml-[2rem] md:w-60 h-[calc(100vh-3.5rem)] overflow-y-scroll ml-2 flex-col  mt-3 text-white">
           {currentUser?.following?.length !== 0 ? (
             <div>
               <h1>Followings</h1>

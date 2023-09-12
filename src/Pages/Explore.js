@@ -61,7 +61,7 @@ function Explore({ socket }) {
   return (
     <>
       <Navbar socket={socket} />
-      <div className="flex bg-[#2D3B58] z-50 pt-9">
+      <div className="flex z-50 pt-9">
         <div className="flex flex-col mb-4">
           <div className="flex md:hidden ml-5 mt-2 w-[90vw] items-center bg-slate-200 rounded-md">
             <input

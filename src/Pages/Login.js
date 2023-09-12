@@ -39,12 +39,12 @@ function Login() {
   };
   return (
     <>
-      <div className="flex justify-evenly h-screen w-screen md:bg-[#2D3B58]">
+      <div className="flex justify-evenly h-screen w-screen">
         <div className="hidden md:flex m-auto flex-1">
           <img src="/images/login.jpeg" alt="login"></img>
         </div>
         <div className="flex flex-1 justify-center items-center ">
-          <div className="flex w-screen  bg-white rounded-lg lg:w-[400px]  md:w-[300px] md:justify-center">
+          <div className="flex w-[91vw] bg-white rounded-lg lg:w-[400px]  md:w-[300px] md:justify-center">
             <div className="flex flex-col w-full p-5">
               <h1 className="text-black text-xl md:mb-3">Login</h1>
               <form
