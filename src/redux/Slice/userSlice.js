@@ -1,14 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import Cookie from "js-cookie";
 
 const initialState = {
   config: {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
     },
   },
-  currentUser: JSON.parse(localStorage.getItem("data")),
+  currentUser: localStorage?.getItem("data")
+    ? JSON.parse(localStorage?.getItem("data"))
+    : null,
   loading: false,
   error: false,
 };
@@ -32,8 +33,8 @@ export const UserSlice = createSlice({
       state.currentUser = null;
       state.loading = false;
       state.error = false;
-      Cookie.remove("token");
-      Cookie.remove("data");
+      localStorage.removeItem("token");
+      localStorage.removeItem("data");
     },
   },
 });

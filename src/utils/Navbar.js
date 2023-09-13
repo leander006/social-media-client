@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import Cookie from "js-cookie";
 import SearchFreind from "./SearchFreind";
 
 import "react-toastify/dist/ReactToastify.css";

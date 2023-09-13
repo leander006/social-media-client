@@ -19,8 +19,7 @@ function Login() {
         username: username,
         password: password,
       });
-      console.log(data);
-      dispatch(loginSuccess(data.data));
+      dispatch(loginSuccess(data.others));
       localStorage.setItem("data", JSON.stringify(data.others));
       localStorage.setItem("token", data.token);
       navigate("/home");
