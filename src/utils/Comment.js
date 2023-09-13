@@ -8,24 +8,19 @@ import {
 } from "../redux/Slice/commentSlice";
 import Cookie from "js-cookie";
 import axios from "axios";
+import { BASE_URL } from "../services/helper";
 
 function Comment({ comment }) {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, config } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const { allComment } = useSelector((state) => state.comment);
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
 
   const handledelete = async (e) => {
     e.preventDefault();
     try {
       dispatch(commentStart());
       await axios.delete(
-        `http://localhost:3001/api/comment/delete/${comment._id}`,
+        `${BASE_URL}/api/comment/delete/${comment._id}`,
         config
       );
       dispatch(commentSuccess(allComment.filter((c) => c._id !== comment._id)));

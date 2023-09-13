@@ -14,6 +14,7 @@ import {
   notifcationSuccess,
 } from "../redux/Slice/notificationSlice";
 import Notifcations from "./Notifcations";
+import { BASE_URL } from "../services/helper";
 
 function Navbar({ socket }) {
   const [searched, setSearched] = useState("");
@@ -22,23 +23,16 @@ function Navbar({ socket }) {
   const [notify, setNotify] = useState(false);
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-  const navigate = useNavigate();
 
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, config } = useSelector((state) => state.user);
   const { allNoti } = useSelector((state) => state.notification);
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
 
   useEffect(() => {
     const getNotifications = async () => {
       dispatch(notifcationStart());
       try {
         const { data } = await axios.get(
-          "http://localhost:3001/api/notification",
+          `${BASE_URL}/api/notification`,
           config
         );
         dispatch(notifcationSuccess(data));
@@ -54,7 +48,7 @@ function Navbar({ socket }) {
     e.preventDefault();
     socket?.emit("removeUser", { userId: currentUser?._id });
     dispatch(logout());
-    window.open("http://localhost:3001/api/auth/google/logout", "_self");
+    window.open(`${BASE_URL}/api/auth/google/logout`, "_self");
   };
 
   const handleSearch = async (query) => {
@@ -64,7 +58,7 @@ function Navbar({ socket }) {
     }
     try {
       const { data } = await axios.get(
-        "http://localhost:3001/api/user/oneUser?name=" + searched,
+        `${BASE_URL}/api/user/oneUser?name=` + searched,
         config
       );
       setSearch(data);

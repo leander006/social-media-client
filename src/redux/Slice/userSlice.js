@@ -2,7 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import Cookie from "js-cookie";
 
 const initialState = {
-  currentUser: Cookie?.get("data") ? JSON?.parse(Cookie?.get("data")) : null,
+  config: {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  },
+  currentUser: JSON.parse(localStorage.getItem("data")),
   loading: false,
   error: false,
 };

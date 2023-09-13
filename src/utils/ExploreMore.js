@@ -4,9 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import Cookie from "js-cookie";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import axios from "axios";
+import { BASE_URL } from "../services/helper";
 
 function ExploreMore({ explore }) {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, config } = useSelector((state) => state.user);
   const [like, setLike] = useState(explore?.likes?.length);
   const user = currentUser?.others ? currentUser?.others : currentUser;
   const [isLiked, setIsLiked] = useState(false);
@@ -16,18 +17,11 @@ function ExploreMore({ explore }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
-
   useEffect(() => {
     const getPost = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:3001/api/post/" + explore?._id,
+          `${BASE_URL}/api/post/` + explore?._id,
           config
         );
         setPost(data);
@@ -57,11 +51,13 @@ function ExploreMore({ explore }) {
     try {
       dispatch(loginStart());
       const { data } = await axios.post(
-        `http://localhost:3001/api/like/${explore?._id}`,
+        `${BASE_URL}/api/like/${explore?._id}`,
         { modelType: "Post" },
         config
       );
+      console.log(data);
       dispatch(loginSuccess(data));
+      localStorage.setItem("data", JSON.stringify(data));
       setLike(isLiked ? like - 1 : like + 1);
     } catch (error) {
       dispatch(loginError());
@@ -74,11 +70,13 @@ function ExploreMore({ explore }) {
     try {
       dispatch(loginStart());
       const { data } = await axios.put(
-        `http://localhost:3001/api/post/bookmarkPost/${explore?._id}`,
+        `${BASE_URL}/api/post/bookmarkPost/${explore?._id}`,
         {},
         config
       );
+      console.log(data);
       dispatch(loginSuccess(data));
+      localStorage.setItem("data", JSON.stringify(data));
       setBookmark(!bookmark);
     } catch (error) {
       dispatch(loginError());

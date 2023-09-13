@@ -12,11 +12,12 @@ import {
 } from "../redux/Slice/commentSlice";
 import { postError, postStart, postSuccess } from "../redux/Slice/postSlice";
 import axios from "axios";
+import { BASE_URL } from "../services/helper";
 
 function SinglePage({ socket }) {
   const { postId } = useParams();
   const [post, setPost] = useState();
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, config } = useSelector((state) => state.user);
   const { allComment } = useSelector((state) => state.comment);
   const { allpost } = useSelector((state) => state.post);
   // const [isLiked, setIsLiked] = useState(false);
@@ -28,19 +29,14 @@ function SinglePage({ socket }) {
   const navigate = useNavigate();
   const [textAreaCount, setTextAreaCount] = useState("0/45");
   const max = 45;
-  const config = {
-    headers: {
-      "Content-type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
+
   const user = currentUser?.others ? currentUser?.others : currentUser;
 
   useEffect(() => {
     const getPost = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:3001/api/post/" + postId,
+          `${BASE_URL}/api/post/` + postId,
           config
         );
         setPost(data);
@@ -62,10 +58,7 @@ function SinglePage({ socket }) {
     e.preventDefault();
     try {
       dispatch(postStart());
-      await axios.delete(
-        `http://localhost:3001/api/post/delete/${postId}`,
-        config
-      );
+      await axios.delete(`${BASE_URL}/api/post/delete/${postId}`, config);
       dispatch(postSuccess(allpost));
       navigate("/home");
     } catch (error) {
@@ -83,7 +76,7 @@ function SinglePage({ socket }) {
       try {
         dispatch(commentStart());
         const { data } = await axios.get(
-          "http://localhost:3001/api/comment/allComment/" + postId,
+          `${BASE_URL}/api/comment/allComment/` + postId,
           config
         );
         dispatch(commentSuccess(data));
@@ -101,11 +94,10 @@ function SinglePage({ socket }) {
     try {
       dispatch(commentStart());
       const { data } = await axios.post(
-        `http://localhost:3001/api/comment/${postId}`,
+        `${BASE_URL}/api/comment/${postId}`,
         { content: comment, modelType: "Post" },
         config
       );
-      console.log("data", data);
       dispatch(commentSuccess([data, ...allComment]));
       setComment("");
     } catch (error) {

@@ -8,17 +8,14 @@ import {
   notifcationStart,
   notifcationSuccess,
 } from "../redux/Slice/notificationSlice";
+import { BASE_URL } from "../services/helper";
 
 function Notifcations({ n, setNotify, notify }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { config } = useSelector((state) => state.user);
   const { allNoti } = useSelector((state) => state.notification);
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookies.get("token")}`,
-    },
-  };
+
   return (
     <div
       className="flex py-3 cursor-pointer ml-2 border border-x-0 border-t-0 border-b-1 items-center"
@@ -27,7 +24,7 @@ function Notifcations({ n, setNotify, notify }) {
         try {
           dispatch(notifcationStart());
           const { data } = await axios.delete(
-            `http://localhost:3001/api/notification/${n._id}`,
+            `${BASE_URL}/api/notification/${n._id}`,
             config
           );
           console.log(data);

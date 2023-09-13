@@ -8,26 +8,21 @@ import { useSelector } from "react-redux";
 import SearchFreind from "../utils/SearchFreind";
 import axios from "axios";
 import ProfileComponent from "../utils/ProfileComponent";
+import { BASE_URL } from "../services/helper";
 function LikedPost({ socket }) {
   const [loading, setLoading] = useState(false);
 
   const [likePost, setLikePost] = useState([]);
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, config } = useSelector((state) => state.user);
 
   const [search, setSearch] = useState([]);
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
 
   useEffect(() => {
     const getPost = async () => {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          "http://localhost:3001/api/post/liked/Post",
+          `${BASE_URL}/api/post/liked/Post`,
           config
         );
         setLoading(false);
@@ -44,7 +39,7 @@ function LikedPost({ socket }) {
     const getUsers = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:3001/api/user/followers/getAll",
+          `${BASE_URL}/api/user/followers/getAll`,
           config
         );
         setSearch(data);

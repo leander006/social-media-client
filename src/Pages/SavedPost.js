@@ -7,26 +7,21 @@ import SearchFreind from "../utils/SearchFreind";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import ProfileComponent from "../utils/ProfileComponent";
+import { BASE_URL } from "../services/helper";
 
 function YourPosts({ socket }) {
   const [loading, setLoading] = useState(false);
   const [bookmarkPost, setBookmarkPost] = useState([]);
 
   const [search, setSearch] = useState([]);
-  const { currentUser } = useSelector((state) => state.user);
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
+  const { currentUser, config } = useSelector((state) => state.user);
 
   useEffect(() => {
     const getPost = async () => {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          "http://localhost:3001/api/post/bookmark/Post",
+          `${BASE_URL}/api/post/bookmark/Post`,
           config
         );
         setBookmarkPost(data);
@@ -43,7 +38,7 @@ function YourPosts({ socket }) {
     const getUsers = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:3001/api/user/following/getAll",
+          `${BASE_URL}/api/user/following/getAll`,
           config
         );
         setSearch(data);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "../services/helper";
 
 function EmailVerificatiion() {
   const [validUrl, setValidUrl] = useState(false);
@@ -9,7 +10,7 @@ function EmailVerificatiion() {
     const verifyEmailUrl = async () => {
       try {
         await axios.get(
-          `http://localhost:3001/api/user/${param.id}/verify/${param.token}`
+          `${BASE_URL}/api/user/${param.id}/verify/${param.token}`
         );
         setValidUrl(true);
       } catch (error) {

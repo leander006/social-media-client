@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   loginError,
@@ -12,6 +12,7 @@ import Cookie from "js-cookie";
 import { SpinnerCircular } from "spinners-react";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { BASE_URL } from "../services/helper";
 
 function Edit({ socket }) {
   const navigate = useNavigate();
@@ -28,14 +29,8 @@ function Edit({ socket }) {
   const [fileInputState, setFileInputState] = useState("");
   const [status, setStatus] = useState("");
   const [password, setPassword] = useState("");
+  const { config } = useSelector((state) => state.user);
   const { editId } = useParams();
-
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
@@ -57,7 +52,7 @@ function Edit({ socket }) {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          "http://localhost:3001/api/user/" + editId,
+          `${BASE_URL}/api/user/` + editId,
           config
         );
         setUser(data.user);
@@ -88,7 +83,7 @@ function Edit({ socket }) {
     try {
       setLoad(true);
       const { data } = await axios.post(
-        "http://localhost:3001/api/user/upload",
+        `${BASE_URL}/api/user/upload`,
         { data: base64EncodedImage },
         config
       );
@@ -110,7 +105,7 @@ function Edit({ socket }) {
     try {
       console.log("profile ", profile);
       const { data } = await axios.put(
-        "http://localhost:3001/api/user/update/" + editId,
+        `${BASE_URL}/api/user/update/` + editId,
         {
           username: username,
           bio: bio,

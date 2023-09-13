@@ -8,6 +8,7 @@ import Skeleton from "../Skeleton/Skeleton";
 import SearchFreind from "../utils/SearchFreind";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "../services/helper";
 
 const sizeArray = ["sm", "md", "lg"];
 
@@ -16,12 +17,7 @@ function Explore({ socket }) {
   const [searched, setSearched] = useState([]);
 
   const dispatch = useDispatch();
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
+  const { config } = useSelector((state) => state.user);
   const { allpost, loading } = useSelector((state) => state.post);
 
   const handleSearch = async (query) => {
@@ -31,7 +27,7 @@ function Explore({ socket }) {
     }
     try {
       const { data } = await axios.get(
-        "http://localhost:3001/api/user/oneUser?name=" + search,
+        `${BASE_URL}/api/user/oneUser?name=` + search,
         config
       );
       setSearched(data);
@@ -44,10 +40,7 @@ function Explore({ socket }) {
     const getAllPost = async () => {
       try {
         dispatch(postStart());
-        const { data } = await axios.get(
-          "http://localhost:3001/api/post",
-          config
-        );
+        const { data } = await axios.get(`${BASE_URL}/api/post`, config);
         dispatch(postSuccess(data));
       } catch (error) {
         dispatch(postError());

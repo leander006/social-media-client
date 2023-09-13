@@ -8,23 +8,19 @@ import {
   setCurrentChat,
 } from "../redux/Slice/chatSlice";
 import axios from "axios";
+import { BASE_URL } from "../services/helper";
 
 function DirectMessage({ search, setSearched, setSearch }) {
   const { allChat } = useSelector((state) => state.chat);
+  const { config } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
 
   const openChat = async (e) => {
     e.preventDefault();
     try {
       dispatch(chatStart());
       const { data } = await axios.post(
-        "http://localhost:3001/api/chat/" + search._id,
+        `${BASE_URL}/api/chat/` + search._id,
         {},
         config
       );

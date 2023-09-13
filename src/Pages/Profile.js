@@ -8,9 +8,10 @@ import { SpinnerCircular } from "spinners-react";
 import Skeleton from "../Skeleton/Skeleton";
 import axios from "axios";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
+import { BASE_URL } from "../services/helper";
 
 function Profile({ socket }) {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, config } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
   const [sloading, setSloading] = useState(false);
   const { userId } = useParams();
@@ -20,20 +21,13 @@ function Profile({ socket }) {
   const dispatch = useDispatch();
   const current = currentUser.others ? currentUser.others : currentUser;
 
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
-
   useEffect(() => {
     const getPost = async () => {
       try {
         setLoading(true);
         setSloading(true);
         const { data } = await axios.get(
-          "http://localhost:3001/api/user/" + userId,
+          `${BASE_URL}/api/user/` + userId,
           config
         );
         setUser(data.user);
@@ -54,11 +48,12 @@ function Profile({ socket }) {
     dispatch(loginStart());
     try {
       const { data } = await axios.put(
-        `http://localhost:3001/api/user/addFollower/${userId}`,
+        `${BASE_URL}/api/user/addFollower/${userId}`,
         {},
         config
       );
       setFollow(!follow);
+      localStorage.setItem("data", JSON.stringify(data));
       dispatch(loginSuccess(data));
     } catch (error) {
       dispatch(loginError());

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { BASE_URL } from "../services/helper";
 function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -11,15 +12,12 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        "http://localhost:3001/api/auth/register",
-        {
-          username,
-          password,
-          name,
-          email,
-        }
-      );
+      const { data } = await axios.post(`${BASE_URL}/api/auth/register`, {
+        username,
+        password,
+        name,
+        email,
+      });
       toast.success(data?.message);
       setName("");
       setPassword("");
@@ -32,7 +30,7 @@ function Register() {
 
   const google = (e) => {
     e.preventDefault();
-    window.open("http://localhost:3001/api/auth/google/callback", "_self");
+    window.open(`${BASE_URL}/api/auth/google/callback`, "_self");
   };
   return (
     <>

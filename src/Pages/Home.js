@@ -16,20 +16,15 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import ProfileComponent from "../utils/ProfileComponent";
+import { BASE_URL } from "../services/helper";
 
 function Home({ socket }) {
   const { followerPost, loading } = useSelector((state) => state.post);
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, config } = useSelector((state) => state.user);
   const [search, setSearch] = useState([]);
   const [sloading, setSloading] = useState(false);
   const dispatch = useDispatch();
 
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookies.get("token")}`,
-    },
-  };
   useEffect(() => {
     socket.emit("login", { userId: currentUser?._id });
     // eslint-disable-next-line
@@ -40,7 +35,7 @@ function Home({ socket }) {
       try {
         setSloading(true);
         const { data } = await axios.get(
-          "http://localhost:3001/api/user/suggesteduser/user",
+          `${BASE_URL}/api/user/suggesteduser/user`,
           config
         );
         setSearch(data);
@@ -59,7 +54,7 @@ function Home({ socket }) {
       try {
         dispatch(followerPostStart());
         const { data } = await axios.get(
-          "http://localhost:3001/api/post/following/Post",
+          `${BASE_URL}/api/post/following/Post`,
           config
         );
         dispatch(followerPostSuccess(data));

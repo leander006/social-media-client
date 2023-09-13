@@ -16,8 +16,9 @@ import EmailVerificatiion from "./Pages/EmailVerificatiion";
 import SinglePage from "./Pages/SinglePage";
 import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
+import { BASE_URL } from "./services/helper";
 axios.defaults.withCredentials = true;
-const Endpoint = "http://localhost:3001/";
+const Endpoint = `${BASE_URL}/`;
 function App() {
   const { currentUser } = useSelector((state) => state.user);
   const socket = io(Endpoint);

@@ -5,7 +5,7 @@ import Navbar from "../utils/Navbar";
 import Messages from "../utils/Mesaages";
 import NopPreview from "../utils/NopPreview";
 import Cookie from "js-cookie";
-
+import { BASE_URL } from "../services/helper";
 import DirectMessage from "../utils/DirectMessage";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -42,17 +42,13 @@ function Chat({ socket }) {
   const { allChat, currentChat } = useSelector((state) => state.chat);
   const { allmessage } = useSelector((state) => state.message);
   const [loading, setLoading] = useState(false);
-  const { currentUser, chatloading } = useSelector((state) => state.user);
+  const { currentUser, chatloading, config } = useSelector(
+    (state) => state.user
+  );
   const { allNoti } = useSelector((state) => state.notification);
   const [chatname, setChatname] = useState("");
   const user = currentUser?.others ? currentUser?.others : currentUser;
   const dispatch = useDispatch();
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${Cookie.get("token")}`,
-    },
-  };
 
   // Socket //
   const [socketConnected, setSocketConnected] = useState(false);
@@ -95,10 +91,7 @@ function Chat({ socket }) {
     const getChat = async () => {
       try {
         dispatch(chatStart());
-        const { data } = await axios.get(
-          "http://localhost:3001/api/chat",
-          config
-        );
+        const { data } = await axios.get(`${BASE_URL}/api/chat`, config);
         dispatch(chatSuccess(data));
       } catch (error) {
         dispatch(chatError());
@@ -107,7 +100,7 @@ function Chat({ socket }) {
     };
     getChat();
     // eslint-disable-next-line
-  }, [user, allNoti]);
+  }, [user, allNoti, allmessage]);
 
   useEffect(() => {
     const getMessage = async () => {
@@ -115,7 +108,7 @@ function Chat({ socket }) {
         setLoading(true);
         dispatch(messageStart());
         const { data } = await axios.get(
-          "http://localhost:3001/api/message/get/" + currentChat._id,
+          `${BASE_URL}/api/message/get/` + currentChat._id,
           config
         );
         dispatch(messageSuccess(data));
@@ -137,7 +130,7 @@ function Chat({ socket }) {
     try {
       dispatch(messageStart());
       const { data } = await axios.post(
-        "http://localhost:3001/api/message/" + currentChat._id,
+        `${BASE_URL}/api/message/` + currentChat._id,
         { content: message },
         config
       );
@@ -158,10 +151,7 @@ function Chat({ socket }) {
   const handleDelete = async (me) => {
     try {
       dispatch(messageStart());
-      await axios.delete(
-        `http://localhost:3001/api/message/delete/${me._id}`,
-        config
-      );
+      await axios.delete(`${BASE_URL}/api/message/delete/${me._id}`, config);
       dispatch(messageSuccess(allmessage.filter((m) => m._id !== me._id)));
       socket.emit("new message delete", me);
       setMessage(" ");
@@ -190,7 +180,7 @@ function Chat({ socket }) {
     try {
       dispatch(chatStart());
       await axios.delete(
-        "http://localhost:3001/api/chat/delete/" + currentChat._id,
+        `${BASE_URL}/api/chat/delete/` + currentChat._id,
         config
       );
       dispatch(chatSuccess(allChat.filter((c) => c._id !== currentChat._id)));
@@ -215,7 +205,7 @@ function Chat({ socket }) {
     }
     try {
       const { data } = await axios.get(
-        "http://localhost:3001/api/user/freind/search?name=" + groupSearch,
+        `${BASE_URL}/api/user/freind/search?name=` + groupSearch,
         config
       );
       setAddUser(data);
@@ -230,7 +220,7 @@ function Chat({ socket }) {
     }
     try {
       const { data } = await axios.get(
-        "http://localhost:3001/api/user/freind/search?name=" + search,
+        `${BASE_URL}/api/user/freind/search?name=` + search,
         config
       );
       setSearched(data);
@@ -253,7 +243,7 @@ function Chat({ socket }) {
   const handleRemove = async (deleteUser) => {
     try {
       const { data } = await axios.put(
-        "http://localhost:3001/api/chat/remove/" + currentChat._id,
+        `${BASE_URL}/api/chat/remove/` + currentChat._id,
         { userId: deleteUser._id },
         config
       );
@@ -268,7 +258,7 @@ function Chat({ socket }) {
     try {
       dispatch(chatStart());
       await axios.put(
-        "http://localhost:3001/api/chat/remove/" + currentChat._id,
+        `${BASE_URL}/api/chat/remove/` + currentChat._id,
         { userId: removeUser._id },
         config
       );
@@ -288,7 +278,7 @@ function Chat({ socket }) {
         return;
       } else {
         const { data } = await axios.put(
-          "http://localhost:3001/api/chat/add/" + currentChat._id,
+          `${BASE_URL}/api/chat/add/` + currentChat._id,
           { userId: addUser._id },
           config
         );
@@ -305,7 +295,7 @@ function Chat({ socket }) {
     e.preventDefault();
     try {
       const { data } = await axios.put(
-        "http://localhost:3001/api/chat/rename/" + currentChat._id,
+        `${BASE_URL}/api/chat/rename/` + currentChat._id,
         { chatname: chatname },
         config
       );
@@ -321,7 +311,7 @@ function Chat({ socket }) {
     try {
       dispatch(chatStart());
       const { data } = await axios.post(
-        "http://localhost:3001/api/chat",
+        `${BASE_URL}/api/chat`,
         { name: name, users: JSON.stringify(selectedUser.map((u) => u._id)) },
         config
       );

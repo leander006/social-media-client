@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { BASE_URL } from "../services/helper";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -14,14 +15,14 @@ function Login() {
     e.preventDefault();
     dispatch(loginStart());
     try {
-      const { data } = await axios.post(
-        "http://localhost:3001/api/auth/login",
-        {
-          username: username,
-          password: password,
-        }
-      );
-      dispatch(loginSuccess(data));
+      const { data } = await axios.post(`${BASE_URL}/api/auth/login`, {
+        username: username,
+        password: password,
+      });
+      console.log(data);
+      dispatch(loginSuccess(data.data));
+      localStorage.setItem("data", JSON.stringify(data.others));
+      localStorage.setItem("token", data.token);
       navigate("/home");
     } catch (err) {
       dispatch(loginError());
@@ -35,7 +36,8 @@ function Login() {
   };
   const google = (e) => {
     e.preventDefault();
-    window.open("http://localhost:3001/api/auth/google", "_self");
+    const data = window.open(`${BASE_URL}/api/auth/google`, "_self");
+    console.log(data);
   };
   return (
     <>
