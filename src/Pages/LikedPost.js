@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Cookie from "js-cookie";
 import Navbar from "../utils/Navbar";
 
 import PostSkeleton from "../Skeleton/PostSkeleton";

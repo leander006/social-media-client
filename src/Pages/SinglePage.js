@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Comment from "../utils/Comment";
 import Navbar from "../utils/Navbar";
-import Cookie from "js-cookie";
 import SingleSkeleton from "../Skeleton/SingleSkeleton";
 import { useDispatch, useSelector } from "react-redux";
 import {

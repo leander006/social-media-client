@@ -6,7 +6,6 @@ import {
   commentStart,
   commentSuccess,
 } from "../redux/Slice/commentSlice";
-import Cookie from "js-cookie";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
 

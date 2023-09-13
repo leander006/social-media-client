@@ -4,7 +4,6 @@ import Conversation from "../utils/Conversation";
 import Navbar from "../utils/Navbar";
 import Messages from "../utils/Mesaages";
 import NopPreview from "../utils/NopPreview";
-import Cookie from "js-cookie";
 import { BASE_URL } from "../services/helper";
 import DirectMessage from "../utils/DirectMessage";
 import { useDispatch, useSelector } from "react-redux";

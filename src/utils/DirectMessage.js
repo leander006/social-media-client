@@ -1,5 +1,4 @@
 import React from "react";
-import Cookie from "js-cookie";
 import { useDispatch, useSelector } from "react-redux";
 import {
   chatError,

@@ -13,7 +13,6 @@ import {
 
 import SearchFreind from "../utils/SearchFreind";
 import axios from "axios";
-import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import ProfileComponent from "../utils/ProfileComponent";
 import { BASE_URL } from "../services/helper";
