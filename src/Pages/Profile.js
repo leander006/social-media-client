@@ -10,7 +10,7 @@ import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import { BASE_URL } from "../services/helper";
 
 function Profile({ socket }) {
-  const { currentUser, config } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
   const [sloading, setSloading] = useState(false);
   const { userId } = useParams();
@@ -19,7 +19,12 @@ function Profile({ socket }) {
   const [post, setPost] = useState([]);
   const dispatch = useDispatch();
   const current = currentUser.others ? currentUser.others : currentUser;
-
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
   useEffect(() => {
     const getPost = async () => {
       try {

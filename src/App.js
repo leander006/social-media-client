@@ -22,6 +22,7 @@ const Endpoint = `${BASE_URL}/`;
 function App() {
   const { currentUser } = useSelector((state) => state.user);
   const socket = io(Endpoint);
+
   return (
     <>
       <Router>

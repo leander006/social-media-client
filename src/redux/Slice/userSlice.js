@@ -1,12 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
 const initialState = {
-  config: {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage?.getItem("token")}`,
-    },
-  },
   currentUser: localStorage?.getItem("data")
     ? JSON.parse(localStorage?.getItem("data"))
     : null,

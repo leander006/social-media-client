@@ -6,7 +6,7 @@ import axios from "axios";
 import { BASE_URL } from "../services/helper";
 
 function ExploreMore({ explore }) {
-  const { currentUser, config } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const [like, setLike] = useState(explore?.likes?.length);
   const user = currentUser?.others ? currentUser?.others : currentUser;
   const [isLiked, setIsLiked] = useState(false);
@@ -15,6 +15,13 @@ function ExploreMore({ explore }) {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
 
   useEffect(() => {
     const getPost = async () => {
@@ -25,8 +32,8 @@ function ExploreMore({ explore }) {
         );
         setPost(data);
         setLike(data?.likes?.length);
-        setIsLiked(user.likedPost?.includes(explore?._id));
-        setBookmark(user.bookmarkedPost?.includes(explore?._id));
+        setIsLiked(user?.likedPost?.includes(explore?._id));
+        setBookmark(user?.bookmarkedPost?.includes(explore?._id));
       } catch (error) {
         console.log(error?.response?.data);
       }
@@ -37,8 +44,8 @@ function ExploreMore({ explore }) {
 
   useEffect(() => {
     setLike(post?.likes?.length);
-    setIsLiked(user.likedPost?.includes(explore?._id));
-    setBookmark(user.bookmarkedPost?.includes(explore?._id));
+    setIsLiked(user?.likedPost?.includes(explore?._id));
+    setBookmark(user?.bookmarkedPost?.includes(explore?._id));
   }, [user, explore?._id, like]);
 
   const click = () => {

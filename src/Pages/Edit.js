@@ -28,9 +28,13 @@ function Edit({ socket }) {
   const [fileInputState, setFileInputState] = useState("");
   const [status, setStatus] = useState("");
   const [password, setPassword] = useState("");
-  const { config } = useSelector((state) => state.user);
   const { editId } = useParams();
-
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     previewFile(file);

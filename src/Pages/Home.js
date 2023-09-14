@@ -19,16 +19,20 @@ import { BASE_URL } from "../services/helper";
 
 function Home({ socket }) {
   const { followerPost, loading } = useSelector((state) => state.post);
-  const { currentUser, config } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const [search, setSearch] = useState([]);
   const [sloading, setSloading] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
     socket.emit("login", { userId: currentUser?._id });
-    // eslint-disable-next-line
   }, []);
-
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
   useEffect(() => {
     const getUser = async () => {
       try {

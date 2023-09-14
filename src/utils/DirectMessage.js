@@ -11,8 +11,15 @@ import { BASE_URL } from "../services/helper";
 
 function DirectMessage({ search, setSearched, setSearch }) {
   const { allChat } = useSelector((state) => state.chat);
-  const { config } = useSelector((state) => state.user);
+
   const dispatch = useDispatch();
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
 
   const openChat = async (e) => {
     e.preventDefault();

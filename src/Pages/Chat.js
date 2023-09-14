@@ -41,14 +41,17 @@ function Chat({ socket }) {
   const { allChat, currentChat } = useSelector((state) => state.chat);
   const { allmessage } = useSelector((state) => state.message);
   const [loading, setLoading] = useState(false);
-  const { currentUser, chatloading, config } = useSelector(
-    (state) => state.user
-  );
+  const { currentUser, chatloading } = useSelector((state) => state.user);
   const { allNoti } = useSelector((state) => state.notification);
   const [chatname, setChatname] = useState("");
   const user = currentUser?.others ? currentUser?.others : currentUser;
   const dispatch = useDispatch();
-
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
   // Socket //
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);

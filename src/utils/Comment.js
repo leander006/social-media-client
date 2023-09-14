@@ -10,9 +10,16 @@ import axios from "axios";
 import { BASE_URL } from "../services/helper";
 
 function Comment({ comment }) {
-  const { currentUser, config } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const { allComment } = useSelector((state) => state.comment);
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
 
   const handledelete = async (e) => {
     e.preventDefault();

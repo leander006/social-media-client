@@ -12,8 +12,15 @@ import { BASE_URL } from "../services/helper";
 function Notifcations({ n, setNotify, notify }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { config } = useSelector((state) => state.user);
+
   const { allNoti } = useSelector((state) => state.notification);
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
 
   return (
     <div

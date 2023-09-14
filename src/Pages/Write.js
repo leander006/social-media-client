@@ -5,7 +5,6 @@ import toast from "react-hot-toast";
 import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
-import { useSelector } from "react-redux";
 
 function Write({ socket }) {
   const navigate = useNavigate();
@@ -16,9 +15,14 @@ function Write({ socket }) {
   const [loading, setLoading] = useState(false);
   const [fileInputState, setFileInputState] = useState("");
   const [textAreaCount, setTextAreaCount] = useState("0/180");
-  const { config } = useSelector((state) => state.user);
-  const max = 180;
 
+  const max = 180;
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     previewFile(file);

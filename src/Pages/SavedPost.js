@@ -13,8 +13,15 @@ function YourPosts({ socket }) {
   const [bookmarkPost, setBookmarkPost] = useState([]);
 
   const [search, setSearch] = useState([]);
-  const { currentUser, config } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
 
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
+  
   useEffect(() => {
     const getPost = async () => {
       try {

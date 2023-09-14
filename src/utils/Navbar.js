@@ -23,8 +23,15 @@ function Navbar({ socket }) {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
 
-  const { currentUser, config } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const { allNoti } = useSelector((state) => state.notification);
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
 
   useEffect(() => {
     const getNotifications = async () => {

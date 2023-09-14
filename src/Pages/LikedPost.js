@@ -12,10 +12,16 @@ function LikedPost({ socket }) {
   const [loading, setLoading] = useState(false);
 
   const [likePost, setLikePost] = useState([]);
-  const { currentUser, config } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
 
   const [search, setSearch] = useState([]);
 
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
   useEffect(() => {
     const getPost = async () => {
       try {

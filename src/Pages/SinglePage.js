@@ -16,7 +16,7 @@ import { BASE_URL } from "../services/helper";
 function SinglePage({ socket }) {
   const { postId } = useParams();
   const [post, setPost] = useState();
-  const { currentUser, config } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const { allComment } = useSelector((state) => state.comment);
   const { allpost } = useSelector((state) => state.post);
   // const [isLiked, setIsLiked] = useState(false);
@@ -24,6 +24,13 @@ function SinglePage({ socket }) {
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   // const [like, setLike] = useState();
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [textAreaCount, setTextAreaCount] = useState("0/45");

@@ -16,9 +16,15 @@ function Explore({ socket }) {
   const [searched, setSearched] = useState([]);
 
   const dispatch = useDispatch();
-  const { config } = useSelector((state) => state.user);
+
   const { allpost, loading } = useSelector((state) => state.post);
 
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
   const handleSearch = async (query) => {
     setSearch(query);
     if (!query) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
@@ -10,6 +10,26 @@ function Login() {
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
+  const data = JSON.parse(params.get("data"));
+  useEffect(() => {
+    const setUser = async () => {
+      dispatch(loginStart());
+      try {
+        if (token && data) {
+          localStorage.setItem("token", token);
+          localStorage.setItem("data", JSON.stringify(data));
+        }
+        dispatch(loginSuccess(data));
+        navigate("/home");
+      } catch (error) {
+        dispatch(loginError());
+        console.log(error);
+      }
+    };
+    setUser();
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,10 +53,10 @@ function Login() {
       );
     }
   };
-  const google = (e) => {
+
+  const google = async (e) => {
     e.preventDefault();
-    const data = window.open(`${BASE_URL}/api/auth/google`, "_self");
-    console.log(data);
+    window.open(`${BASE_URL}/api/auth/google`, "_self");
   };
   return (
     <>
