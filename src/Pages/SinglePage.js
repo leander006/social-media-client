@@ -130,8 +130,16 @@ function SinglePage({ socket }) {
                 <div className="flex">
                   <div className="flex p-1 basis-10 rounded-full">
                     <img
-                      src={post?.owner?.profile?.url}
-                      alt="singlePost"
+                      src={
+                        post?.owner?.profile?.url
+                          ? post?.owner?.profile?.url
+                          : post?.owner?.profile
+                      }
+                      alt={
+                        post?.owner?.profile?.url
+                          ? post?.owner?.profile?.url
+                          : post?.owner?.profile
+                      }
                       className="rounded-full h-8 w-8 cursor-pointer"
                       onClick={click}
                     />

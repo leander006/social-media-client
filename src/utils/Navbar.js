@@ -126,8 +126,12 @@ function Navbar({ socket }) {
           <div className="cursor-pointer" onClick={(e) => setVisible(!visible)}>
             <img
               className="rounded-full w-10 h-10 p-1"
-              src={current?.profile?.url}
-              alt="navbar"
+              src={
+                current?.profile?.url ? current?.profile?.url : current?.profile
+              }
+              alt={
+                current?.profile?.url ? current?.profile?.url : current?.profile
+              }
             />
           </div>
           <div

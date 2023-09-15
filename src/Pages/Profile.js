@@ -76,8 +76,12 @@ function Profile({ socket }) {
                 <div className="p-1 pl-2 md:w-full flex justify-center flex-col items-center">
                   <img
                     className="rounded-full w-12 h-12 lg:w-[70px] lg:h-[70px]"
-                    src={user?.profile?.url}
-                    alt="profile"
+                    src={
+                      user?.profile?.url ? user?.profile?.url : user?.profile
+                    }
+                    alt={
+                      user?.profile?.url ? user?.profile?.url : user?.profile
+                    }
                   />
 
                   <h1 className="ml-6 md:ml-0">{user?.username}</h1>

@@ -108,8 +108,16 @@ function ExploreMore({ explore }) {
       <div className="flex flex-col w-fit bg-[#38487a] hover:scale-105 duration-150 px-1.5 border my-3 rounded-lg">
         <div className="flex p-1 items-center">
           <img
-            src={explore?.owner?.profile?.url}
-            alt="ExploreMore"
+            src={
+              explore?.owner?.profile?.url
+                ? explore?.owner?.profile?.url
+                : explore?.owner?.profile
+            }
+            alt={
+              explore?.owner?.profile?.url
+                ? explore?.owner?.profile?.url
+                : explore?.owner?.profile
+            }
             className="w-12 h-12 rounded-full cursor-pointer border"
             onClick={click}
           />

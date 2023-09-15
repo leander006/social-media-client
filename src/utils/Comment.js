@@ -41,9 +41,17 @@ function Comment({ comment }) {
       <div className="flex mt-1">
         <div className="flex p-1">
           <img
-            src={comment?.user?.profile?.url}
+            src={
+              comment?.user?.profile?.url
+                ? comment?.user?.profile?.url
+                : comment?.user?.profile
+            }
             className="w-9 h-9 rounded-full cursor-pointer"
-            alt="comments"
+            alt={
+              comment?.user?.profile?.url
+                ? comment?.user?.profile?.url
+                : comment?.user?.profile
+            }
           />
           <Link to="/profile">
             <h1 className="capitalize font-bold mx-3 md:mr-3 cursor-pointer text-white">
