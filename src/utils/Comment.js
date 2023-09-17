@@ -44,7 +44,7 @@ function Comment({ comment }) {
             src={
               comment?.user?.profile?.url
                 ? comment?.user?.profile?.url
-                : comment?.user?.profile
+                : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1772660598.1694933442&semt=ais"
             }
             className="w-9 h-9 rounded-full cursor-pointer"
             alt={

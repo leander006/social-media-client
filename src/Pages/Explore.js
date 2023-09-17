@@ -83,7 +83,11 @@ function Explore({ socket }) {
               {allpost?.map((p) => (
                 <Pin
                   display={false}
-                  img={p?.content}
+                  img={
+                    p?.content
+                      ? p?.content
+                      : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1772660598.1694933442&semt=ais"
+                  }
                   id={p?._id}
                   key={p?._id}
                   size={sizeArray[Math.floor(Math.random() * 3)]}

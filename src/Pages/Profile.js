@@ -120,7 +120,11 @@ function Profile({ socket }) {
                 <div className="m-0 w-[50vw] md:w-[80vw] p-9 bg-[#2D3B58] overflow-y-scroll md:h-[67%]  justify-center md:grid md:absolute hidden auto-rows-2fr grid-cols-8">
                   {post.map((p) => (
                     <Pin
-                      img={p.content}
+                      img={
+                        p.content
+                          ? p?.content
+                          : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1772660598.1694933442&semt=ais"
+                      }
                       id={p._id}
                       key={p._id}
                       size={sizeArray[Math.floor(Math.random() * 3)]}
@@ -134,7 +138,11 @@ function Profile({ socket }) {
                         <Link key={p._id} to={"/singlepage/" + p._id}>
                           <img
                             className="transform transition duration-500 hover:scale-110 h-36 cursor-pointer"
-                            src={p?.content?.url}
+                            src={
+                              p?.content?.url
+                                ? p?.content?.url
+                                : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1772660598.1694933442&semt=ais"
+                            }
                             alt="profile"
                           />
                         </Link>

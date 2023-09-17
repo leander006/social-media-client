@@ -127,10 +127,14 @@ function Navbar({ socket }) {
             <img
               className="rounded-full w-10 h-10 p-1"
               src={
-                current?.profile?.url ? current?.profile?.url : current?.profile
+                current?.profile?.url
+                  ? current?.profile?.url
+                  : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1772660598.1694933442&semt=ais"
               }
               alt={
-                current?.profile?.url ? current?.profile?.url : current?.profile
+                current?.profile?.url
+                  ? current?.profile?.url
+                  : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1772660598.1694933442&semt=ais"
               }
             />
           </div>

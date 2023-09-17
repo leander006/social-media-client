@@ -111,7 +111,7 @@ function ExploreMore({ explore }) {
             src={
               explore?.owner?.profile?.url
                 ? explore?.owner?.profile?.url
-                : explore?.owner?.profile
+                : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1772660598.1694933442&semt=ais"
             }
             alt={
               explore?.owner?.profile?.url

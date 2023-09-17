@@ -53,7 +53,11 @@ function DirectMessage({ search, setSearched, setSearch }) {
         onClick={openChat}
       >
         <img
-          src={search?.profile?.url}
+          src={
+            search?.profile?.url
+              ? search?.profile?.url
+              : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1772660598.1694933442&semt=ais"
+          }
           className="rounded-full h-10 w-10"
           alt="directMessage"
         />
