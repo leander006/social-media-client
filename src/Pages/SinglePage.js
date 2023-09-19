@@ -12,6 +12,7 @@ import {
 import { postError, postStart, postSuccess } from "../redux/Slice/postSlice";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
+import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 
 function SinglePage({ socket }) {
   const { postId } = useParams();
@@ -19,11 +20,11 @@ function SinglePage({ socket }) {
   const { currentUser } = useSelector((state) => state.user);
   const { allComment } = useSelector((state) => state.comment);
   const { allpost } = useSelector((state) => state.post);
-  // const [isLiked, setIsLiked] = useState(false);
-  // const [bookmark, setBookmark] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [bookmark, setBookmark] = useState(false);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
-  // const [like, setLike] = useState();
+  const [like, setLike] = useState();
 
   const config = {
     headers: {
@@ -54,10 +55,53 @@ function SinglePage({ socket }) {
     getPost();
     // eslint-disable-next-line
   }, [user]);
+  useEffect(() => {
+    setLike(post?.likes?.length);
+    setIsLiked(currentUser.likedPost?.includes(postId));
+    setBookmark(currentUser.bookmarkedPost?.includes(postId));
+  }, [post?.likes, currentUser, postId]);
+
   const recalculate = (e) => {
     const currentLength = e.target.value.length;
     setTextAreaCount(`${currentLength}/${max}`);
     setComment(e.target.value);
+  };
+  const handleLikes = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(loginStart());
+      const { data } = await axios.post(
+        `${BASE_URL}/api/like/${postId}`,
+        { modelType: "Post" },
+        config
+      );
+      console.log(data);
+      dispatch(loginSuccess(data));
+      localStorage.setItem("data", JSON.stringify(data));
+      setLike(isLiked ? like - 1 : like + 1);
+    } catch (error) {
+      dispatch(loginError());
+      console.log(error?.response?.data);
+    }
+  };
+
+  const handleSaved = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(loginStart());
+      const { data } = await axios.put(
+        `${BASE_URL}/api/post/bookmarkPost/${postId}`,
+        {},
+        config
+      );
+      console.log(data);
+      dispatch(loginSuccess(data));
+      localStorage.setItem("data", JSON.stringify(data));
+      setBookmark(!bookmark);
+    } catch (error) {
+      dispatch(loginError());
+      console.log(error?.response?.data);
+    }
   };
 
   const handleDelete = async (e) => {
@@ -126,7 +170,7 @@ function SinglePage({ socket }) {
               />
             </div>
             <div className="flex flex-col justify-between lg:border border-[#BED7F8] pt-1 px-2 lg:h-5/6 xl:w-2/5 lg:w-3/5  overflow-y-scroll  ">
-              <div className="flex p-1 flex-col justify-between ">
+              <div className="flex p-1 flex-col justify-between h-[37%]">
                 <div className="flex">
                   <div className="flex p-1 basis-10 rounded-full">
                     <img
@@ -158,6 +202,34 @@ function SinglePage({ socket }) {
                       <i className="fa-solid items-start text-black fa-xl fa-trash-can cursor-pointer"></i>
                     </div>
                   )}
+                </div>
+                <div className="flex pl-3">
+                  <div className="flex items-end">
+                    <div
+                      className="flex likes cursor-pointer flex-col justify-center mt-3"
+                      onClick={handleLikes}
+                    >
+                      {isLiked ? (
+                        <i className="fa-solid fa-heart fa-2xl pr-3 text-red-700" />
+                      ) : (
+                        <i className="fa-regular fa-heart fa-2xl pr-3" />
+                      )}
+                      <h1 className="mt-3 ml-3">{like}</h1>
+                    </div>
+                  </div>
+                  <div className="mb-6 cursor-pointer">
+                    {bookmark ? (
+                      <i
+                        className="fa-solid fa-xl fa-bookmark cursor-pointer"
+                        onClick={handleSaved}
+                      ></i>
+                    ) : (
+                      <i
+                        className="fa-regular fa-xl fa-bookmark cursor-pointer"
+                        onClick={handleSaved}
+                      ></i>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="flex flex-col justify-between lg:h-fit h-screen lg:basis-2/3">

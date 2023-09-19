@@ -25,7 +25,7 @@ function Home({ socket }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    socket.emit("login", { userId: currentUser?._id });
+    socket?.emit("login", { userId: currentUser?._id });
   }, []);
   const config = {
     headers: {
