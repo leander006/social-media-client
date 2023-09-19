@@ -108,8 +108,14 @@ function SinglePage({ socket }) {
     e.preventDefault();
     try {
       dispatch(postStart());
-      await axios.delete(`${BASE_URL}/api/post/delete/${postId}`, config);
+      const { data } = await axios.delete(
+        `${BASE_URL}/api/post/delete/${postId}`,
+        config
+      );
       dispatch(postSuccess(allpost));
+      dispatch(loginSuccess(data));
+      console.log("data ", data);
+      localStorage.setItem("data", JSON.stringify(data));
       navigate("/home");
     } catch (error) {
       dispatch(postError());

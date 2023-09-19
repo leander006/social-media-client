@@ -79,12 +79,13 @@ function Write({ socket }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
+      const { data } = await axios.post(
         `${BASE_URL}/api/post`,
         { content: profile, caption: caption },
         config
       );
       navigate("/home");
+      localStorage.setItem("data", JSON.stringify(data));
     } catch (error) {
       console.log(error?.response?.data.message);
     }
