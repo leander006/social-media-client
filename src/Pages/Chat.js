@@ -587,14 +587,14 @@ function Chat({ socket }) {
                           img={
                             c?.isGroupChat
                               ? "images/noProfile.jpeg"
-                              : user === c?.users[0]._id
+                              : user?._id === c?.users[0]._id
                               ? c?.users[1]?.profile?.url
                               : c?.users[0]?.profile?.url
                           }
                           name={
                             c?.isGroupChat
                               ? c?.chatname
-                              : user === c?.users[0]?._id
+                              : user?._id === c?.users[0]?._id
                               ? c?.users[1]?.username
                               : c?.users[0]?.username
                           }
@@ -632,7 +632,7 @@ function Chat({ socket }) {
                       src={
                         currentChat?.isGroupChat
                           ? "images/noProfile.jpeg"
-                          : currentChat?.users[0]?._id === user
+                          : currentChat?.users[0]?._id === user?._id
                           ? currentChat?.users[1]?.profile?.url
                           : currentChat?.users[0]?.profile?.url
                       }
