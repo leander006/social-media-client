@@ -13,7 +13,7 @@ import {
 
 import SearchFreind from "../utils/SearchFreind";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import ProfileComponent from "../utils/ProfileComponent";
 import { BASE_URL } from "../services/helper";
 

@@ -42,8 +42,6 @@ function Notifcations({ n, setNotify, notify }) {
           dispatch(notifcationError());
           console.log(error);
         }
-
-        // navigate("/chat);
       }}
     >
       <img

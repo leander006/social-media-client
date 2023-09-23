@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import toast from "react-hot-toast";
@@ -8,6 +8,7 @@ import { BASE_URL } from "../services/helper";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
@@ -16,20 +17,26 @@ function Login() {
   useEffect(() => {
     const setUser = async () => {
       dispatch(loginStart());
+      currentUser &&
+        toast.success(
+          "Please wait for 10 seconds while socket connection is getting establish",
+          {
+            duration: 8000,
+          }
+        );
       try {
         if (token && data) {
           localStorage.setItem("token", token);
           localStorage.setItem("data", JSON.stringify(data));
         }
         dispatch(loginSuccess(data));
-        navigate("/home");
       } catch (error) {
         dispatch(loginError());
         console.log(error);
       }
     };
     setUser();
-  }, [token]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

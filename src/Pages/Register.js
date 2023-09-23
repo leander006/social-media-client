@@ -18,7 +18,7 @@ function Register() {
         name,
         email,
       });
-      toast.success(data?.message);
+      toast.success("User signed in Successfully");
       setName("");
       setPassword("");
       setEmail("");

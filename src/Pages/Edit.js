@@ -120,6 +120,7 @@ function Edit({ socket }) {
         config
       );
       dispatch(loginSuccess(data));
+      toast.success("Updated your user profile");
       navigate("/profile/" + editId);
     } catch (error) {
       dispatch(loginError());
@@ -130,7 +131,7 @@ function Edit({ socket }) {
   const log = (e) => {
     e.preventDefault();
     dispatch(logout());
-    navigate("/");
+    navigate("/home");
   };
   return (
     <>

@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
+import toast from "react-hot-toast";
 
 function ExploreMore({ explore }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -64,6 +65,7 @@ function ExploreMore({ explore }) {
       console.log(data);
       dispatch(loginSuccess(data));
       localStorage.setItem("data", JSON.stringify(data));
+      toast.success(`You ${!isLiked ? "liked" : "unliked"} the post`);
       setLike(isLiked ? like - 1 : like + 1);
     } catch (error) {
       dispatch(loginError());
@@ -83,6 +85,13 @@ function ExploreMore({ explore }) {
       console.log(data);
       dispatch(loginSuccess(data));
       localStorage.setItem("data", JSON.stringify(data));
+      toast.success(
+        `${
+          !bookmark
+            ? "Post saved successfully!"
+            : "Post removed from saved posts"
+        }`
+      );
       setBookmark(!bookmark);
     } catch (error) {
       dispatch(loginError());

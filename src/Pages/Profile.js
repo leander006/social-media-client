@@ -8,6 +8,8 @@ import Skeleton from "../Skeleton/Skeleton";
 import axios from "axios";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import { BASE_URL } from "../services/helper";
+// import { Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 function Profile({ socket }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -49,6 +51,7 @@ function Profile({ socket }) {
 
   const following = async (e) => {
     e.preventDefault();
+    // toast.success("Successfully toasted!");
     dispatch(loginStart());
     try {
       const { data } = await axios.put(
@@ -56,9 +59,12 @@ function Profile({ socket }) {
         {},
         config
       );
+      console.log(follow);
       setFollow(!follow);
       localStorage.setItem("data", JSON.stringify(data));
       dispatch(loginSuccess(data));
+
+      toast.success(`You ${follow ? "unfollowed" : "followed"} a user`);
     } catch (error) {
       dispatch(loginError());
       console.log(error?.response?.data);
@@ -133,11 +139,11 @@ function Profile({ socket }) {
                 </div>
                 {!sloading ? (
                   <div className="md:hidden px-4 py-2">
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                       {post.map((p) => (
                         <Link key={p._id} to={"/singlepage/" + p._id}>
                           <img
-                            className="transform transition duration-500 hover:scale-110 h-36 cursor-pointer"
+                            className="transform transition duration-500 hover:scale-110 h-40 w-full cursor-pointer"
                             src={
                               p?.content?.url
                                 ? p?.content?.url

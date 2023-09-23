@@ -13,6 +13,7 @@ import { postError, postStart, postSuccess } from "../redux/Slice/postSlice";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
+import toast from "react-hot-toast";
 
 function SinglePage({ socket }) {
   const { postId } = useParams();
@@ -75,7 +76,7 @@ function SinglePage({ socket }) {
         { modelType: "Post" },
         config
       );
-      console.log(data);
+      toast.success(`You ${!isLiked ? "liked" : "unliked"} the post`);
       dispatch(loginSuccess(data));
       localStorage.setItem("data", JSON.stringify(data));
       setLike(isLiked ? like - 1 : like + 1);
@@ -97,6 +98,13 @@ function SinglePage({ socket }) {
       console.log(data);
       dispatch(loginSuccess(data));
       localStorage.setItem("data", JSON.stringify(data));
+      toast.success(
+        `${
+          !bookmark
+            ? "Post saved successfully!"
+            : "Post removed from saved posts"
+        }`
+      );
       setBookmark(!bookmark);
     } catch (error) {
       dispatch(loginError());
@@ -114,8 +122,8 @@ function SinglePage({ socket }) {
       );
       dispatch(postSuccess(allpost));
       dispatch(loginSuccess(data));
-      console.log("data ", data);
       localStorage.setItem("data", JSON.stringify(data));
+      toast.success("You deleted the post");
       navigate("/home");
     } catch (error) {
       dispatch(postError());
@@ -154,6 +162,7 @@ function SinglePage({ socket }) {
         { content: comment, modelType: "Post" },
         config
       );
+      toast.success("Comment added successfully");
       dispatch(commentSuccess([data, ...allComment]));
       setComment("");
     } catch (error) {
@@ -240,11 +249,11 @@ function SinglePage({ socket }) {
               </div>
               <div className="flex flex-col justify-between lg:h-fit h-screen lg:basis-2/3">
                 {allComment.length === 0 ? (
-                  <div className="border-x-0 flex items-center justify-center border-t-2 border-[#BED7F8]  h-3/5 lg:h-5/6  border-b-0 ">
+                  <div className="border-x-0 flex items-center justify-center border-t-2 border-[#BED7F8] h-3/5 lg:h-5/6 border-b-0 ">
                     <h1 className="text-slate-400">No Comments</h1>
                   </div>
                 ) : (
-                  <div className="border-x-0 border-t-2 border-[#BED7F8] mt-2 h-3/5 lg:h-5/6 border-b-0">
+                  <div className="border-x-0 border-t-2 border-[#BED7F8] mt-2 h-3/5 lg:h-5/6 border-b-0 ">
                     {allComment?.map((c) => (
                       <Comment key={c._id} comment={c} />
                     ))}

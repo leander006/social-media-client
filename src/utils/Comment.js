@@ -8,6 +8,7 @@ import {
 } from "../redux/Slice/commentSlice";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
+import toast from "react-hot-toast";
 
 function Comment({ comment }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -30,6 +31,7 @@ function Comment({ comment }) {
         config
       );
       dispatch(commentSuccess(allComment.filter((c) => c._id !== comment._id)));
+      toast.success("Deleted the comment");
     } catch (error) {
       dispatch(commentError());
       console.log(error?.response?.data);
@@ -59,7 +61,7 @@ function Comment({ comment }) {
             </h1>
           </Link>
         </div>
-        <div className="relative ml-4 group basis-[70%] text-white">
+        <div className="relative ml-4 group basis-[90%] text-white pb-3">
           <p
             className={
               comment?.user?._id === currentUser._id

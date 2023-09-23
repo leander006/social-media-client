@@ -1,7 +1,7 @@
 import Explore from "./Pages/Explore";
 
 import Home from "./Pages/Home";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import axios from "axios";
@@ -25,53 +25,54 @@ function App() {
 
   return (
     <>
-      <Router>
-        <Routes>
-          <Route exact path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/home"
-            element={currentUser ? <Home socket={socket} /> : <Login />}
-          />
-          <Route
-            path="/like"
-            element={currentUser ? <LikedPost socket={socket} /> : <Login />}
-          />
-          <Route
-            path="/profile/:userId"
-            element={currentUser ? <Profile socket={socket} /> : <Login />}
-          />
-          <Route
-            path="/savedPost"
-            element={currentUser ? <SavedPost socket={socket} /> : <Login />}
-          />
-          <Route
-            path="/chat"
-            element={currentUser ? <Chat socket={socket} /> : <Login />}
-          />
-          <Route
-            path="/explore"
-            element={currentUser ? <Explore socket={socket} /> : <Login />}
-          />
-          <Route
-            path="/write"
-            element={currentUser ? <Write socket={socket} /> : <Login />}
-          />
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/edit/:editId"
-            element={currentUser ? <Edit socket={socket} /> : <Login />}
-          />
-          <Route
-            path="/singlepage/:postId"
-            element={currentUser ? <SinglePage socket={socket} /> : <Login />}
-          />
-          <Route
-            path="/users/:id/verify/:token"
-            element={currentUser ? <EmailVerificatiion /> : <Login />}
-          />
-        </Routes>
-      </Router>
+      <Routes>
+        <Route
+          path="/"
+          element={currentUser ? <Home socket={socket} /> : <Login />}
+        />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/home"
+          element={currentUser ? <Home socket={socket} /> : <Login />}
+        />
+        <Route
+          path="/like"
+          element={currentUser ? <LikedPost socket={socket} /> : <Login />}
+        />
+        <Route
+          path="/profile/:userId"
+          element={currentUser ? <Profile socket={socket} /> : <Login />}
+        />
+        <Route
+          path="/savedPost"
+          element={currentUser ? <SavedPost socket={socket} /> : <Login />}
+        />
+        <Route
+          path="/chat"
+          element={currentUser ? <Chat socket={socket} /> : <Login />}
+        />
+        <Route
+          path="/explore"
+          element={currentUser ? <Explore socket={socket} /> : <Login />}
+        />
+        <Route
+          path="/write"
+          element={currentUser ? <Write socket={socket} /> : <Login />}
+        />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/edit/:editId"
+          element={currentUser ? <Edit socket={socket} /> : <Login />}
+        />
+        <Route
+          path="/singlepage/:postId"
+          element={currentUser ? <SinglePage socket={socket} /> : <Login />}
+        />
+        <Route
+          path="/users/:id/verify/:token"
+          element={currentUser ? <EmailVerificatiion /> : <Login />}
+        />
+      </Routes>
     </>
   );
 }

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import SearchFreind from "./SearchFreind";
 
-import "react-toastify/dist/ReactToastify.css";
 import { logout } from "../redux/Slice/userSlice";
 import axios from "axios";
 
@@ -18,7 +17,7 @@ import { BASE_URL } from "../services/helper";
 function Navbar({ socket }) {
   const [searched, setSearched] = useState("");
   const [search, setSearch] = useState([]);
-
+  const navigate = useNavigate();
   const [notify, setNotify] = useState(false);
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
@@ -52,9 +51,10 @@ function Navbar({ socket }) {
 
   const log = (e) => {
     e.preventDefault();
-    socket?.emit("removeUser", { userId: currentUser?._id });
     dispatch(logout());
+    socket?.emit("removeUser", { userId: currentUser?._id });
     window.open(`${BASE_URL}/api/auth/google/logout`, "_self");
+    navigate("/");
   };
 
   const handleSearch = async (query) => {
@@ -124,6 +124,7 @@ function Navbar({ socket }) {
             </Link>
           </div>
           <div className="cursor-pointer" onClick={(e) => setVisible(!visible)}>
+            {/* <img src="" alt="" srcset="" /> */}
             <img
               className="rounded-full w-10 h-10 p-1"
               src={
@@ -192,7 +193,7 @@ function Navbar({ socket }) {
                 </div>
               </Link>
               <div
-                className="flex items-center my-2 cursor-pointer w-screen"
+                className="flex items-center my-2 cursor-pointer w-full"
                 onClick={log}
               >
                 <i className="fa-solid mr-3 cursor-pointer fa-xl fa-arrow-right-from-bracket "></i>

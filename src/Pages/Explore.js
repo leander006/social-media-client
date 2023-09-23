@@ -109,12 +109,12 @@ function Explore({ socket }) {
           )}
 
           {!loading ? (
-            <div className="w-screen md:hidden bg-[#2D3B58] h-[calc(100vh-6.75rem)] overflow-y-scroll p-2 grid grid-rows-3 grid-flow-col gap-4">
-              <div className="grid grid-cols-3 gap-2">
+            <div className="w-screen md:hidden bg-[#2D3B58] h-[calc(100vh-6.75rem)] overflow-y-scroll p-2 grid grid-rows-2 grid-flow-col gap-4">
+              <div className="grid grid-cols-2 gap-2">
                 {allpost.map((p) => (
                   <Link key={p?._id} to={"/singlepage/" + p._id}>
                     <img
-                      className="transform transition duration-500 hover:scale-110 h-36 cursor-pointer"
+                      className="transform transition duration-500 hover:scale-110 h-40 w-full cursor-pointer"
                       src={p?.content?.url}
                       alt="explore"
                     />

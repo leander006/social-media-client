@@ -321,6 +321,7 @@ function Chat({ socket }) {
       dispatch(chatSuccess([data, ...allChat]));
       setCurrentChat(data);
       setSearchResult(!searchResult);
+      toast.success("Group created");
     } catch (error) {
       console.log(error);
       dispatch(chatError());

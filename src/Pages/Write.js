@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
+import Cropper from "react-easy-crop";
 
 function Write({ socket }) {
   const navigate = useNavigate();
@@ -15,6 +16,14 @@ function Write({ socket }) {
   const [loading, setLoading] = useState(false);
   const [fileInputState, setFileInputState] = useState("");
   const [textAreaCount, setTextAreaCount] = useState("0/180");
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+
+  const cropComplete = (croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
 
   const max = 180;
   const config = {
@@ -86,6 +95,7 @@ function Write({ socket }) {
       );
       navigate("/home");
       localStorage.setItem("data", JSON.stringify(data));
+      toast.success("Post created");
     } catch (error) {
       console.log(error?.response?.data.message);
     }
@@ -103,7 +113,7 @@ function Write({ socket }) {
             <div className="flex items-center space-x-5">
               <i
                 className="fa-solid fa-2xl fa-xmark cursor-pointer text-[#8aaaeb]"
-                onClick={() => navigate("/home")}
+                onClick={() => navigate("/")}
               ></i>
               <h1 className="font-bold  text-xl text-[#8aaaeb]">Post</h1>
             </div>
@@ -113,7 +123,6 @@ function Write({ socket }) {
               </button>
             </div>
           </div>
-
           <div className="flex flex-col justify-center items-center">
             {!loading ? (
               <img

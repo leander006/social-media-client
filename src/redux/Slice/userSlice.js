@@ -26,8 +26,7 @@ export const UserSlice = createSlice({
       state.currentUser = null;
       state.loading = false;
       state.error = false;
-      localStorage.removeItem("token");
-      localStorage.removeItem("data");
+      localStorage.clear();
     },
   },
 });
