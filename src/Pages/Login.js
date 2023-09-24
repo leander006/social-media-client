@@ -15,15 +15,20 @@ function Login() {
   const token = params.get("token");
   const data = JSON.parse(params.get("data"));
   useEffect(() => {
+    currentUser == null &&
+      toast.success(
+        currentUser == null
+          ? "Please wait for 10 seconds while socket connection is getting establish"
+          : "Welcome user",
+        {
+          duration: 8000,
+        }
+      );
+  }, []);
+
+  useEffect(() => {
     const setUser = async () => {
       dispatch(loginStart());
-      currentUser &&
-        toast.success(
-          "Please wait for 10 seconds while socket connection is getting establish",
-          {
-            duration: 8000,
-          }
-        );
       try {
         if (token && data) {
           localStorage.setItem("token", token);
@@ -36,7 +41,7 @@ function Login() {
       }
     };
     setUser();
-  }, []);
+  }, [data]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
