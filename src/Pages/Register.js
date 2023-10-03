@@ -18,7 +18,7 @@ function Register() {
         name,
         email,
       });
-      toast.success("User signed in Successfully");
+      toast.success("An email send for verification");
       setName("");
       setPassword("");
       setEmail("");
