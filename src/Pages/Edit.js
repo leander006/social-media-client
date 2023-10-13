@@ -134,11 +134,11 @@ function Edit({ socket }) {
     navigate("/home");
   };
   return (
-    <>
+    <div>
       <Navbar socket={socket} />
-      <div className="flex pt-9">
+      <div className="flex pt-9 w-screen mx-auto">
         {!loading ? (
-          <div className="flex flex-col md:m-auto w-screen h-[calc(100vh-2.3rem)] md:pt-16 lg:w-[60%] md:w-[75%] md:h-[calc(100vh-2.7rem)] overflow-y-scroll">
+          <div className="flex flex-col md:m-auto w-screen text-white h-[calc(100vh-2.3rem)] md:pt-16 lg:w-[60%] md:w-[75%] md:h-[calc(100vh-2.7rem)] overflow-y-scroll">
             <div className="flex justify-between p-4 ">
               <div className="flex items-center space-x-5">
                 <i
@@ -289,7 +289,7 @@ function Edit({ socket }) {
           />
         )}
       </div>
-    </>
+    </div>
   );
 }
 

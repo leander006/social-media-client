@@ -104,7 +104,7 @@ function Write({ socket }) {
   return (
     <>
       <Navbar socket={socket} />
-      <div className="flex pt-9">
+      <div className="flex pt-9 w-screen mx-auto">
         <form
           className="flex flex-col md:justify-center  md:m-auto w-screen h-[calc(100vh-2.4rem)] lg:w-[60%] md:w-[75%] md:h-[calc(100vh-2.7rem)]"
           onSubmit={handleSubmit}

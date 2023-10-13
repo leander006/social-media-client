@@ -80,7 +80,7 @@ function Navbar({ socket }) {
       <div className="flex justify-between md:justify-evenly bg-[#455175] w-screen">
         <div className="font-bold p-2 text-white">
           <Link to="/home">
-            <h1>Talkology</h1>
+            <h1>InstaWave</h1>
           </Link>
         </div>
 

@@ -8,23 +8,11 @@ import { BASE_URL } from "../services/helper";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const params = new URLSearchParams(window.location.search);
   const token = params.get("token");
   const data = JSON.parse(params.get("data"));
-  useEffect(() => {
-    currentUser == null &&
-      toast.success(
-        currentUser == null
-          ? "Please wait for 10 seconds while socket connection is getting establish"
-          : "Welcome user",
-        {
-          duration: 8000,
-        }
-      );
-  }, []);
 
   useEffect(() => {
     const setUser = async () => {
@@ -72,7 +60,7 @@ function Login() {
   };
   return (
     <>
-      <div className="flex justify-evenly h-screen w-screen">
+      <div className="flex justify-evenly h-screen w-screen mx-auto">
         <div className="hidden md:flex m-auto flex-1">
           <img src="/images/login.jpeg" alt="login"></img>
         </div>

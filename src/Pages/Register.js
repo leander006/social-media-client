@@ -34,7 +34,7 @@ function Register() {
   };
   return (
     <>
-      <div className="flex justify-evenly flex-row-reverse h-screen w-screen">
+      <div className="flex justify-evenly flex-row-reverse h-screen w-screen mx-auto">
         <div className="hidden md:flex m-auto flex-1">
           <img src="/images/register.jpeg" alt="register"></img>
         </div>

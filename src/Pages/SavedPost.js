@@ -59,7 +59,7 @@ function YourPosts({ socket }) {
   return (
     <>
       <Navbar socket={socket} />
-      <div className="flex mt-10">
+      <div className="flex mt-10 w-screen mx-auto">
         {!loading ? (
           <div className="hidden md:flex lg:w-1/3 md:w-[40%] p-2">
             <ProfileComponent currentUser={currentUser} />

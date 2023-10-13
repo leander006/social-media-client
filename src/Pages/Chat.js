@@ -227,7 +227,7 @@ function Chat({ socket }) {
       );
       setSearched(data);
     } catch (error) {
-      toast.error(error.response.data.error);
+      console.log(error);
     }
   };
 
@@ -335,7 +335,7 @@ function Chat({ socket }) {
   return (
     <>
       <Navbar socket={socket} />
-      <div className="flex mt-10">
+      <div className="flex mt-10 w-screen mx-auto">
         {/* Destop view  */}
         <div className="hidden md:flex w-screen ">
           <div className="conversation w-[40%] border border-y-0">

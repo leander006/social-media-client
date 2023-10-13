@@ -74,7 +74,7 @@ function Profile({ socket }) {
   return (
     <>
       <Navbar socket={socket} />
-      <div className="flex pt-9">
+      <div className="flex pt-9 w-screen mx-auto">
         {!loading ? (
           <div className="bg-[#2D3B58] h-[calc(100vh-2.5rem)] w-full flex flex-col ">
             <div className="flex flex-col w-screen bg-[#2D3B58] md:px-16 pt-6 text-white lg:w-[95vw]">

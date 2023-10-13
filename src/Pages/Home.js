@@ -74,9 +74,9 @@ function Home({ socket }) {
   }, []);
 
   return (
-    <>
+    <div>
       <Navbar socket={socket} />
-      <div className="flex z-50 pt-12 ">
+      <div className="flex z-50 pt-12 w-screen mx-auto">
         {!loading ? (
           <div className="hidden md:flex lg:w-1/3 md:w-[40%] p-2">
             <ProfileComponent currentUser={currentUser} />
@@ -117,7 +117,7 @@ function Home({ socket }) {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
