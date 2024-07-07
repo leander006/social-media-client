@@ -72,8 +72,6 @@ function Login() {
                 className="flex justify-center flex-col item-center mt-4"
                 onSubmit={handleSubmit}
               >
-                <h1>Username: leander006</h1>
-                <h1>Password: 12345</h1>
                 <label className="mb-2">Username</label>
                 <input
                   className="w-full mb-3 h-12 rounded-md p-3 md:mb-8  border border-black"
