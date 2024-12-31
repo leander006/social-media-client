@@ -257,7 +257,6 @@ function SinglePage({ socket }) {
                     {allComment?.map((c) => (
                       <>
                       <Comment key={c._id} comment={c} />
-                      <Comment key={c._id} comment={c} />
                       </>
                       
                     ))}
