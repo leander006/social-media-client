@@ -47,6 +47,7 @@ function Navbar({ socket }) {
       }
     };
     getNotifications();
+    // eslint-disable-next-line
   }, [currentUser, notify]);
 
   const log = (e) => {

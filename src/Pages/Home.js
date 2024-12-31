@@ -26,6 +26,7 @@ function Home({ socket }) {
 
   useEffect(() => {
     socket?.emit("login", { userId: currentUser?._id });
+    // eslint-disable-next-line
   }, []);
   const config = {
     headers: {
@@ -44,7 +45,7 @@ function Home({ socket }) {
         setSearch(data);
         setSloading(false);
       } catch (error) {
-        toast.error("error?.response?.data");
+        toast.error("Your token got expired login again");
         console.log(error);
       }
     };
@@ -76,7 +77,7 @@ function Home({ socket }) {
   return (
     <div>
       <Navbar socket={socket} />
-      <div className="flex z-50 pt-12 w-screen mx-auto">
+      <div className="flex z-50 pt-12 mx-auto">
         {!loading ? (
           <div className="hidden md:flex lg:w-1/3 md:w-[40%] p-2">
             <ProfileComponent currentUser={currentUser} />
@@ -85,7 +86,7 @@ function Home({ socket }) {
           <div className="lg:w-1/3 md:w-1/2"></div>
         )}
         {!loading ? (
-          <div className="md:flex lg:w-1/3 md:w-[60%] mx-3 h-[calc(100vh-3rem)] w-screen">
+          <div className="md:flex md:w-[60%] mx-3 h-[calc(100vh-3rem)] w-screen">
             {followerPost?.length !== 0 ? (
               <div className="flex flex-col">
                 {followerPost?.map((p) => (
@@ -104,7 +105,7 @@ function Home({ socket }) {
           </div>
         )}
 
-        <div className="hidden lg:flex w-1/3 lg:mr-[10rem] lg:ml-[2rem] md:w-60 h-[calc(100vh-3.5rem)] overflow-y-scroll ml-2 flex-col  mt-3 text-white ">
+        <div className="hidden lg:flex lg:mr-[10rem] lg:ml-[2rem] w-fit  ml-2 flex-col  mt-3 text-white ">
           <h1>Suggested Followers</h1>
           {!sloading ? (
             <div>

@@ -255,7 +255,11 @@ function SinglePage({ socket }) {
                 ) : (
                   <div className="border-x-0 border-t-2 border-[#BED7F8] mt-2 h-3/5 lg:h-5/6 border-b-0 ">
                     {allComment?.map((c) => (
+                      <>
                       <Comment key={c._id} comment={c} />
+                      <Comment key={c._id} comment={c} />
+                      </>
+                      
                     ))}
                   </div>
                 )}

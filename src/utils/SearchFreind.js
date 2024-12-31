@@ -8,7 +8,7 @@ function SearchFreind({ search, setSearch }) {
       <Link to={"/profile/" + search._id}>
         <img
           src={search?.profile?.url}
-          className="rounded-full h-8 w-8 cursor-pointer"
+          className="rounded-full h-6 w-6 cursor-pointer"
           alt="searchFreind"
           onClick={() => {
             setSearch([]);
