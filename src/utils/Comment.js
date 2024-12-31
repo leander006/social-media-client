@@ -15,6 +15,9 @@ function Comment({ comment }) {
   const dispatch = useDispatch();
   const { allComment } = useSelector((state) => state.comment);
 
+  console.log(comment);
+  
+
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -55,7 +58,7 @@ function Comment({ comment }) {
                 : comment?.user?.profile
             }
           />
-          <Link to="/profile">
+          <Link to={"/profile/"+comment?.user?._id }>
             <h1 className="capitalize font-bold mx-3 md:mr-3 cursor-pointer text-white">
               {comment?.user?.username}
             </h1>
