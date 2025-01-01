@@ -25,7 +25,8 @@ function Mesaages({ messages, own, handleFunction }) {
             setVisible(false);
           }}
         >
-          <p className="pl-2 text-[#2D3B58]">{messages?.content}</p>
+          <p className={messages?.sender?._id === currentUser._id?"pl-2 text-[#2D3B58] cursor-pointer w-44 break-words":"pl-2 text-[#2D3B58]"}>{messages?.content}</p>
+          {/* <p className={messages?.sender?._id !== currentUser._id?"pl-2 text-[#2D3B58] cursor-pointer w-44 break-words":"pl-2 text-[#2D3B58]"}>{messages?.content}</p> */}
           {visible && (
             <div className="">
               <i

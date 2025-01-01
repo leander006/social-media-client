@@ -14,6 +14,8 @@ import axios from "axios";
 import { BASE_URL } from "../services/helper";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import toast from "react-hot-toast";
+import InputEmoji from 'react-input-emoji'
+
 
 function SinglePage({ socket }) {
   const { postId } = useParams();
@@ -39,7 +41,6 @@ function SinglePage({ socket }) {
   const max = 45;
 
   const user = currentUser?.others ? currentUser?.others : currentUser;
-
   useEffect(() => {
     const getPost = async () => {
       try {
@@ -62,11 +63,14 @@ function SinglePage({ socket }) {
     setBookmark(currentUser.bookmarkedPost?.includes(postId));
   }, [post?.likes, currentUser, postId]);
 
-  const recalculate = (e) => {
-    const currentLength = e.target.value.length;
+  const recalculate = (text) => {
+    const currentLength = text.length;
+    console.log(currentLength);
+    console.log('enter in recalculate', text)
     setTextAreaCount(`${currentLength}/${max}`);
-    setComment(e.target.value);
+    setComment(text)
   };
+
   const handleLikes = async (e) => {
     e.preventDefault();
     try {
@@ -153,10 +157,12 @@ function SinglePage({ socket }) {
     // eslint-disable-next-line
   }, [postId]);
 
-  const handleComment = async (e) => {
-    e.preventDefault();
+  const handleComment = async (text) => {
     try {
+      setComment(text);
       dispatch(commentStart());
+      console.log("comment "+comment);
+      
       const { data } = await axios.post(
         `${BASE_URL}/api/comment/${postId}`,
         { content: comment, modelType: "Post" },
@@ -170,6 +176,8 @@ function SinglePage({ socket }) {
       console.log(error?.response?.data);
     }
   };
+
+
 
   return (
     <>
@@ -255,31 +263,22 @@ function SinglePage({ socket }) {
                 ) : (
                   <div className="border-x-0 border-t-2 border-[#BED7F8] mt-2 h-3/5 lg:h-5/6 border-b-0 ">
                     {allComment?.map((c) => (
-                      <>
                       <Comment key={c._id} comment={c} />
-                      </>
-                      
                     ))}
                   </div>
                 )}
 
-                <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md">
-                  <div className="flex w-full items-center">
-                    <input
-                      className="w-full rounded-md p-1"
-                      value={comment}
-                      maxLength={max}
-                      placeholder="Comment here"
-                      onChange={recalculate}
-                      type="text"
-                    ></input>
-                    <p className="text-end mx-2">{textAreaCount}</p>
+                <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
+                  <div className="flex items-center w-[80%]">
+                  <InputEmoji
+                  value={comment}
+                  onChange={recalculate}
+                  cleanOnEnter
+                  onEnter={handleComment}
+                  maxLength={max}
+                  placeholder="Type a message"/>
                   </div>
-
-                  <i
-                    className="fa-solid fa-xl fa-paper-plane p-2 text-[#BED7F8] cursor-pointer "
-                    onClick={handleComment}
-                  ></i>
+                  <p className="w-[20%] md:text-center">{textAreaCount}</p>
                 </div>
               </div>
             </div>

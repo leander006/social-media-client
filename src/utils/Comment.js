@@ -15,7 +15,7 @@ function Comment({ comment }) {
   const dispatch = useDispatch();
   const { allComment } = useSelector((state) => state.comment);
 
-  console.log(comment);
+
   
 
   const config = {
@@ -68,8 +68,8 @@ function Comment({ comment }) {
           <p
             className={
               comment?.user?._id === currentUser._id
-                ? "mt-1 cursor-pointer pr-2 ml-2 group-hover:block absolute"
-                : "mt-1 pr-2 ml-2 group-hover:block absolute"
+                ? "mt-1 cursor-pointer pr-2 mx-2 group-hover:block w-36 md:w-fit lg:w-44 xl:w-60 2xl:w-fit break-words"
+                : "mt-1 pr-2 ml-2 group-hover:block w-36 md:w-fit lg:w-44 xl:w-60 2xl:w-fit break-words"
             }
           >
             {comment?.content}

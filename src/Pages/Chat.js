@@ -24,7 +24,7 @@ import GroupUser from "../utils/GroupUser";
 import ListItems from "../utils/ListItems";
 import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
-
+import InputEmoji from 'react-input-emoji'
 var selectedChatCompare;
 
 function Chat({ socket }) {
@@ -56,6 +56,9 @@ function Chat({ socket }) {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [comment, setComment] = useState("");
+  const [textAreaCount, setTextAreaCount] = useState("0/45");
+  const max = 45;
 
   useEffect(() => {
     socket.emit("setup", user);
@@ -65,8 +68,8 @@ function Chat({ socket }) {
     // eslint-disable-next-line
   }, []);
 
-  const typingHandler = (e) => {
-    setMessage(e.target.value);
+  const typingHandler = (text) => {
+    setMessage(text);
 
     if (!socketConnected) return;
 
@@ -126,29 +129,24 @@ function Chat({ socket }) {
     // eslint-disable-next-line
   }, [currentChat]);
 
-  const sendMessage = async (e) => {
-    e.preventDefault();
-    socket.emit("stop typing", currentChat._id);
-    try {
-      dispatch(messageStart());
-      const { data } = await axios.post(
-        `${BASE_URL}/api/message/` + currentChat._id,
-        { content: message },
-        config
-      );
-      socket.emit("send_message", data);
-      // socket.emit("sendNotification", {
-      //   senderName: user,
-      //   receiverName: post.username,
-      //   type,
-      // });
-      dispatch(messageSuccess([...allmessage, data]));
-      setMessage("");
-    } catch (error) {
-      dispatch(messageError());
-      console.log(error?.response?.data);
-    }
-  };
+  // const sendMessage = async (text) => {
+  //   setMessage(text);
+  //   socket.emit("stop typing", currentChat._id);
+  //   try {
+  //     dispatch(messageStart());
+  //     const { data } = await axios.post(
+  //       `${BASE_URL}/api/message/` + currentChat._id,
+  //       { content: message },
+  //       config
+  //     );
+  //     socket.emit("send_message", data);
+  //     dispatch(messageSuccess([...allmessage, data]));
+  //     setMessage("");
+  //   } catch (error) {
+  //     dispatch(messageError());
+  //     console.log(error?.response?.data);
+  //   }
+  // };
 
   const handleDelete = async (me) => {
     try {
@@ -327,6 +325,60 @@ function Chat({ socket }) {
       dispatch(chatError());
     }
   };
+
+  const recalculate = (text) => {
+    const currentLength = text.length;
+    console.log(currentLength);
+    console.log('enter in recalculate', text)
+    setTextAreaCount(`${currentLength}/${max}`);
+    setMessage(text)
+  };
+
+  const sendMessage = async (text) => {
+    setMessage(text);
+    if(text.length == 0){
+      toast.error("Please enter some message")
+      return;
+    }
+    socket.emit("stop typing", currentChat._id);
+    try {
+      dispatch(messageStart());
+      const { data } = await axios.post(
+        `${BASE_URL}/api/message/` + currentChat._id,
+        { content: message },
+        config
+      );
+      socket.emit("send_message", data);
+      dispatch(messageSuccess([...allmessage, data]));
+      setMessage("");
+    } catch (error) {
+      dispatch(messageError());
+      console.log(error?.response?.data);
+    }
+  };
+
+  
+  // const handleComment = async (text) => {
+  //   try {
+  //     setComment(text);
+  //     dispatch(commentStart());
+  //     console.log("comment "+comment);
+      
+  //     const { data } = await axios.post(
+  //       `${BASE_URL}/api/comment/${postId}`,
+  //       { content: comment, modelType: "Post" },
+  //       config
+  //     );
+  //     toast.success("Comment added successfully");
+  //     dispatch(commentSuccess([data, ...allComment]));
+  //     setComment("");
+  //   } catch (error) {
+  //     dispatch(commentError());
+  //     console.log(error?.response?.data);
+  //   }
+  // };
+
+
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -518,23 +570,18 @@ function Chat({ socket }) {
                   secondaryColor="black"
                 />
               )}
-
-              <form className="flex bg-[#BED7F8] h-12 items-center p-2 m-3 mt-3 rounded-lg">
-                <input
-                  type="text"
-                  placeholder="Enter message"
-                  value={message}
-                  onChange={typingHandler}
-                  className="w-full h-10 rounded-lg p-5 border"
-                  required
-                />
-                <button>
-                  <i
-                    className="fa-solid fa-paper-plane fa-xl p-2 cursor-pointer hover:text-slate-400"
-                    onClick={sendMessage}
-                  ></i>
-                </button>
-              </form>
+                <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
+                  <div className="flex items-center w-[90%]">
+                  <InputEmoji
+                  value={comment}
+                  onChange={recalculate}
+                  cleanOnEnter
+                  onEnter={sendMessage}
+                  maxLength={max}
+                  placeholder="Type a message"/>
+                  </div>
+                  <p className="w-[10%] md:text-center">{textAreaCount}</p>
+                </div>
             </div>
           ) : (
             <div className="flex m-auto items-center">
@@ -728,20 +775,13 @@ function Chat({ socket }) {
                 />
               )}
               <form className="flex bg-[#BED7F8] h-12 items-center p-2 m-3 mt-3 rounded-lg">
-                <input
-                  type="text"
-                  placeholder="Enter message"
+                <InputEmoji
                   value={message}
+                  className="h-full"
                   onChange={typingHandler}
-                  className="w-full h-full rounded-lg p-5 border"
-                  required
-                />
-                <button>
-                  <i
-                    className="fa-solid fa-paper-plane fa-xl p-2 cursor-pointer hover:text-slate-400"
-                    onClick={sendMessage}
-                  ></i>
-                </button>
+                  cleanOnEnter
+                  onEnter={sendMessage}
+                  placeholder="Type a message"/>
               </form>
             </div>
           )}
