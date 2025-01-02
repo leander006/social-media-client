@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import Split from "./Split"
 function SearchFreind({ search, setSearch }) {
   const navigate = useNavigate();
   return (
@@ -17,7 +17,7 @@ function SearchFreind({ search, setSearch }) {
         />
       </Link>
       <div className="ml-2">
-        <div className="name">{search.username}</div>
+        <div className="name">{Split(search.username)}</div>
       </div>
     </div>
   );

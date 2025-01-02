@@ -57,8 +57,8 @@ function Chat({ socket }) {
   const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [comment, setComment] = useState("");
-  const [textAreaCount, setTextAreaCount] = useState("0/45");
-  const max = 45;
+  const [textAreaCount, setTextAreaCount] = useState("0/100");
+  const max = 100;
 
   useEffect(() => {
     socket.emit("setup", user);
@@ -129,24 +129,6 @@ function Chat({ socket }) {
     // eslint-disable-next-line
   }, [currentChat]);
 
-  // const sendMessage = async (text) => {
-  //   setMessage(text);
-  //   socket.emit("stop typing", currentChat._id);
-  //   try {
-  //     dispatch(messageStart());
-  //     const { data } = await axios.post(
-  //       `${BASE_URL}/api/message/` + currentChat._id,
-  //       { content: message },
-  //       config
-  //     );
-  //     socket.emit("send_message", data);
-  //     dispatch(messageSuccess([...allmessage, data]));
-  //     setMessage("");
-  //   } catch (error) {
-  //     dispatch(messageError());
-  //     console.log(error?.response?.data);
-  //   }
-  // };
 
   const handleDelete = async (me) => {
     try {
@@ -570,8 +552,8 @@ function Chat({ socket }) {
                   secondaryColor="black"
                 />
               )}
-                <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
-                  <div className="flex items-center w-[90%]">
+            <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
+                  <div className="flex items-center w-[80%]">
                   <InputEmoji
                   value={comment}
                   onChange={recalculate}
@@ -580,7 +562,7 @@ function Chat({ socket }) {
                   maxLength={max}
                   placeholder="Type a message"/>
                   </div>
-                  <p className="w-[10%] md:text-center">{textAreaCount}</p>
+                  <p className="w-[20%] md:text-center">{textAreaCount}</p>
                 </div>
             </div>
           ) : (
@@ -774,15 +756,18 @@ function Chat({ socket }) {
                   secondaryColor="black"
                 />
               )}
-              <form className="flex bg-[#BED7F8] h-12 items-center p-2 m-3 mt-3 rounded-lg">
-                <InputEmoji
-                  value={message}
-                  className="h-full"
-                  onChange={typingHandler}
+            <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
+                  <div className="flex items-center w-[80%]">
+                  <InputEmoji
+                  value={comment}
+                  onChange={recalculate}
                   cleanOnEnter
                   onEnter={sendMessage}
+                  maxLength={max}
                   placeholder="Type a message"/>
-              </form>
+                  </div>
+                  <p className="w-[20%] md:text-center">{textAreaCount}</p>
+                </div>
             </div>
           )}
         </div>

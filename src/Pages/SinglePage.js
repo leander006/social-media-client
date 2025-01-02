@@ -185,6 +185,7 @@ function SinglePage({ socket }) {
       <div className="flex w-screen pt-9 h-screen mx-auto">
         {loading ? (
           <div className="flex flex-col py-4 lg:items-center lg:px-6 lg:justify-center lg:p-4 lg:flex-row w-full ">
+            <i onClick={() => navigate(-1)} class="flex lg:hidden fa-solid fa-arrow-left text-white ml-2 cursor-pointer"></i>
             <div className="hidden lg:flex lg:h-5/6 lg:border border-[#BED7F8] border-x-0 border-y-0 ">
               <img
                 className="lg:w-fit h-full w-screen lg:object-cover object-contain"

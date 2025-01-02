@@ -13,6 +13,7 @@ import {
 } from "../redux/Slice/notificationSlice";
 import Notifcations from "./Notifcations";
 import { BASE_URL } from "../services/helper";
+import { imageSuccess } from "../redux/Slice/imageSlice";
 
 function Navbar({ socket }) {
   const [searched, setSearched] = useState("");
@@ -21,10 +22,14 @@ function Navbar({ socket }) {
   const [notify, setNotify] = useState(false);
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-
+  const [display, setDisplay] = useState(false)
   const { currentUser } = useSelector((state) => state.user);
   const { allNoti } = useSelector((state) => state.notification);
-
+  const { url } = useSelector((state) => state.image);
+  const [fileInputState, setFileInputState] = useState("");
+  const [previewSource, setPreviewSource] = useState("");
+  const [selectedImg, setSelectedImg] = useState("");
+  
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -58,6 +63,23 @@ function Navbar({ socket }) {
     navigate("/");
   };
 
+
+  const handleFileInputChange = (e) => {
+    const file = e.target.files[0];
+    previewFile(file);
+    setSelectedImg(file);
+    setFileInputState(e.target.value);
+  };
+
+  const previewFile = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPreviewSource(reader.result);
+    };
+  };
+
+
   const handleSearch = async (query) => {
     setSearched(query);
     if (!query) {
@@ -73,6 +95,10 @@ function Navbar({ socket }) {
       console.log(error);
     }
   };
+
+  const next = async() =>{
+    dispatch(imageSuccess(selectedImg));
+  }
 
   const current = currentUser?.others ? currentUser?.others : currentUser;
 
@@ -120,9 +146,9 @@ function Navbar({ socket }) {
             </Link>
           </div>
           <div className="mr-2 text-[#BED7F8] cursor-pointer">
-            <Link to="/write">
+            <div onClick={ () =>setDisplay(true)}>
               <i className="fa-solid fa-xl fa-square-plus"></i>
-            </Link>
+            </div>
           </div>
           <div className="cursor-pointer" onClick={(e) => setVisible(!visible)}>
             {/* <img src="" alt="" srcset="" /> */}
@@ -204,6 +230,59 @@ function Navbar({ socket }) {
           )}
         </div>
       </div>
+
+      {
+        display && 
+        <div className="flex flex-col items-center justify-center h-screen">
+          <div className={!previewSource?"bg-[#435280] shadow-lg  w-[93%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-between rounded-lg text-center text-white":"shadow-lg  w-[93%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-center rounded-lg text-center text-white"}>
+          {previewSource &&
+          <div className="flex w-full justify-between text-white mb-1">
+              <div onClick={() =>{setPreviewSource("") ;setFileInputState("")}}>
+                <i className="fa-solid fa-arrow-left fa-xl cursor-pointer"></i>
+              </div>
+              <div onClick={next}>
+                 <h1 className=" cursor-pointer text-xl">Next</h1> 
+              </div>
+          </div>
+          }
+          {
+            !previewSource && 
+            <div onClick={() => setDisplay(!display)} className="flex w-full justify-start text-white ml-3">
+                <i className="fa-solid fa-xmark text-2xl"></i>
+            </div>
+          }
+            {
+            !previewSource ?<div  className="flex flex-col">
+              <i className="fa-solid fa-2xl fa-photo-film cursor-pointer mb-2"></i>
+              <label
+                className="mt-4 bg-[#798abe] p-2 rounded-lg cursor-pointer"
+                htmlFor="forFile"
+              >
+                Select from device
+              </label>
+            
+            <input
+              type="file"
+              id="forFile"
+              accept="image/png , image/jpg, image/jpeg ,video/mp4"
+              value={fileInputState}
+              onChange={handleFileInputChange}
+              style={{ display: "none" }}bvchchchghg
+              name="file"
+            />
+            </div>:
+            <img
+                className="h-full w-full object-cover"
+                src={previewSource}
+                alt="write"
+              />
+          }
+          <div>
+            </div>
+          </div> 
+          
+        </div>
+      }
     </div>
   );
 }
