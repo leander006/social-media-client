@@ -6,25 +6,18 @@ import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
 import Cropper from "react-easy-crop";
+import { useSelector } from "react-redux";
+import InputEmoji from 'react-input-emoji'
 
 function Write({ socket }) {
   const navigate = useNavigate();
   const [caption, setCaption] = useState("");
-  const [selectedImg, setSelectedImg] = useState("");
-  const [previewSource, setPreviewSource] = useState("");
   const [profile, setProfile] = useState();
   const [loading, setLoading] = useState(false);
-  const [fileInputState, setFileInputState] = useState("");
-  const [textAreaCount, setTextAreaCount] = useState("0/180");
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState(0);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const { imgUrl,imagePreview } = useSelector((state) => state.image);
 
-  const cropComplete = (croppedArea, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  };
 
+  const [textAreaCount, setTextAreaCount] = useState("0/108");
   const max = 180;
   const config = {
     headers: {
@@ -32,26 +25,11 @@ function Write({ socket }) {
       Authorization: `Bearer ${localStorage?.getItem("token")}`,
     },
   };
-  const handleFileInputChange = (e) => {
-    const file = e.target.files[0];
-    previewFile(file);
-    setSelectedImg(file);
-    setFileInputState(e.target.value);
-  };
 
-  const previewFile = (file) => {
+  const handleImage = () => {
+    if (!imgUrl) return;
     const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      setPreviewSource(reader.result);
-    };
-  };
-
-  const handleImage = (e) => {
-    e.preventDefault();
-    if (!selectedImg) return;
-    const reader = new FileReader();
-    reader.readAsDataURL(selectedImg);
+    reader.readAsDataURL(imgUrl);
     reader.onloadend = () => {
       uploadImage(reader.result);
     };
@@ -68,8 +46,6 @@ function Write({ socket }) {
         { data: base64EncodedImage },
         config
       );
-      setFileInputState("");
-      setPreviewSource("");
       setProfile(data);
       setLoading(false);
       toast.success("Image uploaded");
@@ -79,25 +55,26 @@ function Write({ socket }) {
     }
   };
 
-  const recalculate = (e) => {
-    const currentLength = e.target.value.length;
+  const recalculate = (text) => {
+    const currentLength = text.length;
+    console.log(currentLength);
+    console.log('enter in recalculate', text)
     setTextAreaCount(`${currentLength}/${max}`);
-    setCaption(e.target.value);
+    setCaption(text)
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (text) => {
     try {
+      handleImage();
       const { data } = await axios.post(
         `${BASE_URL}/api/post`,
-        { content: profile, caption: caption },
+        { content: profile, caption: text },
         config
       );
       navigate("/home");
       localStorage.setItem("data", JSON.stringify(data));
       toast.success("Post created");
     } catch (error) {
-      console.log(error?.response?.data.message);
+      console.log(error);
     }
   };
 
@@ -124,68 +101,29 @@ function Write({ socket }) {
             </div>
           </div>
           <div className="flex flex-col justify-center items-center">
-            {!loading ? (
               <img
                 className="h-28 md:h-64 lg:h-72 xl:h-80 object-contain"
                 src={
-                  previewSource
-                    ? previewSource
-                    : profile?.url
-                    ? profile?.url
-                    : "/images/noImage.png"
+                  imagePreview
                 }
                 alt="write"
               />
-            ) : (
-              <SpinnerCircular
-                size="90"
-                className="bg-[#2D3B58] w-full flex items-center xl:h-80  md:h-64 h-28 lg:h-72 flex-col  mx-auto"
-                thickness="100"
-                speed="600"
-                color="white"
-                secondaryColor="black"
-              />
-            )}
-            {!selectedImg && (
-              <label
-                className="bg-blue-600 active:bg-blue-400 cursor-pointer mt-2 text-white p-1 rounded"
-                htmlFor="forFile"
-              >
-                Upload
-              </label>
-            )}
-            <input
-              type="file"
-              id="forFile"
-              accept="image/png , image/jpg, image/jpeg ,video/mp4"
-              value={fileInputState}
-              onChange={handleFileInputChange}
-              style={{ display: "none" }}
-              name="file"
-            />
           </div>
-          {selectedImg && !profile && (
-            <div className="flex justify-center">
-              <h1
-                className="bg-blue-600 active:bg-blue-400 cursor-pointer mt-2 text-white p-1 rounded"
-                onClick={handleImage}
-              >
-                Upload image
-              </h1>
-            </div>
-          )}
           <div className="bottom">
             <div className="p-2">
               <h1 className="text-[#8aaaeb] ">Caption</h1>
-              <textarea
-                className="bg-[#2D3B58] border-b w-full mt-2 outline-none"
-                type="text"
-                value={caption}
-                maxLength={max}
-                onChange={recalculate}
-                required
-              ></textarea>
-              <p className="text-end mr-2">{textAreaCount}</p>
+              <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
+                  <div className="flex items-center w-[80%]">
+                  <InputEmoji
+                  value={caption}
+                  onChange={recalculate}
+                  cleanOnEnter
+                  onEnter={handleSubmit}
+                  maxLength={max}
+                  placeholder="Type a message"/>
+                  </div>
+                  <p className="w-[20%] md:text-center">{textAreaCount}</p>
+                </div>
             </div>
           </div>
         </form>

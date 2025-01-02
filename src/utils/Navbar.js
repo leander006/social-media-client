@@ -13,7 +13,7 @@ import {
 } from "../redux/Slice/notificationSlice";
 import Notifcations from "./Notifcations";
 import { BASE_URL } from "../services/helper";
-import { imageSuccess } from "../redux/Slice/imageSlice";
+import { imageSuccess, setImagePreview, setImgUrl } from "../redux/Slice/imageSlice";
 
 function Navbar({ socket }) {
   const [searched, setSearched] = useState("");
@@ -25,7 +25,6 @@ function Navbar({ socket }) {
   const [display, setDisplay] = useState(false)
   const { currentUser } = useSelector((state) => state.user);
   const { allNoti } = useSelector((state) => state.notification);
-  const { url } = useSelector((state) => state.image);
   const [fileInputState, setFileInputState] = useState("");
   const [previewSource, setPreviewSource] = useState("");
   const [selectedImg, setSelectedImg] = useState("");
@@ -36,6 +35,7 @@ function Navbar({ socket }) {
       Authorization: `Bearer ${localStorage?.getItem("token")}`,
     },
   };
+
 
   useEffect(() => {
     const getNotifications = async () => {
@@ -97,7 +97,9 @@ function Navbar({ socket }) {
   };
 
   const next = async() =>{
-    dispatch(imageSuccess(selectedImg));
+    dispatch(setImgUrl(selectedImg));
+    dispatch(setImagePreview(previewSource));
+    navigate("/write")
   }
 
   const current = currentUser?.others ? currentUser?.others : currentUser;
@@ -234,7 +236,7 @@ function Navbar({ socket }) {
       {
         display && 
         <div className="flex flex-col items-center justify-center h-screen">
-          <div className={!previewSource?"bg-[#435280] shadow-lg  w-[93%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-between rounded-lg text-center text-white":"shadow-lg  w-[93%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-center rounded-lg text-center text-white"}>
+          <div className={!previewSource?"bg-[#435280] shadow-lg  w-[99%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-between rounded-lg text-center text-white":"shadow-lg  w-[93%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-center rounded-lg text-center text-white"}>
           {previewSource &&
           <div className="flex w-full justify-between text-white mb-1">
               <div onClick={() =>{setPreviewSource("") ;setFileInputState("")}}>
@@ -248,12 +250,12 @@ function Navbar({ socket }) {
           {
             !previewSource && 
             <div onClick={() => setDisplay(!display)} className="flex w-full justify-start text-white ml-3">
-                <i className="fa-solid fa-xmark text-2xl"></i>
+                <i className="fa-solid fa-xmark text-2xl cursor-pointer"></i>
             </div>
           }
             {
             !previewSource ?<div  className="flex flex-col">
-              <i className="fa-solid fa-2xl fa-photo-film cursor-pointer mb-2"></i>
+              <i className="fa-solid fa-2xl fa-photo-film cursor-pointer mb-4"></i>
               <label
                 className="mt-4 bg-[#798abe] p-2 rounded-lg cursor-pointer"
                 htmlFor="forFile"
