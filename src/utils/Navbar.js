@@ -106,7 +106,7 @@ function Navbar({ socket }) {
 
   return (
     <div className="container fixed top-0 z-50 ">
-      <div className="flex justify-between md:justify-evenly bg-[#455175] w-screen">
+      <div className="flex justify-between md:justify-evenly bg-[#2f3549] w-screen">
         <div className="font-bold p-2 text-white">
           <Link to="/home">
             <h1>InstaWave</h1>
@@ -240,10 +240,10 @@ function Navbar({ socket }) {
           {previewSource &&
           <div className="flex w-full justify-between text-white mb-1">
               <div onClick={() =>{setPreviewSource("") ;setFileInputState("")}}>
-                <i className="fa-solid fa-arrow-left fa-xl cursor-pointer"></i>
+                <i className="fa-solid fa-arrow-left  bg-[#385bc4] p-4 rounded-md fa-xl cursor-pointer"></i>
               </div>
               <div onClick={next}>
-                 <h1 className=" cursor-pointer text-xl">Next</h1> 
+                 <h1 className=" cursor-pointer bg-[#385bc4] p-1 rounded-md text-xl">Next</h1> 
               </div>
           </div>
           }

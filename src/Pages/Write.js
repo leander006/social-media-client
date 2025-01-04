@@ -17,42 +17,13 @@ function Write({ socket }) {
   const { imgUrl,imagePreview } = useSelector((state) => state.image);
 
 
-  const [textAreaCount, setTextAreaCount] = useState("0/108");
+  const [textAreaCount, setTextAreaCount] = useState("0/180");
   const max = 180;
   const config = {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage?.getItem("token")}`,
     },
-  };
-
-  const handleImage = () => {
-    if (!imgUrl) return;
-    const reader = new FileReader();
-    reader.readAsDataURL(imgUrl);
-    reader.onloadend = () => {
-      uploadImage(reader.result);
-    };
-    reader.onerror = () => {
-      console.error("AHHHHHHHH!!");
-    };
-  };
-
-  const uploadImage = async (base64EncodedImage) => {
-    try {
-      setLoading(true);
-      const { data } = await axios.post(
-        `${BASE_URL}/api/post/postUpload/postImg`,
-        { data: base64EncodedImage },
-        config
-      );
-      setProfile(data);
-      setLoading(false);
-      toast.success("Image uploaded");
-    } catch (err) {
-      console.error(err);
-      toast.error(err?.response?.data?.message);
-    }
   };
 
   const recalculate = (text) => {
@@ -62,21 +33,64 @@ function Write({ socket }) {
     setTextAreaCount(`${currentLength}/${max}`);
     setCaption(text)
   };
-  const handleSubmit = async (text) => {
-    try {
-      handleImage();
-      const { data } = await axios.post(
-        `${BASE_URL}/api/post`,
-        { content: profile, caption: text },
-        config
-      );
-      navigate("/home");
-      localStorage.setItem("data", JSON.stringify(data));
-      toast.success("Post created");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
+const handleImage = async () => {
+  return new Promise((resolve, reject) => {
+    if (!imgUrl) return reject("No image provided");
+    const reader = new FileReader();
+    reader.readAsDataURL(imgUrl);
+    reader.onloadend = () => {
+      resolve(reader.result);
+    };
+    reader.onerror = () => {
+      reject("Error reading file");
+    };
+  });
+};
+
+const uploadImage = async (base64EncodedImage) => {
+  try {
+    const { data } = await axios.post(
+      `${BASE_URL}/api/post/postUpload/postImg`,
+      { data: base64EncodedImage },
+      config
+    );
+    setProfile(data);
+    return data;
+  } catch (err) {
+    setLoading(false);
+    console.error(err);
+    toast.error("An error occurred during submission");
+    throw err; 
+  }
+};
+
+const handleSubmit = async (text) => {
+  try {
+    
+    if (!imgUrl) return;
+    setLoading(true);
+
+    const base64Image = await handleImage();
+
+    const uploadedImageData = await uploadImage(base64Image);
+
+    const { data } = await axios.post(
+      `${BASE_URL}/api/post`,
+      { content: uploadedImageData, caption: text },
+      config
+    );
+
+    setLoading(false);
+    navigate("/home");
+    localStorage.setItem("data", JSON.stringify(data));
+    toast.success("Post created");
+  } catch (error) {
+    console.error(error);
+    toast.error("An error occurred during submission");
+  }
+};
+
 
   return (
     <>
@@ -94,12 +108,19 @@ function Write({ socket }) {
               ></i>
               <h1 className="font-bold  text-xl text-[#8aaaeb]">Post</h1>
             </div>
-            <div>
-              <button type="submit">
-                <i className="fa-solid fa-2xl cursor-pointer fa-check text-[#8aaaeb]"></i>
-              </button>
-            </div>
           </div>
+          {
+            loading ?
+            <SpinnerCircular
+            size="90"
+            className="bg-[#2D3B58] w-full flex items-center mt-12 flex-col  mx-auto"
+            thickness="100"
+            speed="600"
+            color="white"
+            secondaryColor="black"
+          />
+            :
+            <>
           <div className="flex flex-col justify-center items-center">
               <img
                 className="h-28 md:h-64 lg:h-72 xl:h-80 object-contain"
@@ -111,21 +132,27 @@ function Write({ socket }) {
           </div>
           <div className="bottom">
             <div className="p-2">
-              <h1 className="text-[#8aaaeb] ">Caption</h1>
+              <h1 className="text-[#8aaaeb] my-4">Caption</h1>
               <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
-                  <div className="flex items-center w-[80%]">
-                  <InputEmoji
+              <div
+        className="w-[80%] max-w-sm sm:max-w-md lg:max-w-lg"
+
+      >
+        <InputEmoji
                   value={caption}
                   onChange={recalculate}
                   cleanOnEnter
                   onEnter={handleSubmit}
                   maxLength={max}
-                  placeholder="Type a message"/>
-                  </div>
+          placeholder="Write a caption..."
+        />
+      </div>
                   <p className="w-[20%] md:text-center">{textAreaCount}</p>
                 </div>
             </div>
           </div>
+            </>
+          }
         </form>
       </div>
     </>
