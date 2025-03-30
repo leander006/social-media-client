@@ -67,31 +67,7 @@ function Chat({ socket }) {
     socket.on("stop typing", () => setIsTyping(false));
     // eslint-disable-next-line
   }, []);
-
-  const typingHandler = (text) => {
-    setMessage(text);
-
-    if (!socketConnected) return;
-
-    if (!typing) {
-      setTyping(true);
-      socket.emit("typing", currentChat._id);
-    }
-    let lastTypingTime = new Date().getTime();
-    var timerLength = 3000;
-
-    setTimeout(() => {
-      var timenow = new Date().getTime();
-      var timeDiff = timenow - lastTypingTime;
-      if (timeDiff >= timerLength && typing) {
-        socket.emit("stop typing", currentChat._id);
-        setTyping(false);
-      }
-    }, timerLength);
-  };
-
-  //-------//
-
+  
   useEffect(() => {
     const getChat = async () => {
       try {
@@ -310,8 +286,6 @@ function Chat({ socket }) {
 
   const recalculate = (text) => {
     const currentLength = text.length;
-    console.log(currentLength);
-    console.log('enter in recalculate', text)
     setTextAreaCount(`${currentLength}/${max}`);
     setMessage(text)
   };
@@ -338,28 +312,6 @@ function Chat({ socket }) {
       console.log(error?.response?.data);
     }
   };
-
-  
-  // const handleComment = async (text) => {
-  //   try {
-  //     setComment(text);
-  //     dispatch(commentStart());
-  //     console.log("comment "+comment);
-      
-  //     const { data } = await axios.post(
-  //       `${BASE_URL}/api/comment/${postId}`,
-  //       { content: comment, modelType: "Post" },
-  //       config
-  //     );
-  //     toast.success("Comment added successfully");
-  //     dispatch(commentSuccess([data, ...allComment]));
-  //     setComment("");
-  //   } catch (error) {
-  //     dispatch(commentError());
-  //     console.log(error?.response?.data);
-  //   }
-  // };
-
 
 
   useEffect(() => {

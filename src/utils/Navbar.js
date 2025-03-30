@@ -269,7 +269,7 @@ function Navbar({ socket }) {
               accept="image/png , image/jpg, image/jpeg ,video/mp4"
               value={fileInputState}
               onChange={handleFileInputChange}
-              style={{ display: "none" }}bvchchchghg
+              style={{ display: "none" }}
               name="file"
             />
             </div>:

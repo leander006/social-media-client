@@ -23,3 +23,19 @@
 ::-webkit-scrollbar-thumb:hover {
     background: #547bca;
 }
+
+/* Styles for the input container */
+.input-container {
+    width: 100%;
+    max-width: 100px; /* Adjust this for larger screens */
+    margin: 0 auto;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+  
+  
+/* Target the emoji picker dropdown container */
+.react-input-emoji--wrapper {
+      width: 240px;  
+}
+      

@@ -114,7 +114,7 @@ function ExploreMore({ explore }) {
 
   return (
     <>
-      <div className="flex flex-col w-fit bg-[#38487a] hover:scale-105 duration-150 px-1.5 border my-3 rounded-lg">
+      <div className="flex flex-col w-fit bg-[#38487a] hover:scale-95 duration-150 px-1.5 border my-3 rounded-lg">
         <div className="flex p-1 items-center">
           <img
             src={
