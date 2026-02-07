@@ -292,7 +292,7 @@ function Chat({ socket }) {
 
   const sendMessage = async (text) => {
     setMessage(text);
-    if (text.length == 0) {
+    if (text.length === 0) {
       toast.error("Please enter some message")
       return;
     }

@@ -39,6 +39,7 @@ function App() {
     };
 
     fetchUser();
+    // eslint-disable-next-line
   }, []);
 
 
