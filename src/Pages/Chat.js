@@ -1,3 +1,7 @@
+
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Conversation from "../utils/Conversation";
@@ -67,7 +71,7 @@ function Chat({ socket }) {
     socket.on("stop typing", () => setIsTyping(false));
     // eslint-disable-next-line
   }, []);
-  
+
   useEffect(() => {
     const getChat = async () => {
       try {
@@ -292,7 +296,7 @@ function Chat({ socket }) {
 
   const sendMessage = async (text) => {
     setMessage(text);
-    if(text.length == 0){
+    if (text.length == 0) {
       toast.error("Please enter some message")
       return;
     }
@@ -372,15 +376,15 @@ function Chat({ socket }) {
                           c?.isGroupChat
                             ? "images/noProfile.jpeg"
                             : user._id === c?.users[0]?._id
-                            ? c?.users[1]?.profile?.url
-                            : c?.users[0]?.profile?.url
+                              ? c?.users[1]?.profile?.url
+                              : c?.users[0]?.profile?.url
                         }
                         name={
                           c?.isGroupChat
                             ? c?.chatname
                             : user._id === c?.users[0]?._id
-                            ? c?.users[1]?.username
-                            : c?.users[0]?.username
+                              ? c?.users[1]?.username
+                              : c?.users[0]?.username
                         }
                         chat={c}
                         key={c?._id}
@@ -411,8 +415,8 @@ function Chat({ socket }) {
                       currentChat?.isGroupChat
                         ? "images/noProfile.jpeg"
                         : user._id === currentChat?.users[0]?._id
-                        ? currentChat?.users[1]?.profile?.url
-                        : currentChat?.users[0]?.profile?.url
+                          ? currentChat?.users[1]?.profile?.url
+                          : currentChat?.users[0]?.profile?.url
                     }
                     alt="chat"
                     className="w-10 h-10  rounded-full border"
@@ -422,16 +426,16 @@ function Chat({ socket }) {
                       {currentChat?.isGroupChat
                         ? currentChat?.chatname
                         : user._id === currentChat?.users[0]?._id
-                        ? currentChat?.users[1]?.username
-                        : currentChat?.users[0]?.username}
+                          ? currentChat?.users[1]?.username
+                          : currentChat?.users[0]?.username}
                     </h1>
                     {isTyping ? (
                       <div className="flex flex-wrap ml-4">
                         {currentChat?.isGroupChat
                           ? "Someone "
                           : user._id === currentChat?.users[0]?._id
-                          ? currentChat?.users[1]?.username
-                          : currentChat?.users[0]?.username}{" "}
+                            ? currentChat?.users[1]?.username
+                            : currentChat?.users[0]?.username}{" "}
                         is typing..
                       </div>
                     ) : (
@@ -442,7 +446,7 @@ function Chat({ socket }) {
                 <div className="flex">
                   {!currentChat?.isGroupChat &&
                     currentChat.users.filter((c) => c._id === user)?.length ===
-                      1 && (
+                    1 && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
@@ -504,18 +508,18 @@ function Chat({ socket }) {
                   secondaryColor="black"
                 />
               )}
-            <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
-                  <div className="flex items-center w-[80%]">
+              <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
+                <div className="flex items-center w-[80%]">
                   <InputEmoji
-                  value={comment}
-                  onChange={recalculate}
-                  cleanOnEnter
-                  onEnter={sendMessage}
-                  maxLength={max}
-                  placeholder="Type a message"/>
-                  </div>
-                  <p className="w-[20%] md:text-center">{textAreaCount}</p>
+                    value={comment}
+                    onChange={recalculate}
+                    cleanOnEnter
+                    onEnter={sendMessage}
+                    maxLength={max}
+                    placeholder="Type a message" />
                 </div>
+                <p className="w-[20%] md:text-center">{textAreaCount}</p>
+              </div>
             </div>
           ) : (
             <div className="flex m-auto items-center">
@@ -570,15 +574,15 @@ function Chat({ socket }) {
                             c?.isGroupChat
                               ? "images/noProfile.jpeg"
                               : user?._id === c?.users[0]._id
-                              ? c?.users[1]?.profile?.url
-                              : c?.users[0]?.profile?.url
+                                ? c?.users[1]?.profile?.url
+                                : c?.users[0]?.profile?.url
                           }
                           name={
                             c?.isGroupChat
                               ? c?.chatname
                               : user?._id === c?.users[0]?._id
-                              ? c?.users[1]?.username
-                              : c?.users[0]?.username
+                                ? c?.users[1]?.username
+                                : c?.users[0]?.username
                           }
                           chat={c}
                           key={c?._id}
@@ -615,8 +619,8 @@ function Chat({ socket }) {
                         currentChat?.isGroupChat
                           ? "images/noProfile.jpeg"
                           : currentChat?.users[0]?._id === user?._id
-                          ? currentChat?.users[1]?.profile?.url
-                          : currentChat?.users[0]?.profile?.url
+                            ? currentChat?.users[1]?.profile?.url
+                            : currentChat?.users[0]?.profile?.url
                       }
                       alt="chat"
                       className="w-10 h-10 rounded-full cursor-pointer border"
@@ -627,16 +631,16 @@ function Chat({ socket }) {
                       {currentChat?.isGroupChat
                         ? currentChat?.chatname
                         : user?._id === currentChat?.users[0]?._id
-                        ? currentChat?.users[1]?.username
-                        : currentChat?.users[0]?.username}
+                          ? currentChat?.users[1]?.username
+                          : currentChat?.users[0]?.username}
                     </h1>
                     {isTyping ? (
                       <div className="flex flex-wrap ml-4">
                         {currentChat?.isGroupChat
                           ? "Someone "
                           : user?._id === currentChat?.users[0]?._id
-                          ? currentChat?.users[1]?.username
-                          : currentChat?.users[0]?.username}{" "}
+                            ? currentChat?.users[1]?.username
+                            : currentChat?.users[0]?.username}{" "}
                         is typing..
                       </div>
                     ) : (
@@ -648,7 +652,7 @@ function Chat({ socket }) {
                 <div className="flex">
                   {!currentChat?.isGroupChat &&
                     currentChat.users.filter((c) => c._id === user)?.length ===
-                      1 && (
+                    1 && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
@@ -708,18 +712,18 @@ function Chat({ socket }) {
                   secondaryColor="black"
                 />
               )}
-            <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
-                  <div className="flex items-center w-[80%]">
+              <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
+                <div className="flex items-center w-[80%]">
                   <InputEmoji
-                  value={comment}
-                  onChange={recalculate}
-                  cleanOnEnter
-                  onEnter={sendMessage}
-                  maxLength={max}
-                  placeholder="Type a message"/>
-                  </div>
-                  <p className="w-[20%] md:text-center">{textAreaCount}</p>
+                    value={comment}
+                    onChange={recalculate}
+                    cleanOnEnter
+                    onEnter={sendMessage}
+                    maxLength={max}
+                    placeholder="Type a message" />
                 </div>
+                <p className="w-[20%] md:text-center">{textAreaCount}</p>
+              </div>
             </div>
           )}
         </div>

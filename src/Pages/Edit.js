@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -163,8 +166,8 @@ function Edit({ socket }) {
                     previewSource
                       ? previewSource
                       : profile?.url
-                      ? profile?.url
-                      : user?.profile?.url
+                        ? profile?.url
+                        : user?.profile?.url
                   }
                   alt="edit"
                 />

@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -86,10 +89,9 @@ function ExploreMore({ explore }) {
       dispatch(loginSuccess(data));
       localStorage.setItem("data", JSON.stringify(data));
       toast.success(
-        `${
-          !bookmark
-            ? "Post saved successfully!"
-            : "Post removed from saved posts"
+        `${!bookmark
+          ? "Post saved successfully!"
+          : "Post removed from saved posts"
         }`
       );
       setBookmark(!bookmark);

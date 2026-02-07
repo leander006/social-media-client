@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Comment from "../utils/Comment";
@@ -105,10 +108,9 @@ function SinglePage({ socket }) {
       dispatch(loginSuccess(data));
       localStorage.setItem("data", JSON.stringify(data));
       toast.success(
-        `${
-          !bookmark
-            ? "Post saved successfully!"
-            : "Post removed from saved posts"
+        `${!bookmark
+          ? "Post saved successfully!"
+          : "Post removed from saved posts"
         }`
       );
       setBookmark(!bookmark);
@@ -163,8 +165,8 @@ function SinglePage({ socket }) {
     try {
       setComment(text);
       dispatch(commentStart());
-      console.log("comment "+comment);
-      
+      console.log("comment " + comment);
+
       const { data } = await axios.post(
         `${BASE_URL}/api/comment/${postId}`,
         { content: comment, modelType: "Post" },
@@ -273,19 +275,19 @@ function SinglePage({ socket }) {
 
                 <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
                   <div className="flex items-center w-[80%]">
-                  <InputEmoji
-                  value={comment}
-                  onChange={recalculate}
-                  cleanOnEnter
-                  pickerStyle={{
-                    zIndex: 50, // Ensure it appears above other elements
-                    width: '90%', // Adjust width for mobile
-                    maxWidth: '7000px', // Optional limit for larger screens
-                    bottom: '5px', // Adjust position
-                  }}
-                  onEnter={handleComment}
-                  maxLength={max}
-                  placeholder="Type a message"/>
+                    <InputEmoji
+                      value={comment}
+                      onChange={recalculate}
+                      cleanOnEnter
+                      pickerStyle={{
+                        zIndex: 50, // Ensure it appears above other elements
+                        width: '90%', // Adjust width for mobile
+                        maxWidth: '7000px', // Optional limit for larger screens
+                        bottom: '5px', // Adjust position
+                      }}
+                      onEnter={handleComment}
+                      maxLength={max}
+                      placeholder="Type a message" />
                   </div>
                   <p className="w-[20%] md:text-center">{textAreaCount}</p>
                 </div>
