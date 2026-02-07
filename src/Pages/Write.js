@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../utils/Navbar";
@@ -8,14 +5,13 @@ import toast from "react-hot-toast";
 import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
-import Cropper from "react-easy-crop";
 import { useSelector } from "react-redux";
 import InputEmoji from 'react-input-emoji'
 
 function Write({ socket }) {
   const navigate = useNavigate();
   const [caption, setCaption] = useState("");
-  const [profile, setProfile] = useState();
+  //const [profile, setProfile] = useState();
   const [loading, setLoading] = useState(false);
   const { imgUrl, imagePreview } = useSelector((state) => state.image);
 
@@ -58,7 +54,7 @@ function Write({ socket }) {
         { data: base64EncodedImage },
         config
       );
-      setProfile(data);
+      //setProfile(data);
       return data;
     } catch (err) {
       setLoading(false);

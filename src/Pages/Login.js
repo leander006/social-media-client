@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import toast from "react-hot-toast";
@@ -32,6 +30,7 @@ function Login() {
       }
     };
     setUser();
+    // eslint-disable-next-line
   }, [data]);
 
   const handleSubmit = async (e) => {

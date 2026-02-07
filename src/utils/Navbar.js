@@ -13,7 +13,7 @@ import {
 } from "../redux/Slice/notificationSlice";
 import Notifcations from "./Notifcations";
 import { BASE_URL } from "../services/helper";
-import { imageSuccess, setImagePreview, setImgUrl } from "../redux/Slice/imageSlice";
+import { setImagePreview, setImgUrl } from "../redux/Slice/imageSlice";
 
 function Navbar({ socket }) {
   const [searched, setSearched] = useState("");
@@ -28,7 +28,7 @@ function Navbar({ socket }) {
   const [fileInputState, setFileInputState] = useState("");
   const [previewSource, setPreviewSource] = useState("");
   const [selectedImg, setSelectedImg] = useState("");
-  
+
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -96,7 +96,7 @@ function Navbar({ socket }) {
     }
   };
 
-  const next = async() =>{
+  const next = async () => {
     dispatch(setImgUrl(selectedImg));
     dispatch(setImagePreview(previewSource));
     navigate("/write")
@@ -148,7 +148,7 @@ function Navbar({ socket }) {
             </Link>
           </div>
           <div className="mr-2 text-[#BED7F8] cursor-pointer">
-            <div onClick={ () =>setDisplay(true)}>
+            <div onClick={() => setDisplay(true)}>
               <i className="fa-solid fa-xl fa-square-plus"></i>
             </div>
           </div>
@@ -234,55 +234,55 @@ function Navbar({ socket }) {
       </div>
 
       {
-        display && 
+        display &&
         <div className="flex flex-col items-center justify-center h-screen">
-          <div className={!previewSource?"bg-[#435280] shadow-lg  w-[99%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-between rounded-lg text-center text-white":"shadow-lg  w-[93%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-center rounded-lg text-center text-white"}>
-          {previewSource &&
-          <div className="flex w-full justify-between text-white mb-1">
-              <div onClick={() =>{setPreviewSource("") ;setFileInputState("")}}>
-                <i className="fa-solid fa-arrow-left  bg-[#385bc4] p-4 rounded-md fa-xl cursor-pointer"></i>
+          <div className={!previewSource ? "bg-[#435280] shadow-lg  w-[99%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-between rounded-lg text-center text-white" : "shadow-lg  w-[93%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-center rounded-lg text-center text-white"}>
+            {previewSource &&
+              <div className="flex w-full justify-between text-white mb-1">
+                <div onClick={() => { setPreviewSource(""); setFileInputState("") }}>
+                  <i className="fa-solid fa-arrow-left  bg-[#385bc4] p-4 rounded-md fa-xl cursor-pointer"></i>
+                </div>
+                <div onClick={next}>
+                  <h1 className=" cursor-pointer bg-[#385bc4] p-1 rounded-md text-xl">Next</h1>
+                </div>
               </div>
-              <div onClick={next}>
-                 <h1 className=" cursor-pointer bg-[#385bc4] p-1 rounded-md text-xl">Next</h1> 
-              </div>
-          </div>
-          }
-          {
-            !previewSource && 
-            <div onClick={() => setDisplay(!display)} className="flex w-full justify-start text-white ml-3">
-                <i className="fa-solid fa-xmark text-2xl cursor-pointer"></i>
-            </div>
-          }
+            }
             {
-            !previewSource ?<div  className="flex flex-col">
-              <i className="fa-solid fa-2xl fa-photo-film cursor-pointer mb-4"></i>
-              <label
-                className="mt-4 bg-[#798abe] p-2 rounded-lg cursor-pointer"
-                htmlFor="forFile"
-              >
-                Select from device
-              </label>
-            
-            <input
-              type="file"
-              id="forFile"
-              accept="image/png , image/jpg, image/jpeg ,video/mp4"
-              value={fileInputState}
-              onChange={handleFileInputChange}
-              style={{ display: "none" }}
-              name="file"
-            />
-            </div>:
-            <img
-                className="h-full w-full object-cover"
-                src={previewSource}
-                alt="write"
-              />
-          }
-          <div>
+              !previewSource &&
+              <div onClick={() => setDisplay(!display)} className="flex w-full justify-start text-white ml-3">
+                <i className="fa-solid fa-xmark text-2xl cursor-pointer"></i>
+              </div>
+            }
+            {
+              !previewSource ? <div className="flex flex-col">
+                <i className="fa-solid fa-2xl fa-photo-film cursor-pointer mb-4"></i>
+                <label
+                  className="mt-4 bg-[#798abe] p-2 rounded-lg cursor-pointer"
+                  htmlFor="forFile"
+                >
+                  Select from device
+                </label>
+
+                <input
+                  type="file"
+                  id="forFile"
+                  accept="image/png , image/jpg, image/jpeg ,video/mp4"
+                  value={fileInputState}
+                  onChange={handleFileInputChange}
+                  style={{ display: "none" }}
+                  name="file"
+                />
+              </div> :
+                <img
+                  className="h-full w-full object-cover"
+                  src={previewSource}
+                  alt="write"
+                />
+            }
+            <div>
             </div>
-          </div> 
-          
+          </div>
+
         </div>
       }
     </div>

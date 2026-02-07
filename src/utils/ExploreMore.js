@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,6 +48,7 @@ function ExploreMore({ explore }) {
     setLike(post?.likes?.length);
     setIsLiked(user?.likedPost?.includes(explore?._id));
     setBookmark(user?.bookmarkedPost?.includes(explore?._id));
+    // eslint-disable-next-line
   }, [user, explore?._id, like]);
 
   const click = () => {

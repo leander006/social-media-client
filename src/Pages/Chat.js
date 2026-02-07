@@ -1,7 +1,3 @@
-
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Conversation from "../utils/Conversation";
@@ -29,7 +25,6 @@ import ListItems from "../utils/ListItems";
 import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 import InputEmoji from 'react-input-emoji'
-var selectedChatCompare;
 
 function Chat({ socket }) {
   const scrollRef = useRef();
@@ -57,8 +52,9 @@ function Chat({ socket }) {
     },
   };
   // Socket //
-  const [socketConnected, setSocketConnected] = useState(false);
-  const [typing, setTyping] = useState(false);
+
+  //const [socketConnected, setSocketConnected] = useState(false);
+  //const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [comment, setComment] = useState("");
   const [textAreaCount, setTextAreaCount] = useState("0/100");
@@ -66,7 +62,7 @@ function Chat({ socket }) {
 
   useEffect(() => {
     socket.emit("setup", user);
-    socket.on("connected", () => setSocketConnected(true));
+    // socket.on("connected", () => setSocketConnected(true));
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
     // eslint-disable-next-line
@@ -105,7 +101,6 @@ function Chat({ socket }) {
       }
     };
     getMessage();
-    selectedChatCompare = currentChat;
     // eslint-disable-next-line
   }, [currentChat]);
 
@@ -292,6 +287,7 @@ function Chat({ socket }) {
     const currentLength = text.length;
     setTextAreaCount(`${currentLength}/${max}`);
     setMessage(text)
+    setComment(text)
   };
 
   const sendMessage = async (text) => {

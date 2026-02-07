@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -18,7 +16,6 @@ import { BASE_URL } from "../services/helper";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import toast from "react-hot-toast";
 import InputEmoji from 'react-input-emoji'
-import EmojiPicker from 'emoji-picker-react';
 
 
 
