@@ -14,14 +14,33 @@ import Write from "./Pages/Write";
 import Edit from "./Pages/Edit";
 import EmailVerificatiion from "./Pages/EmailVerificatiion";
 import SinglePage from "./Pages/SinglePage";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { BASE_URL } from "./services/helper";
+import { useEffect } from "react";
+import { loginError, loginStart, loginSuccess } from "./redux/Slice/userSlice";
 axios.defaults.withCredentials = true;
 const Endpoint = `${BASE_URL}/`;
 function App() {
   const { currentUser } = useSelector((state) => state.user);
   const socket = io(Endpoint);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      dispatch(loginStart());
+      try {
+        const res = await axios.get(`${BASE_URL}/api/user/me`);
+        dispatch(loginSuccess(res.data));
+      } catch {
+        dispatch(loginError());
+      }
+    };
+
+    fetchUser();
+  }, []);
+
 
   return (
     <>

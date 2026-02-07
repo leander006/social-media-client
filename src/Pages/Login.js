@@ -34,30 +34,33 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(loginStart());
+
     try {
-      const { data } = await axios.post(`${BASE_URL}/api/auth/login`, {
-        username: username,
-        password: password,
-      });
-      dispatch(loginSuccess(data.others));
-      localStorage.setItem("data", JSON.stringify(data.others));
-      localStorage.setItem("token", data.token);
+      await axios.post(
+        `${BASE_URL}/api/auth/login`,
+        { username, password },
+        { withCredentials: true }
+      );
+
+      // After login, ask backend who the user is
+      const res = await axios.get(`${BASE_URL}/api/user/me`);
+      dispatch(loginSuccess(res.data));
+
       navigate("/home");
     } catch (err) {
       dispatch(loginError());
-      console.log(err?.response?.data?.message);
       toast.error(
-        err?.response?.data?.message
-          ? err?.response?.data?.message
-          : "Something went wrong login through google account"
+        err?.response?.data?.message || "Login failed"
       );
     }
   };
 
-  const google = async (e) => {
+
+  const google = (e) => {
     e.preventDefault();
-    window.open(`${BASE_URL}/api/auth/google`, "_self");
+    window.location.href = `${BASE_URL}/api/auth/google`;
   };
+
   return (
     <>
       <div className="flex justify-evenly h-screen w-screen mx-auto">
