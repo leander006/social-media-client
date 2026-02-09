@@ -16,6 +16,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import ProfileComponent from "../utils/ProfileComponent";
 import { BASE_URL } from "../services/helper";
+import { loginSuccess } from "../redux/Slice/userSlice";
 
 function Home({ socket }) {
   const { followerPost, loading } = useSelector((state) => state.post);
@@ -34,6 +35,19 @@ function Home({ socket }) {
       Authorization: `Bearer ${localStorage?.getItem("token")}`,
     },
   };
+
+  const setUser = async () => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/api/user/getUser/id/me`, { withCredentials: true });
+      console.log("data", data.user);
+      dispatch(loginSuccess(data.user));
+    }
+    catch (error) {
+      console.log(error);
+      toast.error("Your token got expired login again");
+    }
+  }
+
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -78,7 +92,7 @@ function Home({ socket }) {
     <div>
       <Navbar socket={socket} />
       <div className="flex z-50 pt-12 mx-auto">
-        {!loading ? (
+        {/* {!loading ? (
           <div className="hidden md:flex lg:w-1/3 md:w-[40%] p-2">
             <ProfileComponent currentUser={currentUser} />
           </div>
@@ -103,8 +117,11 @@ function Home({ socket }) {
           <div className="flex md:w-1/2 flex-col h-[calc(100vh-2.3rem)]  lg:border-[#BED7F8]">
             <PostSkeleton />
           </div>
-        )}
-
+        )} */}
+        {/* Suggested Followers */}
+        {/* <div>
+          <h1 onClick={() => setUser()}>Hello</h1>
+        </div>
         <div className="hidden lg:flex lg:mr-[10rem] lg:ml-[2rem] w-fit  ml-2 flex-col  mt-3 text-white ">
           <h1>Suggested Followers</h1>
           {!sloading ? (
@@ -116,7 +133,7 @@ function Home({ socket }) {
           ) : (
             <SearchFreindSkeleton />
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   );
