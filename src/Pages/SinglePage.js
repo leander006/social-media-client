@@ -182,10 +182,9 @@ function SinglePage({ socket }) {
 
   return (
     <>
-      <Navbar socket={socket} />
-      <div className="flex w-screen pt-9 h-screen mx-auto">
+      <div className="flex md:w-[85%] w-full">
         {loading ? (
-          <div className="flex flex-col py-4 lg:items-center lg:px-6 lg:justify-center lg:p-4 lg:flex-row w-full ">
+          <div className="flex flex-col lg:items-center lg:justify-center lg:flex-row w-full ">
             <i onClick={() => navigate(-1)} className="flex lg:hidden fa-solid fa-arrow-left text-white ml-2 cursor-pointer"></i>
             <div className="hidden lg:flex lg:h-5/6 lg:border border-[#BED7F8] border-x-0 border-y-0 ">
               <img

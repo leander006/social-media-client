@@ -1,14 +1,14 @@
 import Explore from "./Pages/Explore";
 
 import Home from "./Pages/Home";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate, Link } from "react-router-dom";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import axios from "axios";
 import LikedPost from "./Pages/LikedPost";
 import SavedPost from "./Pages/SavedPost";
 import Profile from "./Pages/Profile";
-
+import { toast } from "react-hot-toast";
 import Chat from "./Pages/Chat";
 import Write from "./Pages/Write";
 import Edit from "./Pages/Edit";
@@ -17,16 +17,149 @@ import SinglePage from "./Pages/SinglePage";
 import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { BASE_URL } from "./services/helper";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { loginError, loginStart, loginSuccess } from "./redux/Slice/userSlice";
+import { followerPostError, followerPostStart, followerPostSuccess } from "./redux/Slice/postSlice";
+import Navbar from "./utils/Navbar";
 axios.defaults.withCredentials = true;
 const Endpoint = `${BASE_URL}/`;
 function App() {
   const { currentUser } = useSelector((state) => state.user);
   const socket = io(Endpoint);
 
-  const dispatch = useDispatch();
+  const { followerPost, loading } = useSelector((state) => state.post);
+  const [search, setSearch] = useState([]);
+  const [sloading, setSloading] = useState(false);
+  const [display, setDisplay] = useState(false)
+  const [fileInputState, setFileInputState] = useState("");
+  const [previewSource, setPreviewSource] = useState("");
+  const [selectedImg, setSelectedImg] = useState("");
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    socket?.emit("login", { userId: currentUser?._id });
+    // eslint-disable-next-line
+  }, []);
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage?.getItem("token")}`,
+    },
+  };
+
+  const setUser = async () => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/api/user/getUser/id/me`, { withCredentials: true });
+      console.log("data", data.user);
+      dispatch(loginSuccess(data.user));
+    }
+    catch (error) {
+      console.log(error);
+      toast.error("Your token got expired login again");
+    }
+  }
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        setSloading(true);
+        const { data } = await axios.get(
+          `${BASE_URL}/api/user/suggesteduser/user`,
+          config
+        );
+        setSearch(data);
+        setSloading(false);
+      } catch (error) {
+        toast.error("Your token got expired login again");
+        console.log(error);
+      }
+    };
+    getUser();
+    // eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    const getFollowersPost = async () => {
+      try {
+        dispatch(followerPostStart());
+        const { data } = await axios.get(
+          `${BASE_URL}/api/post/following/Post`,
+          config
+        );
+        dispatch(followerPostSuccess(data));
+        // console.log("data", data);
+      } catch (error) {
+        dispatch(followerPostError());
+        toast.error("error?.response?.data");
+        // alert("error?.response?.data")
+        console.log("error ", error?.response?.data);
+      }
+    };
+    getFollowersPost();
+    // eslint-disable-next-line
+  }, []);
+
+  const socails = [
+    {
+      id: 1,
+      child: (
+        <>
+          <i className="fa-brands fa-xl  fa-linkedin"></i>
+        </>
+      ),
+      href: "https://www.linkedin.com/in/leander06/",
+    },
+    {
+      id: 2,
+      child: (
+        <>
+          <i className="fa-solid fa-xl fa-envelope"></i>
+        </>
+      ),
+      href: "mailto:leanderdsilva06@gmail.com",
+    },
+    {
+      id: 3,
+      child: (
+        <>
+          <i className="fa-brands fa-xl fa-github"></i>
+        </>
+      ),
+      href: "https://github.com/leander006",
+    },
+    {
+      id: 4,
+      child: (
+        <>
+          <i className="fa-brands fa-xl fa-instagram"></i>
+        </>
+      ),
+      href: "https://www.instagram.com/leander_dsilva06/",
+    },
+  ];
+
+  const handleFileInputChange = (e) => {
+    const file = e.target.files[0];
+    previewFile(file);
+    setSelectedImg(file);
+    setFileInputState(e.target.value);
+  };
+
+  const previewFile = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPreviewSource(reader.result);
+    };
+  };
+
+  // const next = async () => {
+  //   dispatch(setImgUrl(selectedImg));
+  //   dispatch(setImagePreview(previewSource));
+  //   navigate("/write")
+  // }
   useEffect(() => {
     const fetchUser = async () => {
       dispatch(loginStart());
@@ -42,57 +175,245 @@ function App() {
     // eslint-disable-next-line
   }, []);
 
+  console.log("currentUser ", currentUser)
 
   return (
     <>
-      <Routes>
-        <Route
-          path="/"
-          element={currentUser ? <Home socket={socket} /> : <Login />}
-        />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/home"
-          element={currentUser ? <Home socket={socket} /> : <Login />}
-        />
-        <Route
-          path="/like"
-          element={currentUser ? <LikedPost socket={socket} /> : <Login />}
-        />
-        <Route
-          path="/profile/:userId"
-          element={currentUser ? <Profile socket={socket} /> : <Login />}
-        />
-        <Route
-          path="/savedPost"
-          element={currentUser ? <SavedPost socket={socket} /> : <Login />}
-        />
-        <Route
-          path="/chat"
-          element={currentUser ? <Chat socket={socket} /> : <Login />}
-        />
-        <Route
-          path="/explore"
-          element={currentUser ? <Explore socket={socket} /> : <Login />}
-        />
-        <Route
-          path="/write"
-          element={currentUser ? <Write socket={socket} /> : <Login />}
-        />
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/edit/:editId"
-          element={currentUser ? <Edit socket={socket} /> : <Login />}
-        />
-        <Route
-          path="/singlepage/:postId"
-          element={currentUser ? <SinglePage socket={socket} /> : <Login />}
-        />
-        <Route
-          path="/users/:id/verify/:token"
-          element={currentUser ? <EmailVerificatiion /> : <Login />}
-        />
-      </Routes>
+      {
+        currentUser == null ?
+          <Routes>
+            <Route
+              path="/*"
+              element={currentUser != null ? <Home socket={socket} /> : <Login />}
+            />
+            <Route path="/register" element={<Register />} />
+
+          </Routes>
+          :
+          <>
+            <Navbar socket={socket} />
+            <div className=" h-[calc(100vh-4rem)] fixed  w-full top-16">
+              <div className="w-full flex h-full">
+                {/* Left Sidebar */}
+                <div className="md:w-[30%] lg:w-[20%] bg-[#2f3549] h-full overflow-y-auto text-[#BED7F8] hidden md:flex flex-col">
+                  <div className="flex flex-col w-full space-y-2">
+                    <Link to="/home">
+                      <div className="flex items-center hover:bg-slate-500 pl-2 p-2">
+                        <i className="fa-solid fa-house mr-2"></i>
+                        <h1>Home</h1>
+                      </div>
+                    </Link>
+                    <Link to="/explore">
+                      <div className="flex items-center hover:bg-slate-500 pl-2 p-2">
+                        <i className="fa-solid fa-play mr-2"></i>
+                        <h1>Explore</h1>
+                      </div>
+                    </Link>
+                    <Link to="/savedPost">
+                      <div className="flex items-center hover:bg-slate-500 pl-2 p-2">
+                        <i className="fa-solid fa-bookmark mr-2"></i>
+                        <h1>Saved Post</h1>
+                      </div>
+                    </Link>
+                    <Link to="/like">
+                      <div className="flex items-center hover:bg-slate-500 pl-2 p-2">
+                        <i className="fa-solid fa-thumbs-up mr-2"></i>
+                        <h1>Liked Post</h1>
+                      </div>
+                    </Link>
+                    <Link to={"/edit/" + currentUser?._id}>
+                      <div className="flex items-center hover:bg-slate-500 pl-2 p-2">
+                        <i className="fa-solid fa-pen-to-square mr-2"></i>
+                        <h1>Edit</h1>
+                      </div>
+                    </Link>
+                    <Link to="/home">
+                      <div className="flex items-center hover:bg-slate-500 pl-2 p-2">
+                        <i className="fa-solid fa-user-group mr-2"></i>
+                        <h1>Freinds</h1>
+                      </div>
+                    </Link>
+                  </div>
+
+                  <div className="bg-[#23293d] p-2 rounded-lg border-[#BED7F8] w-full mt-32">
+                    <p className="leading-relaxed"> Copyright &copy; 2026 All rights reserved by Leander Dsilva</p>
+                    <div className="flex cursor-pointer mt-6 mb-3">
+                      {socails.map(({ child, id, href }) => (
+                        <li
+                          key={id}
+                          className="flex mx-2 list-none hover:scale-125 duration-300"
+                        >
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex items-center"
+                          >
+                            {child}
+                          </a>
+                        </li>
+                      ))}
+                    </div>
+
+                  </div>
+                </div>
+                {/* Main Content */}
+                <div className="w-full md:w-[70%] lg:w-[60%] h-full overflow-y-scroll">
+                  <div className="w-full flex items-center justify-center p-2 mt-2">
+                    <div className="flex w-full md:w-[85%] bg-[#2f3549] justify-center items-center rounded-lg">
+                      <div className="w-full m-3 mr-3">
+                        <input onChange={(e) => setSearch(e.target.value)} className="w-full p-2 focus:outline-none rounded-lg" placeholder="What's in your mind" type="text" />
+                      </div>
+                      <div onClick={() => { setDisplay(true) }}>
+                        <i className="fa-solid fa-2xl fa-square-plus mr-2 text-[#BED7F8]"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-full flex items-center justify-center p-2 mt-2">
+                    <Routes>
+                      <Route
+                        path="/"
+                        element={currentUser ? <Home socket={socket} /> : <Login />}
+                      />
+                      <Route path="/register" element={<Register />} />
+                      <Route
+                        path="/home"
+                        element={currentUser ? <Home socket={socket} /> : <Login />}
+                      />
+                      <Route
+                        path="/like"
+                        element={currentUser ? <LikedPost socket={socket} /> : <Login />}
+                      />
+                      <Route
+                        path="/profile/:userId"
+                        element={currentUser ? <Profile /> : <Login />}
+                      />
+                      <Route
+                        path="/savedPost"
+                        element={currentUser ? <SavedPost /> : <Login />}
+                      />
+                      <Route
+                        path="/chat"
+                        element={currentUser ? <Chat socket={socket} /> : <Login />}
+                      />
+                      <Route
+                        path="/explore"
+                        element={currentUser ? <Explore /> : <Login />}
+                      />
+                      <Route
+                        path="/write"
+                        element={currentUser ? <Write socket={socket} /> : <Login />}
+                      />
+                      <Route path="/login" element={<Login />} />
+                      <Route
+                        path="/edit/:editId"
+                        element={currentUser ? <Edit /> : <Login />}
+                      />
+                      <Route
+                        path="/singlepage/:postId"
+                        element={currentUser ? <SinglePage socket={socket} /> : <Login />}
+                      />
+                      <Route
+                        path="/users/:id/verify/:token"
+                        element={currentUser ? <EmailVerificatiion /> : <Login />}
+                      />
+                    </Routes>
+                  </div>
+                </div>
+
+                {/* Right Sidebar */}
+                <div className="bg-[#2f3549] w-[20%] h-full lg:flex hidden">
+                  <div className="w-full px-2">
+                    <div className="text-[#BED7F8]">
+                      <h1 className="text-xl">Groups you can join</h1>
+                      <div className="flex items-center my-6">
+                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
+                        <h1 className=" text-xl ml-2">Gaming zone</h1>
+                      </div>
+                      <div className="flex items-center">
+                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
+                        <h1 className=" text-xl ml-2">Avenger Assemble</h1>
+                      </div>
+                      <div className="flex items-center my-6">
+                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
+                        <h1 className=" text-xl ml-2">Cricket paglu</h1>
+                      </div>
+
+                    </div>
+                    <div className="text-[#BED7F8] my-2">
+                      <h1 className="text-xl">Freinds for you</h1>
+                      <div className="flex items-center my-6 ">
+                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
+                        <h1 className=" text-xl ml-2">Name</h1>
+                      </div>
+                      <div className="flex items-center">
+                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
+                        <h1 className=" text-xl ml-2">Name</h1>
+                      </div>
+                      <div className="flex items-center my-6">
+                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
+                        <h1 className=" text-xl ml-2">Name</h1>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {
+                display &&
+                <div className="flex flex-col items-center justify-center h-screen">
+                  <div className={!previewSource ? "bg-[#435280] shadow-lg  w-[99%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-between rounded-lg text-center text-white" : "shadow-lg  w-[93%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-center rounded-lg text-center text-white"}>
+                    {previewSource &&
+                      <div className="flex w-full justify-between text-white mb-1">
+                        <div onClick={() => { setPreviewSource(""); setFileInputState("") }}>
+                          <i className="fa-solid fa-arrow-left  bg-[#385bc4] p-4 rounded-md fa-xl cursor-pointer"></i>
+                        </div>
+                        <div >
+                          <h1 className=" cursor-pointer bg-[#385bc4] p-1 rounded-md text-xl">Next</h1>
+                        </div>
+                      </div>
+                    }
+                    {
+                      !previewSource &&
+                      <div onClick={() => setDisplay(!display)} className="flex w-full justify-start text-white ml-3">
+                        <i className="fa-solid fa-xmark text-2xl cursor-pointer"></i>
+                      </div>
+                    }
+                    {
+                      !previewSource ? <div className="flex flex-col">
+                        <i className="fa-solid fa-2xl fa-photo-film cursor-pointer mb-4"></i>
+                        <label
+                          className="mt-4 bg-[#798abe] p-2 rounded-lg cursor-pointer"
+                          htmlFor="forFile"
+                        >
+                          Select from device
+                        </label>
+
+                        <input
+                          type="file"
+                          id="forFile"
+                          accept="image/png , image/jpg, image/jpeg ,video/mp4"
+                          value={fileInputState}
+                          onChange={handleFileInputChange}
+                          style={{ display: "none" }}
+                          name="file"
+                        />
+                      </div> :
+                        <img
+                          className="h-full w-full object-cover"
+                          src={previewSource}
+                          alt="write"
+                        />
+                    }
+                    <div>
+                    </div>
+                  </div>
+
+                </div>
+              }
+            </div>
+          </>
+      }
     </>
   );
 }

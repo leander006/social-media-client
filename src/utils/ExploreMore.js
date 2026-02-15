@@ -115,7 +115,7 @@ function ExploreMore({ explore }) {
 
   return (
     <>
-      <div className="flex flex-col w-fit bg-[#38487a] hover:scale-95 duration-150 px-1.5 border my-3 rounded-lg">
+      <div className="flex flex-col bg-[#38487a] px-1.5 border my-3 rounded-lg h-96">
         <div className="flex p-1 items-center">
           <img
             src={
@@ -138,11 +138,11 @@ function ExploreMore({ explore }) {
             {explore?.owner?.username}
           </h1>
         </div>
-        <div className="flex justify-center">
-          <Link to={"/singlePage/" + explore?._id}>
+        <div className="flex justify-center h-full overflow-hidden">
+          <Link to={"/singlePage/" + explore?._id} className="w-full h-full">
             <img
-              src={explore?.content?.url}
-              className="rounded-lg cursor-pointer "
+              src={explore?.content?.url || "https://via.placeholder.com/300"}
+              className="rounded-lg cursor-pointer w-full h-full object-fit"
               alt="ExploreMore"
             />
           </Link>

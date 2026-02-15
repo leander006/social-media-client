@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../utils/Navbar";
 import { useDispatch, useSelector } from "react-redux";
 import { postError, postStart, postSuccess } from "../redux/Slice/postSlice";
 import Pin from "../GridSystem/Pin";
-import Skeleton from "../Skeleton/Skeleton";
 import SearchFreind from "../utils/SearchFreind";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
+import { Link } from "react-router-dom";
+import Skeleton from "../Skeleton/Skeleton";
 
 const sizeArray = ["sm", "md", "lg"];
 
-function Explore({ socket }) {
+function Explore() {
   const [search, setSearch] = useState("");
   const [searched, setSearched] = useState([]);
 
@@ -58,10 +57,9 @@ function Explore({ socket }) {
 
   return (
     <>
-      <Navbar socket={socket} />
-      <div className="flex z-50 pt-9 w-screen mx-auto">
-        <div className="flex flex-col mb-4">
-          <div className="flex md:hidden ml-5 mt-2 w-[90vw] items-center bg-slate-200 rounded-md">
+      <div className="flex md:w-[85%]">
+        <div className="flex flex-col mb-4 w-full">
+          {/* <div className="flex md:hidden ml-5 mt-2 items-center bg-slate-200 rounded-md">
             <input
               className="rounded-md w-full m-2 p-1"
               type="text"
@@ -76,10 +74,10 @@ function Explore({ socket }) {
                 <SearchFreind key={s?._id} search={s} />
               ))}
             </div>
-          </div>
+          </div> */}
 
           {!loading ? (
-            <div className="hidden w-screen bg-[#2D3B58] md:h-[calc(100vh-2.25rem)] overflow-y-scroll justify-center md:absolute md:grid auto-rows-2fr grid-cols-8">
+            <div className="hidden  bg-[#2D3B58]  justify-center  md:grid auto-rows-2fr grid-cols-2">
               {allpost?.map((p) => (
                 <Pin
                   display={false}
@@ -95,7 +93,7 @@ function Explore({ socket }) {
               ))}
             </div>
           ) : (
-            <div className="hidden w-screen bg-[#2D3B58] md:h-[calc(100vh-2.25rem)] overflow-y-scroll justify-center md:absolute md:grid auto-rows-2fr grid-cols-8">
+            <div className="hidden  bg-[#2D3B58]  justify-center md:absolute md:grid auto-rows-2fr grid-cols-2">
               {allpost?.map((p) => (
                 <Pin
                   display={true}
@@ -109,7 +107,7 @@ function Explore({ socket }) {
           )}
 
           {!loading ? (
-            <div className="w-screen md:hidden bg-[#2D3B58] h-[calc(100vh-6.75rem)] overflow-y-scroll p-2 grid grid-rows-2 grid-flow-col gap-4">
+            <div className=" md:hidden bg-[#2D3B58] w-full p-2 ">
               <div className="grid grid-cols-2 gap-2">
                 {allpost.map((p) => (
                   <Link key={p?._id} to={"/singlepage/" + p._id}>

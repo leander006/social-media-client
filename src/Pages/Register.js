@@ -33,8 +33,9 @@ function Register() {
 
   const google = (e) => {
     e.preventDefault();
-    window.open(`${BASE_URL}/api/auth/google/callback`, "_self");
+    window.location.href = `${BASE_URL}/api/auth/google`;
   };
+
   return (
     <>
       <div className="min-h-screen w-full overflow-x-hidden px-4 flex items-center justify-center">
@@ -55,6 +56,7 @@ function Register() {
                   <div className="w-full md:flex md:space-x-2 flex-col md:flex-row">
                     <ButtonInput value="Create New Account" />
                     <ButtonInput onClick={() => navigate("/login")} value="Login" />
+
                   </div>
                 </form>
                 <h1 className="text-center my-2 text-slate-500">

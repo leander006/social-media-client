@@ -320,15 +320,14 @@ function Chat({ socket }) {
 
   return (
     <>
-      <Navbar socket={socket} />
-      <div className="flex mt-10 w-screen mx-auto">
+      <div className="flex md:w-[85%] w-full">
         {/* Destop view  */}
-        <div className="hidden md:flex w-screen ">
-          <div className="conversation w-[40%] border border-y-0">
+        <div className="hidden md:flex w-full">
+          <div className=" w-[40%]">
             <div className="flex justify-between items-center p-3">
               <div className="flex bg-[#455175] w-full h-8 mt-1 items-center rounded-md">
                 <input
-                  className="rounded-md focus:outline-[#BED7F8] w-full h-full p-1"
+                  className="rounded-md focus:outline-[#BED7F8] w-full h-full"
                   value={search}
                   type="text"
                   onChange={(e) => handleSearched(e.target.value)}
