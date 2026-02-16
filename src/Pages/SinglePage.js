@@ -19,7 +19,7 @@ import InputEmoji from 'react-input-emoji'
 
 
 
-function SinglePage({ socket }) {
+function SinglePage() {
   const { postId } = useParams();
   const [post, setPost] = useState();
   const { currentUser } = useSelector((state) => state.user);
@@ -182,19 +182,22 @@ function SinglePage({ socket }) {
 
   return (
     <>
-      <div className="flex md:w-[85%] w-full">
+      <div className="flex flex-col z-50 lg:absolute md:top-2 w-full md:pl-4 lg:h-[calc(100vh-132px)]">
+        <i onClick={() => navigate(-1)} className="lg:flex hidden justify-end right-0 fa-solid fa-2xl py-5 fa-x text-white mr-10 cursor-pointer"></i>
+
         {loading ? (
-          <div className="flex flex-col lg:items-center lg:justify-center lg:flex-row w-full ">
-            <i onClick={() => navigate(-1)} className="flex lg:hidden fa-solid fa-arrow-left text-white ml-2 cursor-pointer"></i>
-            <div className="hidden lg:flex lg:h-5/6 lg:border border-[#BED7F8] border-x-0 border-y-0 ">
+          // <div className="flex flex-col lg:items-center lg:justify-center lg:flex-row w-full bg-white">
+          <div className="flex flex-col lg:flex-row w-full md:h-[calc(100vh-176px)] h-[calc(100vh-185px)] ">
+            <i onClick={() => navigate(-1)} className="flex lg:hidden fa-solid fa-arrow-left text-white ml-2 mb-2 cursor-pointer"></i>
+            <div className="hidden lg:flex lg:border border-[#BED7F8] border-x-0 border-y-0 ">
               <img
                 className="lg:w-fit h-full w-screen lg:object-cover object-contain"
                 src={post?.content?.url}
                 alt="singlePost"
               />
             </div>
-            <div className="flex flex-col justify-between lg:border border-[#BED7F8] pt-1 px-2 lg:h-5/6 xl:w-2/5 lg:w-3/5  overflow-y-scroll  ">
-              <div className="flex p-1 flex-col justify-between h-[37%]">
+            <div className="flex flex-col justify-between border border-[#BED7F8] pt-1 px-2 h-full md:bg-[#2f3549]">
+              <div className="flex p-1 flex-col justify-between h-[30%] md:h-[40%] border-x-0 border-b-2 border-[#BED7F8]">
                 <div className="flex">
                   <div className="flex p-1 basis-10 rounded-full">
                     <img
@@ -256,13 +259,13 @@ function SinglePage({ socket }) {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col justify-between lg:h-fit h-screen lg:basis-2/3">
+              <div className="flex flex-col justify-between h-[70%] lg:h-[60%] ">
                 {allComment.length === 0 ? (
-                  <div className="border-x-0 flex items-center justify-center border-t-2 border-[#BED7F8] h-3/5 lg:h-5/6 border-b-0 ">
+                  <div className="border-x-0 flex items-center justify-center h-[80%] ">
                     <h1 className="text-slate-400">No Comments</h1>
                   </div>
                 ) : (
-                  <div className="border-x-0 border-t-2 border-[#BED7F8] mt-2 h-3/5 lg:h-5/6 border-b-0 ">
+                  <div className=" mt-2 h-[80%] border-b-0 overflow-y-scroll overflow-x-hidden">
                     {allComment?.map((c) => (
                       <Comment key={c._id} comment={c} />
                     ))}

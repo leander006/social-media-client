@@ -44,7 +44,7 @@ function Home({ socket }) {
 
   return (
     <>
-      <div className="flex md:w-[85%]">
+      <div className="flex md:w-[50%]">
         {!loading ? (
           <div className="flex flex-col w-full">
             {followerPost?.length !== 0 ? (

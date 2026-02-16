@@ -37,7 +37,7 @@ function LikedPost() {
 
   return (
     <>
-      <div className="flex md:w-[85%]">
+      <div className="flex md:w-[50%]">
         {!loading ? (
           <div className="flex flex-col w-full ">
             {likePost.length !== 0 ? (

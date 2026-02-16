@@ -115,7 +115,7 @@ function ExploreMore({ explore }) {
 
   return (
     <>
-      <div className="flex flex-col bg-[#38487a] px-1.5 border my-3 rounded-lg h-96">
+      <div className="flex flex-col bg-[#38487a] px-1.5 border my-3 rounded-lg h-[475px]">
         <div className="flex p-1 items-center">
           <img
             src={

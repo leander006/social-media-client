@@ -192,7 +192,7 @@ function App() {
           :
           <>
             <Navbar socket={socket} />
-            <div className=" h-[calc(100vh-4rem)] fixed  w-full top-16">
+            <div className=" h-[calc(100vh-4rem)]  w-full top-16 relative z-0">
               <div className="w-full flex h-full">
                 {/* Left Sidebar */}
                 <div className="md:w-[30%] lg:w-[20%] bg-[#2f3549] h-full overflow-y-auto text-[#BED7F8] hidden md:flex flex-col">
@@ -311,7 +311,7 @@ function App() {
                       />
                       <Route
                         path="/singlepage/:postId"
-                        element={currentUser ? <SinglePage socket={socket} /> : <Login />}
+                        element={currentUser ? <SinglePage /> : <Login />}
                       />
                       <Route
                         path="/users/:id/verify/:token"

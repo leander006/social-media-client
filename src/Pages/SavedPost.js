@@ -37,7 +37,7 @@ function YourPosts() {
 
   return (
     <>
-      <div className="flex md:w-[85%]">
+      <div className="flex md:w-[50%]">
         {!loading ? (
           <div className="flex flex-col w-full">
             {bookmarkPost.length !== 0 ? (
