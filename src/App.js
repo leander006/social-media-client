@@ -21,6 +21,9 @@ import { useEffect, useState } from "react";
 import { loginError, loginStart, loginSuccess } from "./redux/Slice/userSlice";
 import { followerPostError, followerPostStart, followerPostSuccess } from "./redux/Slice/postSlice";
 import Navbar from "./utils/Navbar";
+import { setImagePreview, setImgUrl } from "./redux/Slice/imageSlice";
+import InputEmoji from 'react-input-emoji'
+
 axios.defaults.withCredentials = true;
 const Endpoint = `${BASE_URL}/`;
 function App() {
@@ -34,6 +37,10 @@ function App() {
   const [fileInputState, setFileInputState] = useState("");
   const [previewSource, setPreviewSource] = useState("");
   const [selectedImg, setSelectedImg] = useState("");
+  const [caption, setCaption] = useState("");
+  // const [sloading, setSLoading] = useState(false);
+  // const { imgUrl, imagePreview } = useSelector((state) => state.image);
+  const [imgUrl, setImgUrl] = useState("second")
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -100,6 +107,75 @@ function App() {
     getFollowersPost();
     // eslint-disable-next-line
   }, []);
+
+  const [textAreaCount, setTextAreaCount] = useState("0/180");
+  const max = 180;
+
+
+  const recalculate = (text) => {
+    const currentLength = text.length;
+    console.log(currentLength);
+    console.log('enter in recalculate', text)
+    setTextAreaCount(`${currentLength}/${max}`);
+    setCaption(text)
+  };
+
+  const handleImage = async () => {
+    return new Promise((resolve, reject) => {
+      if (!imgUrl) return reject("No image provided");
+      const reader = new FileReader();
+      reader.readAsDataURL(imgUrl);
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = () => {
+        reject("Error reading file");
+      };
+    });
+  };
+
+  const uploadImage = async (base64EncodedImage) => {
+    try {
+      const { data } = await axios.post(
+        `${BASE_URL}/api/post/postUpload/postImg`,
+        { data: base64EncodedImage },
+        config
+      );
+      //setProfile(data);
+      return data;
+    } catch (err) {
+      setSloading(false);
+      console.error(err);
+      toast.error("An error occurred during submission");
+      throw err;
+    }
+  };
+
+  const handleSubmit = async (text) => {
+    try {
+
+      if (!imgUrl) return;
+      setSloading(true);
+
+      const base64Image = await handleImage();
+
+      const uploadedImageData = await uploadImage(base64Image);
+
+      const { data } = await axios.post(
+        `${BASE_URL}/api/post`,
+        { content: uploadedImageData, caption: text },
+        config
+      );
+
+      setSloading(false);
+      navigate("/home");
+      localStorage.setItem("data", JSON.stringify(data));
+      toast.success("Post created");
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred during submission");
+    }
+  };
 
   const socails = [
     {
@@ -177,6 +253,13 @@ function App() {
 
   console.log("currentUser ", currentUser)
 
+  const next = async () => {
+    console.log("selectedImg", selectedImg, "previewSource", previewSource);
+
+    dispatch(setImgUrl(selectedImg));
+    dispatch(setImagePreview(previewSource));
+    navigate("/write")
+  }
   return (
     <>
       {
@@ -262,10 +345,25 @@ function App() {
                   <div className="w-full flex items-center justify-center p-2 mt-2">
                     <div className="flex w-full md:w-[85%] bg-[#2f3549] justify-center items-center rounded-lg">
                       <div className="w-full m-3 mr-3">
-                        <input onChange={(e) => setSearch(e.target.value)} className="w-full p-2 focus:outline-none rounded-lg" placeholder="What's in your mind" type="text" />
+                        <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
+                          <div
+                            className="w-[80%] max-w-sm sm:max-w-md lg:max-w-lg"
+
+                          >
+                            <InputEmoji
+                              value={caption}
+                              onChange={recalculate}
+                              cleanOnEnter
+                              onEnter={handleSubmit}
+                              maxLength={max}
+                              placeholder="Write a caption..."
+                            />
+                          </div>
+                          <p className="w-[20%] md:text-center">{textAreaCount}</p>
+                        </div>
                       </div>
                       <div onClick={() => { setDisplay(true) }}>
-                        <i className="fa-solid fa-2xl fa-square-plus mr-2 text-[#BED7F8]"></i>
+                        <i className="fa-solid fa-2xl fa-square-plus mr-2 text-[#BED7F8] cursor-pointer"></i>
                       </div>
                     </div>
                   </div>
@@ -361,14 +459,14 @@ function App() {
 
               {
                 display &&
-                <div className="flex flex-col items-center justify-center h-screen">
+                <div className="flex flex-col items-center justify-center absolute top-12 w-screen">
                   <div className={!previewSource ? "bg-[#435280] shadow-lg  w-[99%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-between rounded-lg text-center text-white" : "shadow-lg  w-[93%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-center rounded-lg text-center text-white"}>
                     {previewSource &&
                       <div className="flex w-full justify-between text-white mb-1">
                         <div onClick={() => { setPreviewSource(""); setFileInputState("") }}>
                           <i className="fa-solid fa-arrow-left  bg-[#385bc4] p-4 rounded-md fa-xl cursor-pointer"></i>
                         </div>
-                        <div >
+                        <div onClick={next}>
                           <h1 className=" cursor-pointer bg-[#385bc4] p-1 rounded-md text-xl">Next</h1>
                         </div>
                       </div>
