@@ -1,7 +1,7 @@
 import Explore from "./Pages/Explore";
 
 import Home from "./Pages/Home";
-import { Routes, Route, useNavigate, Link } from "react-router-dom";
+import { Routes, Route, useNavigate, Link, useParams, useLocation } from "react-router-dom";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import axios from "axios";
@@ -20,8 +20,8 @@ import { BASE_URL } from "./services/helper";
 import { useEffect, useState } from "react";
 import { loginError, loginStart, loginSuccess } from "./redux/Slice/userSlice";
 import { followerPostError, followerPostStart, followerPostSuccess } from "./redux/Slice/postSlice";
+import { SpinnerCircular } from "spinners-react";
 import Navbar from "./utils/Navbar";
-import { setImagePreview, setImgUrl } from "./redux/Slice/imageSlice";
 import InputEmoji from 'react-input-emoji'
 
 axios.defaults.withCredentials = true;
@@ -30,7 +30,6 @@ function App() {
   const { currentUser } = useSelector((state) => state.user);
   const socket = io(Endpoint);
 
-  const { followerPost, loading } = useSelector((state) => state.post);
   const [search, setSearch] = useState([]);
   const [sloading, setSloading] = useState(false);
   const [display, setDisplay] = useState(false)
@@ -38,145 +37,11 @@ function App() {
   const [previewSource, setPreviewSource] = useState("");
   const [selectedImg, setSelectedImg] = useState("");
   const [caption, setCaption] = useState("");
-  // const [sloading, setSLoading] = useState(false);
-  // const { imgUrl, imagePreview } = useSelector((state) => state.image);
-  const [imgUrl, setImgUrl] = useState("second")
+  const location = useLocation(); // Get the current location object
+
+  const currentPath = location.pathname.split("/")[1]; // This will give 'home' for '/home'
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    socket?.emit("login", { userId: currentUser?._id });
-    // eslint-disable-next-line
-  }, []);
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage?.getItem("token")}`,
-    },
-  };
-
-  const setUser = async () => {
-    try {
-      const { data } = await axios.get(`${BASE_URL}/api/user/getUser/id/me`, { withCredentials: true });
-      console.log("data", data.user);
-      dispatch(loginSuccess(data.user));
-    }
-    catch (error) {
-      console.log(error);
-      toast.error("Your token got expired login again");
-    }
-  }
-
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        setSloading(true);
-        const { data } = await axios.get(
-          `${BASE_URL}/api/user/suggesteduser/user`,
-          config
-        );
-        setSearch(data);
-        setSloading(false);
-      } catch (error) {
-        toast.error("Your token got expired login again");
-        console.log(error);
-      }
-    };
-    getUser();
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
-    const getFollowersPost = async () => {
-      try {
-        dispatch(followerPostStart());
-        const { data } = await axios.get(
-          `${BASE_URL}/api/post/following/Post`,
-          config
-        );
-        dispatch(followerPostSuccess(data));
-        // console.log("data", data);
-      } catch (error) {
-        dispatch(followerPostError());
-        toast.error("error?.response?.data");
-        // alert("error?.response?.data")
-        console.log("error ", error?.response?.data);
-      }
-    };
-    getFollowersPost();
-    // eslint-disable-next-line
-  }, []);
-
-  const [textAreaCount, setTextAreaCount] = useState("0/180");
-  const max = 180;
-
-
-  const recalculate = (text) => {
-    const currentLength = text.length;
-    console.log(currentLength);
-    console.log('enter in recalculate', text)
-    setTextAreaCount(`${currentLength}/${max}`);
-    setCaption(text)
-  };
-
-  const handleImage = async () => {
-    return new Promise((resolve, reject) => {
-      if (!imgUrl) return reject("No image provided");
-      const reader = new FileReader();
-      reader.readAsDataURL(imgUrl);
-      reader.onloadend = () => {
-        resolve(reader.result);
-      };
-      reader.onerror = () => {
-        reject("Error reading file");
-      };
-    });
-  };
-
-  const uploadImage = async (base64EncodedImage) => {
-    try {
-      const { data } = await axios.post(
-        `${BASE_URL}/api/post/postUpload/postImg`,
-        { data: base64EncodedImage },
-        config
-      );
-      //setProfile(data);
-      return data;
-    } catch (err) {
-      setSloading(false);
-      console.error(err);
-      toast.error("An error occurred during submission");
-      throw err;
-    }
-  };
-
-  const handleSubmit = async (text) => {
-    try {
-
-      if (!imgUrl) return;
-      setSloading(true);
-
-      const base64Image = await handleImage();
-
-      const uploadedImageData = await uploadImage(base64Image);
-
-      const { data } = await axios.post(
-        `${BASE_URL}/api/post`,
-        { content: uploadedImageData, caption: text },
-        config
-      );
-
-      setSloading(false);
-      navigate("/home");
-      localStorage.setItem("data", JSON.stringify(data));
-      toast.success("Post created");
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred during submission");
-    }
-  };
-
   const socails = [
     {
       id: 1,
@@ -215,6 +80,76 @@ function App() {
       href: "https://www.instagram.com/leander_dsilva06/",
     },
   ];
+  const [textAreaCount, setTextAreaCount] = useState("0/180");
+  const max = 180;
+
+  useEffect(() => {
+    socket?.emit("login", { userId: currentUser?._id });
+    // eslint-disable-next-line
+  }, []);
+
+  const recalculate = (text) => {
+    const currentLength = text.length;
+    setTextAreaCount(`${currentLength}/${max}`);
+    setCaption(text)
+  };
+
+  const handleImage = async () => {
+    return new Promise((resolve, reject) => {
+      if (!selectedImg) return reject("No image provided");
+      const reader = new FileReader();
+      reader.readAsDataURL(selectedImg);
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = () => {
+        reject("Error reading file");
+      };
+    });
+  };
+
+  const uploadImage = async (base64EncodedImage) => {
+    try {
+      const { data } = await axios.post(
+        `${BASE_URL}/api/post/postUpload/postImg`,
+        { data: base64EncodedImage });
+      return data;
+    } catch (err) {
+      setSloading(false);
+      console.error(err);
+      toast.error("An error occurred during submission");
+      throw err;
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (!selectedImg) {
+        console.log("no image");
+
+        return;
+      }
+      setSloading(true);
+
+      const base64Image = await handleImage();
+
+      const uploadedImageData = await uploadImage(base64Image);
+
+      await axios.post(
+        `${BASE_URL}/api/post`,
+        { content: uploadedImageData, caption: caption },
+      );
+
+      setSloading(false);
+      setCaption("");
+      setDisplay(!display);
+      toast.success("Post created");
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred during submission");
+    }
+  };
+
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
@@ -231,11 +166,6 @@ function App() {
     };
   };
 
-  // const next = async () => {
-  //   dispatch(setImgUrl(selectedImg));
-  //   dispatch(setImagePreview(previewSource));
-  //   navigate("/write")
-  // }
   useEffect(() => {
     const fetchUser = async () => {
       dispatch(loginStart());
@@ -251,15 +181,6 @@ function App() {
     // eslint-disable-next-line
   }, []);
 
-  console.log("currentUser ", currentUser)
-
-  const next = async () => {
-    console.log("selectedImg", selectedImg, "previewSource", previewSource);
-
-    dispatch(setImgUrl(selectedImg));
-    dispatch(setImagePreview(previewSource));
-    navigate("/write")
-  }
   return (
     <>
       {
@@ -275,7 +196,7 @@ function App() {
           :
           <>
             <Navbar socket={socket} />
-            <div className=" h-[calc(100vh-4rem)]  w-full top-16 relative z-0">
+            <div className=" h-[calc(100vh-4rem)] overflow-y-hidden w-full top-16 relative z-0 ">
               <div className="w-full flex h-full">
                 {/* Left Sidebar */}
                 <div className="md:w-[30%] lg:w-[20%] bg-[#2f3549] h-full overflow-y-auto text-[#BED7F8] hidden md:flex flex-col">
@@ -342,31 +263,30 @@ function App() {
                 </div>
                 {/* Main Content */}
                 <div className="w-full md:w-[70%] lg:w-[60%] h-full overflow-y-scroll">
-                  <div className="w-full flex items-center justify-center p-2 mt-2">
-                    <div className="flex w-full md:w-[85%] bg-[#2f3549] justify-center items-center rounded-lg">
+                  {currentPath === "home" && <div className="w-full flex items-center  justify-center p-2 mt-2">
+                    <div className="flex w-full md:w-[85%] 2xl:justify-between justify-center items-center rounded-lg">
                       <div className="w-full m-3 mr-3">
                         <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
                           <div
-                            className="w-[80%] max-w-sm sm:max-w-md lg:max-w-lg"
-
+                            className="w-full "
                           >
                             <InputEmoji
                               value={caption}
                               onChange={recalculate}
                               cleanOnEnter
-                              onEnter={handleSubmit}
                               maxLength={max}
                               placeholder="Write a caption..."
                             />
                           </div>
-                          <p className="w-[20%] md:text-center">{textAreaCount}</p>
+                          <p className="w-[20%] md:text-center mr-1">{textAreaCount}</p>
+                          <div onClick={() => { setDisplay(true) }}>
+                            <i className="fa-solid fa-2xl fa-square-plus mr-2 text-[#BED7F8] cursor-pointer"></i>
+                          </div>
                         </div>
-                      </div>
-                      <div onClick={() => { setDisplay(true) }}>
-                        <i className="fa-solid fa-2xl fa-square-plus mr-2 text-[#BED7F8] cursor-pointer"></i>
+
                       </div>
                     </div>
-                  </div>
+                  </div>}
                   <div className="w-full flex items-center justify-center p-2 mt-2">
                     <Routes>
                       <Route
@@ -459,15 +379,12 @@ function App() {
 
               {
                 display &&
-                <div className="flex flex-col items-center justify-center absolute top-12 w-screen">
-                  <div className={!previewSource ? "bg-[#435280] shadow-lg  w-[99%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-between rounded-lg text-center text-white" : "shadow-lg  w-[93%] md:w-1/2 h-[340px] md:h-[540px] flex flex-col items-center justify-center rounded-lg text-center text-white"}>
+                <div className="flex flex-col items-center justify-center absolute top-12 w-screen z-50 px-2">
+                  <div className={`bg-[#435280] shadow-lg  w-[99%] border-2 border-black md:w-1/2 flex flex-col items-center justify-between rounded-lg text-center text-white ${!previewSource ? "h-[340px] md:h-[540px]" : ""}`}>
                     {previewSource &&
-                      <div className="flex w-full justify-between text-white mb-1">
+                      <div className="flex w-full text-white mb-1">
                         <div onClick={() => { setPreviewSource(""); setFileInputState("") }}>
-                          <i className="fa-solid fa-arrow-left  bg-[#385bc4] p-4 rounded-md fa-xl cursor-pointer"></i>
-                        </div>
-                        <div onClick={next}>
-                          <h1 className=" cursor-pointer bg-[#385bc4] p-1 rounded-md text-xl">Next</h1>
+                          <i className="fa-solid fa-arrow-left  p-4 rounded-md fa-xl cursor-pointer"></i>
                         </div>
                       </div>
                     }
@@ -495,16 +412,36 @@ function App() {
                           onChange={handleFileInputChange}
                           style={{ display: "none" }}
                           name="file"
+                          className="focus:outline-none"
                         />
                       </div> :
-                        <img
-                          className="h-full w-full object-cover"
-                          src={previewSource}
-                          alt="write"
-                        />
+
+                        <div> {
+                          !sloading ?
+                            <div className="flex flex-col">
+                              < img
+                                className=" object-cover"
+                                src={previewSource}
+                                alt="write"
+                              /></div> : <SpinnerCircular
+                              size="90"
+                              className="w-full flex items-center flex-col  mx-auto"
+                              thickness="100"
+                              speed="600"
+                              color="white"
+                              secondaryColor="black"
+                            />
+                        }</div>
                     }
                     <div>
                     </div>
+
+                    {previewSource &&
+                      <div className="">
+                        <div onClick={handleSubmit}>
+                          <h1 className=" cursor-pointer p-1 my-2 bg-white text-black rounded-md text-xl">Post</h1>
+                        </div>
+                      </div>}
                   </div>
 
                 </div>

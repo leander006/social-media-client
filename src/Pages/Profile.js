@@ -73,7 +73,7 @@ function Profile() {
     <>
       <div className="flex md:w-[85%] w-full">
         {!loading ? (
-          <div className="bg-[#2D3B58] w-full flex flex-col ">
+          <div className="bg-[#2D3B58] w-full flex flex-col h-full">
             <div className="flex flex-col w-full bg-[#2D3B58] pt-6 text-white ">
               <div className="flex w-full">
                 <div className="p-1 md:w-full flex justify-center flex-col items-center">
@@ -119,8 +119,8 @@ function Profile() {
               </div>
             </div>
             {user?.postCount !== 0 ? (
-              <div className="bg-[#2D3B58] ">
-                <div className="m-0 w-[50vw] bg-[#2D3B58] justify-center md:grid md:absolute hidden auto-rows-2fr grid-cols-2">
+              <div className="bg-[#2D3B58] h-full">
+                <div className="m-0 w-[50vw] bg-[#2D3B58] h-full overflow-y-scroll justify-center md:grid md:absolute hidden auto-rows-2fr grid-cols-2">
                   {post.map((p) => (
                     <Pin
                       img={
