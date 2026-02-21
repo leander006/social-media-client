@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Conversation from "../utils/Conversation";
 import Navbar from "../utils/Navbar";
 import Messages from "../utils/Mesaages";
@@ -43,8 +43,12 @@ function Chat({ socket }) {
   const { currentUser, chatloading } = useSelector((state) => state.user);
   const { allNoti } = useSelector((state) => state.notification);
   const [chatname, setChatname] = useState("");
+  const [searchResults, setSearchResults] = useState([]); // State for search results
+
   const user = currentUser?.others ? currentUser?.others : currentUser;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -313,6 +317,28 @@ function Chat({ socket }) {
     }
   };
 
+  const handleSearchChange = async (e) => {
+    const query = e.target.value;
+    setSearch(query);
+
+    if (query.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    const debounceTimeout = setTimeout(async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/user/freind/search`, {
+          params: { name: query },
+        });
+        setSearchResults(response.data);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      }
+    }, 500);
+
+    return () => clearTimeout(debounceTimeout); // Clear timeout on every new input
+  };
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -320,33 +346,11 @@ function Chat({ socket }) {
 
   return (
     <>
-      <div className="flex md:w-[85%] w-full">
+      <div className="flex w-full">
         {/* Destop view  */}
-        <div className="hidden md:flex w-full">
-          <div className=" w-[40%]">
+        <div className="hidden lg:flex w-full md:h-[calc(100vh-5.15rem)] border">
+          <div className=" w-[40%] border border-y-0 border-l-0">
             <div className="flex justify-between items-center p-3">
-              <div className="flex bg-[#455175] w-full h-8 mt-1 items-center rounded-md">
-                <input
-                  className="rounded-md focus:outline-[#BED7F8] w-full h-full"
-                  value={search}
-                  type="text"
-                  onChange={(e) => handleSearched(e.target.value)}
-                  placeholder="search your friends"
-                ></input>
-                <div className="shadow hidden md:flex mt-24 fixed z-30 ">
-                  <div className="md:w-64 lg:w-80 xl:w-[30rem]  ">
-                    {searched?.map((s) => (
-                      <DirectMessage
-                        key={s._id}
-                        setSearched={setSearched}
-                        setSearch={setSearch}
-                        search={s}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
               <div>
                 <i
                   className="fa-solid fa-xl fa-user-plus ml-4 text-[#BED7F8] cursor-pointer"
@@ -355,12 +359,12 @@ function Chat({ socket }) {
               </div>
             </div>
             {/* {search && <ChatSearchSkeleton/>} */}
-            <div className="md:h-[calc(100vh-6.7rem)] p-3 overflow-y-scroll">
+            <div className=" p-3 h-[calc(100vh-8.6rem)] overflow-y-auto">
               {allChat ? (
                 !chatloading ? (
                   allChat?.map((c) => (
                     <div
-                      className="individual-chat"
+                      className=""
                       key={c?._id}
                       onClick={() => {
                         dispatch(setCurrentChat(c));
@@ -402,8 +406,8 @@ function Chat({ socket }) {
           </div>
 
           {currentChat ? (
-            <div className="message w-[60%]">
-              <div className="flex justify-between items-center message  md:bg-[#84b6f7]">
+            <div className="message h-full w-[60%]">
+              <div className="flex justify-between items-center message md:bg-[#84b6f7]">
                 <div className="flex h-12 items-center p-3">
                   <img
                     src={
@@ -481,7 +485,7 @@ function Chat({ socket }) {
               </div>
 
               {!loading ? (
-                <div className="md:h-[calc(100vh-10.2rem)] md:bg-[#BED7F8] p-3 overflow-y-scroll">
+                <div className=" md:bg-[#BED7F8] md:h-[calc(100vh-11.65rem)] p-3 overflow-y-auto">
                   {allmessage?.map((m) => (
                     <div key={m._id} ref={scrollRef}>
                       <Messages
@@ -496,7 +500,7 @@ function Chat({ socket }) {
               ) : (
                 <SpinnerCircular
                   size="90"
-                  className="bg-[#2D3B58] w-full flex items-center md:h-[calc(100vh-10.2rem)] flex-col  mx-auto"
+                  className="bg-[#2D3B58] w-full flex items-center md:h-[calc(100vh-11.65rem)] flex-col  mx-auto"
                   thickness="100"
                   speed="600"
                   color="white"
@@ -526,20 +530,35 @@ function Chat({ socket }) {
 
         {/* Mobile view */}
 
-        <div className="flex md:hidden z-10 flex-col md:p-0 w-screen h-[calc(100vh-2.5rem)]">
+        <div className="flex lg:hidden z-10 flex-col md:p-0 w-screen h-full">
           {!currentChat ? (
             <div className="conversation lg:flex-1">
               <div className="flex justify-between items-center md:p-3">
-                <div className="flex bg-[#455175] mx-2 w-full h-8 mt-2 items-center rounded-md">
-                  <input
-                    className="rounded-md focus:outline-[#BED7F8] w-full h-full p-1"
-                    value={search}
-                    type="text"
-                    onChange={(e) => handleSearched(e.target.value)}
-                    placeholder="search your friends"
-                  />
+                <div className="flex md:hidden w-full items-center bg-white rounded-xl p-1">
+                  <i className="fa-solid fa-xl text-[#2f3549] fa-magnifying-glass"></i>
+                  <input value={search}
+                    onChange={handleSearchChange} className="p-0.5 m-1 w-full focus:outline-none" placeholder="Search Friends" type="text" />
                 </div>
 
+                {search && searchResults.length > 0 ? (
+                  <div className="absolute top-16 left-1/2 transform -translate-x-1/2 shadow-lg rounded-lg w-[95%] z-50">
+                    <ul>
+                      {searchResults.map((s, index) => (
+                        <DirectMessage
+                          key={index}
+                          setSearched={setSearched}
+                          setSearch={setSearch}
+                          search={s}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  search && <div className="absolute top-16 bg-[#7c8bb9] left-1/2 transform -translate-x-1/2 shadow-lg rounded-lg w-[95%] z-50">
+                    <ul>
+                      <h1 className="p-2 text-center text-white font-bold">No search result</h1>
+                    </ul>
+                  </div>)}
                 <div className="flex mt-36 fixed z-30 ">
                   <div className=" w-[92vw] p-2 ">
                     {searched?.map((s) => (
@@ -553,7 +572,7 @@ function Chat({ socket }) {
                   </div>
                 </div>
               </div>
-              <div className="h-[calc(100vh-8rem)] p-1 overflow-y-scroll">
+              <div className="h-[calc(100vh-9rem)] p-1 overflow-y-auto">
                 {allChat ? (
                   !chatloading ? (
                     allChat?.map((c) => (
@@ -600,7 +619,7 @@ function Chat({ socket }) {
             </div>
           ) : (
             <div className="message">
-              <div className="flex justify-between items-center message bg-[#8cbeff] md:hidden">
+              <div className="flex justify-between items-center message bg-[#8cbeff] lg:hidden">
                 <div className="flex h-12 items-center p-3">
                   <i
                     className="fa-solid mr-2 fa-xl cursor-pointer fa-arrow-left"
@@ -685,7 +704,7 @@ function Chat({ socket }) {
                 </div>
               </div>
               {!loading ? (
-                <div className="h-[calc(100vh-10rem)] bg-[#BED7F8]  p-3 overflow-y-scroll">
+                <div className="h-[calc(100vh-11.9rem)] bg-[#BED7F8]  p-3 overflow-y-auto">
                   {allmessage?.map((m) => (
                     <div key={m._id} ref={scrollRef}>
                       <Messages
@@ -700,7 +719,7 @@ function Chat({ socket }) {
               ) : (
                 <SpinnerCircular
                   size="90"
-                  className="bg-[#2D3B58] w-full flex items-center h-[calc(100vh-10.2rem)] flex-col  mx-auto"
+                  className="bg-[#2D3B58] w-full flex items-center h-[calc(100vh-11.9rem)] flex-col  mx-auto"
                   thickness="100"
                   speed="600"
                   color="white"
@@ -727,12 +746,12 @@ function Chat({ socket }) {
       </div>
 
       {searchResult && (
-        <div className="fixed flex z-40 top-0 mt-24  w-screen lg:w-[32rem] xl:w-[36rem] xl:ml-96 md:w-96 md:ml-52 lg:ml-72">
+        <div className="fixed flex z-40 top-0 mt-24  w-screen lg:w-[32rem] xl:w-[36rem] md:w-96">
           <form
-            className="bg-[#1f62b9] h-full  m-auto w-11/12 "
+            className="bg-[#2D3B58] h-full  m-auto w-11/12 border"
             onSubmit={create}
           >
-            <h1 className="text-2xl font-bold text-[#153f75] text-center">
+            <h1 className="text-2xl font-bold text-white text-center">
               Create group chat
             </h1>
             <div className="h-14 w-full p-1 mt-2 ">
@@ -776,12 +795,12 @@ function Chat({ socket }) {
             </div>
             <div className=" flex justify-around mb-2  ml-2 rounded p-1">
               <input
-                className="bg-blue-500 text-white p-1 rounded text-center"
+                className=" text-white p-1 rounded text-center cursor-pointer"
                 value="Create chat"
                 type="submit"
               />
               <input
-                className="bg-blue-500 text-white p-1 rounded text-center"
+                className=" text-white p-1 rounded text-center cursor-pointer"
                 onClick={handleGroupChat}
                 value="Cancel"
                 type="button"

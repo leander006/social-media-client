@@ -37,7 +37,7 @@ function LikedPost() {
 
   return (
     <>
-      <div className="flex md:w-[50%]">
+      <div className="flex w-full md:w-[80%] lg:w-[55%]">
         {!loading ? (
           <div className="flex flex-col w-full ">
             {likePost.length !== 0 ? (
@@ -45,8 +45,8 @@ function LikedPost() {
                 <div className="flex justify-center font-bold text-xl text-[#547bca]">
                   Liked Post
                 </div>
-                {likePost?.map((p) => (
-                  <ExploreMore explore={p} key={p._id} />
+                {likePost?.map((l) => (
+                  <ExploreMore explore={l} key={l._id} />
                 ))}
               </div>
             ) : (
@@ -56,8 +56,10 @@ function LikedPost() {
             )}
           </div >
         ) : (
-          <div className="flex md:w-1/2 flex-col h-[calc(100vh-2.3rem)]  lg:border-[#BED7F8]">
-            <PostSkeleton />
+          <div className="flex flex-col w-full">
+            {likePost?.map((l) => (
+              <PostSkeleton key={l._id} />
+            ))}
           </div>
         )
         }

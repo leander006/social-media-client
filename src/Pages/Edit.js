@@ -169,7 +169,7 @@ function Edit() {
             ) : (
               <SpinnerCircular
                 size="90"
-                className="bg-[#2D3B58] w-full flex items-center  md:h-56 h-28  flex-col  mx-auto"
+                className="bg-[#2D3B58] w-full flex items-center h-28  flex-col  mx-auto"
                 thickness="100"
                 speed="600"
                 color="white"

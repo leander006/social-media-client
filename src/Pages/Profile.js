@@ -74,7 +74,7 @@ function Profile() {
       <div className="flex md:w-[85%] w-full">
         {!loading ? (
           <div className="bg-[#2D3B58] w-full flex flex-col h-full">
-            <div className="flex flex-col w-full bg-[#2D3B58] pt-6 text-white ">
+            <div className="flex flex-col w-full bg-[#2D3B58] md:pt-6 text-white ">
               <div className="flex w-full">
                 <div className="p-1 md:w-full flex justify-center flex-col items-center">
                   <img
@@ -108,9 +108,9 @@ function Profile() {
                     </div>
                   )}
                 </div>
-                <div className="flex flex-col pt-2 pr-2 md:px-8 w-full">
+                <div className="flex flex-col pt-2 pr-2 w-full">
                   <div className="flex justify-between w-full ">
-                    <h1>{user?.postCount} post</h1>
+                    <h1 >{user?.postCount} post</h1>
                     <h1>{user?.followers.length} followers</h1>
                     <h1>{user?.following.length} following</h1>
                   </div>
@@ -120,7 +120,7 @@ function Profile() {
             </div>
             {user?.postCount !== 0 ? (
               <div className="bg-[#2D3B58] h-full">
-                <div className="m-0 w-[50vw] bg-[#2D3B58] h-full overflow-y-scroll justify-center md:grid md:absolute hidden auto-rows-2fr grid-cols-2">
+                <div className="m-0 w-[50vw] bg-[#2D3B58] h-full justify-center md:grid hidden auto-rows-2fr grid-cols-2">
                   {post.map((p) => (
                     <Pin
                       img={
@@ -157,8 +157,8 @@ function Profile() {
                 )}
               </div>
             ) : (
-              <div className="h-[calc(100vh-4.3rem)] flex mt-28 m-auto font-bold text-3xl md:h-[calc(100vh-2.7rem)] text-[#547bca]">
-                No Post Available{" "}
+              <div className="flex mt-28 m-auto font-bold text-3xl text-[#547bca]">
+                No Post Available
               </div>
             )}
           </div>

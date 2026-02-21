@@ -6,9 +6,29 @@ body {
     overflow-x: hidden;
 }
 
+.react-input-emoji--input {
+    @apply max-h-28 overflow-y-auto;
+}
+
+.react-input-emoji--input::-webkit-scrollbar {
+    width: 6px;
+}
+
+.react-input-emoji--input::-webkit-scrollbar-thumb {
+    background-color: #94a3b8;
+    border-radius: 4px;
+}
+
+.react-input-emoji--input {
+    min-height: 40px;
+    max-height: 120px;
+    overflow-y: auto !important;
+}
+
+
 /* Custom scrollbar styles */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 5px;
     /* Set the width of the scrollbar */
 }
 
@@ -22,7 +42,7 @@ body {
     /* Color of the scrollbar thumb */
     border-radius: 10px;
     /* Rounded corners for the scrollbar thumb */
-    border: 2px solid #2f3549;
+    border: 2px solid #4a5568;
     /* Optional: Add a border around the thumb */
 }
 

@@ -11,6 +11,7 @@ import {
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { BASE_URL } from "../services/helper";
+import PostSkeleton from "../Skeleton/PostSkeleton";
 
 function Home({ socket }) {
   const { followerPost, loading } = useSelector((state) => state.post);
@@ -44,7 +45,7 @@ function Home({ socket }) {
 
   return (
     <>
-      <div className="flex md:w-[50%]">
+      <div className="flex w-full md:w-[80%] lg:w-[55%]">
         {!loading ? (
           <div className="flex flex-col w-full">
             {followerPost?.length !== 0 ? (
@@ -56,7 +57,11 @@ function Home({ socket }) {
             )}
           </div>
         ) : (
-          <p>Loading...</p>
+          <div className="flex flex-col w-full">
+            {followerPost?.map((p) => (
+              <PostSkeleton key={p._id} />
+            ))}
+          </div>
         )}
       </div>
     </>

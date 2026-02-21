@@ -49,7 +49,7 @@ function DirectMessage({ search, setSearched, setSearch }) {
   return (
     <>
       <div
-        className="flex bg-slate-300 p-2 cursor-pointer items-center"
+        className="flex bg-[#7c8bb9] p-2 cursor-pointer items-center"
         onClick={openChat}
       >
         <img

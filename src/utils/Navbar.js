@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import SearchFreind from "./SearchFreind";
 
 import { logout } from "../redux/Slice/userSlice";
 import axios from "axios";
@@ -14,7 +13,7 @@ import {
 import Notifcations from "./Notifcations";
 import { BASE_URL } from "../services/helper";
 
-function Navbar({ socket }) {
+function Navbar() {
   const [search, setSearch] = useState(""); // State for search input
   const [searchResults, setSearchResults] = useState([]); // State for search results
 
@@ -169,12 +168,6 @@ function Navbar({ socket }) {
                 <div onClick={() => setVisible(!visible)} className="flex items-center">
                   <i className="fa-solid fa-pen-to-square mr-2"></i>
                   <h1>Edit</h1>
-                </div>
-              </Link>
-              <Link to="/home">
-                <div onClick={() => setVisible(!visible)} className="flex items-center">
-                  <i className="fa-solid fa-user-group mr-2"></i>
-                  <h1>Freinds</h1>
                 </div>
               </Link>
             </div>

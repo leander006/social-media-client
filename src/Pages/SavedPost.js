@@ -37,7 +37,7 @@ function YourPosts() {
 
   return (
     <>
-      <div className="flex md:w-[50%]">
+      <div className="flex w-full md:w-[80%] lg:w-[55%]">
         {!loading ? (
           <div className="flex flex-col w-full">
             {bookmarkPost.length !== 0 ? (
@@ -45,8 +45,8 @@ function YourPosts() {
                 <div className="flex justify-center font-bold text-xl text-[#547bca]">
                   Saved Post
                 </div>
-                {bookmarkPost?.map((p) => (
-                  <ExploreMore explore={p} key={p._id} />
+                {bookmarkPost?.map((b) => (
+                  <ExploreMore explore={b} key={b._id} />
                 ))}
               </div>
             ) : (
@@ -56,8 +56,10 @@ function YourPosts() {
             )}
           </div>
         ) : (
-          <div className="flex md:w-1/2 flex-col h-[calc(100vh-2.3rem)]  lg:border-[#BED7F8]">
-            <PostSkeleton />
+          <div className="flex flex-col w-full">
+            {bookmarkPost?.map((b) => (
+              <PostSkeleton key={b._id} />
+            ))}
           </div>
         )}
       </div>

@@ -195,7 +195,7 @@ function App() {
           </Routes>
           :
           <>
-            <Navbar socket={socket} />
+            <Navbar />
             <div className=" h-[calc(100vh-4rem)] overflow-y-hidden w-full top-16 relative z-0 ">
               <div className="w-full flex h-full">
                 {/* Left Sidebar */}
@@ -231,12 +231,6 @@ function App() {
                         <h1>Edit</h1>
                       </div>
                     </Link>
-                    <Link to="/home">
-                      <div className="flex items-center hover:bg-slate-500 pl-2 p-2">
-                        <i className="fa-solid fa-user-group mr-2"></i>
-                        <h1>Freinds</h1>
-                      </div>
-                    </Link>
                   </div>
 
                   <div className="bg-[#23293d] p-2 rounded-lg border-[#BED7F8] w-full mt-32">
@@ -262,7 +256,7 @@ function App() {
                   </div>
                 </div>
                 {/* Main Content */}
-                <div className="w-full md:w-[70%] lg:w-[60%] h-full overflow-y-scroll">
+                <div className={`w-full md:w-[70%] lg:w-[60%] h-full ${currentPath === "chat" ? "" : "overflow-y-auto"} `}>
                   {currentPath === "home" && <div className="w-full flex items-center  justify-center p-2 mt-2">
                     <div className="flex w-full md:w-[85%] 2xl:justify-between justify-center items-center rounded-lg">
                       <div className="w-full m-3 mr-3">
@@ -317,10 +311,6 @@ function App() {
                       <Route
                         path="/explore"
                         element={currentUser ? <Explore /> : <Login />}
-                      />
-                      <Route
-                        path="/write"
-                        element={currentUser ? <Write socket={socket} /> : <Login />}
                       />
                       <Route path="/login" element={<Login />} />
                       <Route
