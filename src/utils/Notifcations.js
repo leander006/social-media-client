@@ -15,13 +15,6 @@ function Notifcations({ n, setNotify, notify }) {
 
   const { allNoti } = useSelector((state) => state.notification);
 
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage?.getItem("token")}`,
-    },
-  };
-
   return (
     <div
       className="flex py-3 cursor-pointer ml-2 border border-x-0 border-t-0 border-b-1 items-center"
@@ -30,8 +23,7 @@ function Notifcations({ n, setNotify, notify }) {
         try {
           dispatch(notifcationStart());
           const { data } = await axios.delete(
-            `${BASE_URL}/api/notification/${n._id}`,
-            config
+            `${BASE_URL}/api/notification/${n._id}`
           );
           console.log(data);
           dispatch(

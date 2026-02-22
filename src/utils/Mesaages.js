@@ -20,7 +20,7 @@ function Mesaages({ messages, own, handleFunction }) {
           <p className={messages?.sender?._id === currentUser._id ? "pl-2 text-[#2D3B58] cursor-pointer w-44 break-words" : "pl-2 text-[#2D3B58]"}>{messages?.content}</p>
           {/* <p className={messages?.sender?._id !== currentUser._id?"pl-2 text-[#2D3B58] cursor-pointer w-44 break-words":"pl-2 text-[#2D3B58]"}>{messages?.content}</p> */}
           {own && <i onClick={() => setVisible(!visible)} className="fa-solid fa-ellipsis-vertical cursor-pointer ml-3"></i>}
-          {visible && <div className=" absolute right-0 bg-[#2f3549] text-white p-2 bottom-6 cursor-pointer" onClick={handleFunction}>Delete</div>}
+          {visible && <div className=" absolute right-0 bg-[#2f3549] text-white p-2 -top-10 cursor-pointer" onClick={handleFunction}>Delete</div>}
         </div>
       </div>
     </div>

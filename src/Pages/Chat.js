@@ -47,7 +47,6 @@ function Chat({ socket }) {
 
   const user = currentUser?.others ? currentUser?.others : currentUser;
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const config = {
     headers: {
@@ -153,41 +152,17 @@ function Chat({ socket }) {
   const handleGroupChat = (e) => {
     e.preventDefault();
     setSearchResult(!searchResult);
+    setSelectedUser([]);
+    setGroupSearch("");
+    setChatname("");
+    console.log(chatname);
+
+    console.log("Cancel gruop");
+
   };
   const addGroup = (e) => {
     e.preventDefault();
     setAdddUserGroup(!addUserGroup);
-  };
-
-  const handleSearch = async (query) => {
-    setGroupSearch(query);
-    if (!query) {
-      return;
-    }
-    try {
-      const { data } = await axios.get(
-        `${BASE_URL}/api/user/freind/search?name=` + groupSearch,
-        config
-      );
-      setAddUser(data);
-    } catch (error) {
-      toast.error(error.response.data.error);
-    }
-  };
-  const handleSearched = async (query) => {
-    setSearch(query);
-    if (!query) {
-      return;
-    }
-    try {
-      const { data } = await axios.get(
-        `${BASE_URL}/api/user/freind/search?name=` + search,
-        config
-      );
-      setSearched(data);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const handleGroup = (addUser) => {
@@ -195,6 +170,7 @@ function Chat({ socket }) {
       return;
     }
     setSelectedUser([...selectedUser, addUser]);
+    setGroupSearch("");
   };
 
   const handleCancel = (deleteUser) => {
@@ -273,7 +249,7 @@ function Chat({ socket }) {
       dispatch(chatStart());
       const { data } = await axios.post(
         `${BASE_URL}/api/chat`,
-        { name: name, users: JSON.stringify(selectedUser.map((u) => u._id)) },
+        { name: chatname, users: JSON.stringify(selectedUser.map((u) => u._id)) },
         config
       );
 
@@ -281,6 +257,8 @@ function Chat({ socket }) {
       setCurrentChat(data);
       setSearchResult(!searchResult);
       toast.success("Group created");
+      setChatname("");
+      setSelectedUser([]);
     } catch (error) {
       console.log(error);
       dispatch(chatError());
@@ -340,6 +318,29 @@ function Chat({ socket }) {
     return () => clearTimeout(debounceTimeout); // Clear timeout on every new input
   };
 
+  const handleGroupSearch = async (e) => {
+    const query = e.target.value;
+    setGroupSearch(query);
+
+    if (query.trim() === "") {
+      setAddUser([]);
+      return;
+    }
+
+    const debounceTimeout = setTimeout(async () => {
+      try {
+        const { data } = await axios.get(
+          `${BASE_URL}/api/user/freind/search?name=` + query,
+        );
+        setAddUser(data);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      }
+    }, 500);
+
+    return () => clearTimeout(debounceTimeout); // Clear timeout on every new input
+  };
+
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentChat, message]);
@@ -367,6 +368,7 @@ function Chat({ socket }) {
                       className=""
                       key={c?._id}
                       onClick={() => {
+                        setSearchResult(false)
                         dispatch(setCurrentChat(c));
                       }}
                     >
@@ -454,7 +456,7 @@ function Chat({ socket }) {
                       </div>
                     )}
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id !== user && (
+                    currentChat?.groupAdmin?._id !== user?._id && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-delete-left cursor-pointer"
@@ -462,9 +464,8 @@ function Chat({ socket }) {
                         ></i>
                       </div>
                     )}
-
                   {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id === user && (
+                    currentChat?.groupAdmin?._id === user?._id && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
@@ -472,15 +473,15 @@ function Chat({ socket }) {
                         ></i>
                       </div>
                     )}
-                  {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id === user && (
+                  {/* {currentChat?.isGroupChat &&
+                    currentChat?.groupAdmin?._id === user?._id && (
                       <div>
                         <i
                           className="fa-solid fa-xl fa-user-plus mr-4 text-black cursor-pointer"
                           onClick={addGroup}
                         ></i>
                       </div>
-                    )}
+                    )} */}
                 </div>
               </div>
 
@@ -531,6 +532,7 @@ function Chat({ socket }) {
         {/* Mobile view */}
 
         <div className="flex lg:hidden z-10 flex-col md:p-0 w-screen h-full">
+
           {!currentChat ? (
             <div className="conversation lg:flex-1">
               <div className="flex justify-between items-center md:p-3">
@@ -571,6 +573,14 @@ function Chat({ socket }) {
                     ))}
                   </div>
                 </div>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <i
+                      className="fa-solid fa-xl fa-user-plus ml-4 text-[#BED7F8] cursor-pointer"
+                      onClick={handleGroupChat}
+                    ></i>
+                  </div>
+                </div>
               </div>
               <div className="h-[calc(100vh-9rem)] p-1 overflow-y-auto">
                 {allChat ? (
@@ -580,6 +590,7 @@ function Chat({ socket }) {
                         className="individual-chat"
                         key={c?._id}
                         onClick={() => {
+                          setSearchResult(false)
                           dispatch(setCurrentChat(c));
                         }}
                       >
@@ -692,7 +703,7 @@ function Chat({ socket }) {
                         ></i>
                       </div>
                     )}
-                  {currentChat?.isGroupChat &&
+                  {/* {currentChat?.isGroupChat &&
                     currentChat?.groupAdmin?._id === user?._id && (
                       <div>
                         <i
@@ -700,7 +711,7 @@ function Chat({ socket }) {
                           onClick={addGroup}
                         ></i>
                       </div>
-                    )}
+                    )} */}
                 </div>
               </div>
               {!loading ? (
@@ -759,8 +770,8 @@ function Chat({ socket }) {
                 className="focus:outline-slate-900 w-full h-full p-1"
                 type="text"
                 placeholder="Enter group Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={chatname}
+                onChange={(e) => setChatname(e.target.value)}
                 required
               />
             </div>
@@ -770,7 +781,7 @@ function Chat({ socket }) {
                 type="text"
                 placeholder="Add user eg leander06"
                 value={groupSearch}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={handleGroupSearch}
               />
             </div>
             <div className="w-full ">
@@ -785,13 +796,15 @@ function Chat({ socket }) {
               </div>
             </div>
             <div className="w-full p-1.5">
-              {addUser?.slice(0, 6).map((a) => (
+              {groupSearch && addUser.length > 0 ? (addUser?.slice(0, 6).map((a) => (
                 <GroupUser
                   user={a}
                   key={a._id}
                   handleFunction={() => handleGroup(a)}
                 />
-              ))}
+              ))) : groupSearch && <ul>
+                <h1 className="p-2 text-center text-white font-bold">No search result</h1>
+              </ul>}
             </div>
             <div className=" flex justify-around mb-2  ml-2 rounded p-1">
               <input
@@ -849,7 +862,7 @@ function Chat({ socket }) {
                 type="text"
                 placeholder="Add user eg leander06"
                 value={groupSearch}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={handleGroupSearch}
                 required
               />
             </div>
@@ -865,13 +878,16 @@ function Chat({ socket }) {
               </div>
             </div>
             <div className="w-full p-1.5">
-              {addUser?.slice(0, 6).map((a) => (
+
+              {groupSearch && addUser.length > 0 ? (addUser?.slice(0, 6).map((a) => (
                 <GroupUser
                   user={a}
                   key={a._id}
-                  handleFunction={() => handleAdd(a)}
+                  handleFunction={() => handleGroup(a)}
                 />
-              ))}
+              ))) : groupSearch && <ul>
+                <h1 className="p-2 text-center text-white font-bold">No search result</h1>
+              </ul>}
             </div>
             <div className="bg-blue-500 mb-2 w-fit ml-2 rounded p-1">
               <input

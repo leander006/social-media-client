@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
 
 const initialState = {
   allNoti: [],
@@ -26,5 +27,18 @@ export const NotificationSlice = createSlice({
 
 export const { notifcationError, notifcationStart, notifcationSuccess } =
   NotificationSlice.actions;
+
+// Thunk to fetch notifications
+export const fetchNotifications = () => async (dispatch) => {
+  dispatch(notifcationStart());
+  try {
+    const response = await axios.get("/api/notification"); // Replace with your API endpoint
+    dispatch(notifcationSuccess(response.data));
+    console.log("Fetched notifications:", response.data);
+  } catch (err) {
+    dispatch(notifcationError());
+    console.error("Error fetching notifications:", err);
+  }
+};
 
 export default NotificationSlice.reducer;
