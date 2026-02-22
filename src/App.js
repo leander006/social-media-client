@@ -79,13 +79,11 @@ function App() {
   const max = 180;
 
   useEffect(() => {
+    console.log(currentUser, "current user in app");
+
     if (currentUser) {
       // Initialize the socket connection when the user logs in
       dispatch(initializeSocket());
-    }
-    if (isConnected && currentUser) {
-      const socket = getSocket(); // Get the socket object
-      socket.emit("login", { userId: currentUser._id });
     }
 
     // Cleanup socket connection when the user logs out or component unmounts
@@ -93,7 +91,15 @@ function App() {
       dispatch(disconnectSocket());
     };
     // eslint-disable-next-line
-  }, []);
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (isConnected && currentUser) {
+      const socket = getSocket(); // Get the socket object
+      socket.emit("login", { userId: currentUser._id });
+    }
+  }, [currentUser, isConnected]);
+
 
   useEffect(() => {
     const getUser = async () => {
