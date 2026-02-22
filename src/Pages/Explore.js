@@ -35,22 +35,6 @@ function Explore() {
     <>
       <div className="flex md:w-[85%]">
         <div className="flex flex-col mb-4 w-full">
-          {/* <div className="flex md:hidden ml-5 mt-2 items-center bg-slate-200 rounded-md">
-            <input
-              className="rounded-md w-full m-2 p-1"
-              type="text"
-              placeholder="search your friends"
-              value={search}
-              onChange={(e) => handleSearch(e.target.value)}
-            />
-          </div>
-          <div className="flex lg:hidden fixed z-30 ml-6 mt-12 bg-[#a1bcf1] ">
-            <div className="w-96 ">
-              {searched?.map((s) => (
-                <SearchFreind key={s?._id} search={s} />
-              ))}
-            </div>
-          </div> */}
 
           {!loading ? (
             <div className="hidden  bg-[#2D3B58]  justify-center  md:grid auto-rows-2fr grid-cols-2">
