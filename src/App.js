@@ -1,7 +1,6 @@
 import Explore from "./Pages/Explore";
-
 import Home from "./Pages/Home";
-import { Routes, Route, useNavigate, Link, useParams, useLocation } from "react-router-dom";
+import { Routes, Route, Link, useLocation } from "react-router-dom";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import axios from "axios";
@@ -10,27 +9,23 @@ import SavedPost from "./Pages/SavedPost";
 import Profile from "./Pages/Profile";
 import { toast } from "react-hot-toast";
 import Chat from "./Pages/Chat";
-import Write from "./Pages/Write";
 import Edit from "./Pages/Edit";
 import EmailVerificatiion from "./Pages/EmailVerificatiion";
 import SinglePage from "./Pages/SinglePage";
 import { useDispatch, useSelector } from "react-redux";
-import { io } from "socket.io-client";
 import { BASE_URL } from "./services/helper";
 import { useEffect, useState } from "react";
 import { loginError, loginStart, loginSuccess } from "./redux/Slice/userSlice";
-import { followerPostError, followerPostStart, followerPostSuccess } from "./redux/Slice/postSlice";
 import { SpinnerCircular } from "spinners-react";
 import Navbar from "./utils/Navbar";
 import InputEmoji from 'react-input-emoji'
+import { disconnectSocket, getSocket, initializeSocket } from "./redux/Slice/socketSlice";
 
 axios.defaults.withCredentials = true;
-const Endpoint = `${BASE_URL}/`;
 function App() {
   const { currentUser } = useSelector((state) => state.user);
-  const socket = io(Endpoint);
+  const { isConnected } = useSelector((state) => state.socket); // Get connection status from Redux
 
-  const [search, setSearch] = useState([]);
   const [sloading, setSloading] = useState(false);
   const [display, setDisplay] = useState(false)
   const [fileInputState, setFileInputState] = useState("");
@@ -38,7 +33,7 @@ function App() {
   const [selectedImg, setSelectedImg] = useState("");
   const [caption, setCaption] = useState("");
   const location = useLocation(); // Get the current location object
-
+  const [suggestedUser, setSuggestedUser] = useState([])
   const currentPath = location.pathname.split("/")[1]; // This will give 'home' for '/home'
 
   const dispatch = useDispatch();
@@ -84,9 +79,36 @@ function App() {
   const max = 180;
 
   useEffect(() => {
-    socket?.emit("login", { userId: currentUser?._id });
+    if (currentUser) {
+      // Initialize the socket connection when the user logs in
+      dispatch(initializeSocket());
+    }
+    if (isConnected && currentUser) {
+      const socket = getSocket(); // Get the socket object
+      socket.emit("login", { userId: currentUser._id });
+    }
+
+    // Cleanup socket connection when the user logs out or component unmounts
+    return () => {
+      dispatch(disconnectSocket());
+    };
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const { data } = await axios.get(`${BASE_URL}/api/user//suggesteduser/user`);
+        setSuggestedUser(data);
+        console.log("data", data);
+      } catch (error) {
+        console.log("error", error);
+
+      }
+    }
+
+    getUser();
+  }, [])
 
   const recalculate = (text) => {
     const currentLength = text.length;
@@ -188,7 +210,7 @@ function App() {
           <Routes>
             <Route
               path="/*"
-              element={currentUser != null ? <Home socket={socket} /> : <Login />}
+              element={currentUser != null ? <Home /> : <Login />}
             />
             <Route path="/register" element={<Register />} />
 
@@ -196,7 +218,7 @@ function App() {
           :
           <>
             <Navbar />
-            <div className=" h-[calc(100vh-4rem)] overflow-y-hidden w-full top-16 relative z-0 ">
+            <div className=" h-[calc(100vh-4rem)] overflow-y-hidden overflow-x-hidden w-full top-16 relative z-0 ">
               <div className="w-full flex h-full">
                 {/* Left Sidebar */}
                 <div className="md:w-[30%] lg:w-[20%] bg-[#2f3549] h-full overflow-y-auto text-[#BED7F8] hidden md:flex flex-col">
@@ -256,25 +278,38 @@ function App() {
                   </div>
                 </div>
                 {/* Main Content */}
-                <div className={`w-full md:w-[70%] lg:w-[60%] h-full ${currentPath === "chat" ? "" : "overflow-y-auto"} `}>
+                <div className={`w-full md:w-[70%] lg:w-[60%] h-full ${currentPath === "chat" || currentPath === "singlePage" ? "" : "overflow-y-auto"}`}>
                   {currentPath === "home" && <div className="w-full flex items-center  justify-center p-2 mt-2">
                     <div className="flex w-full md:w-[85%] 2xl:justify-between justify-center items-center rounded-lg">
                       <div className="w-full m-3 mr-3">
-                        <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
-                          <div
-                            className="w-full "
-                          >
-                            <InputEmoji
-                              value={caption}
-                              onChange={recalculate}
-                              cleanOnEnter
-                              maxLength={max}
-                              placeholder="Write a caption..."
-                            />
-                          </div>
-                          <p className="w-[20%] md:text-center mr-1">{textAreaCount}</p>
-                          <div onClick={() => { setDisplay(true) }}>
-                            <i className="fa-solid fa-2xl fa-square-plus mr-2 text-[#BED7F8] cursor-pointer"></i>
+
+                        <div className="w-full max-w-4xl mx-auto px-2">
+                          <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full relative">
+
+                            {/* Input Section */}
+                            <div className="flex items-center flex-1 min-w-0">
+                              <InputEmoji
+                                value={caption}
+                                onChange={recalculate}
+                                cleanOnEnter
+                                maxLength={max}
+                                placeholder="Type a message"
+                                pickerStyle={{
+                                  zIndex: 100,
+                                  width: window.innerWidth < 640 ? "95vw" : "350px",
+                                  maxWidth: "100%",
+                                  bottom: "60px",
+                                }}
+                              />
+                            </div>
+
+                            {/* Character Counter */}
+                            <p className="px-3 text-sm md:text-base text-center whitespace-nowrap">
+                              {textAreaCount}
+                            </p>
+                            <div onClick={() => { setDisplay(true) }}>
+                              <i className="fa-solid fa-2xl fa-square-plus mr-2 text-[#BED7F8] cursor-pointer"></i>
+                            </div>
                           </div>
                         </div>
 
@@ -285,16 +320,16 @@ function App() {
                     <Routes>
                       <Route
                         path="/"
-                        element={currentUser ? <Home socket={socket} /> : <Login />}
+                        element={currentUser ? <Home /> : <Login />}
                       />
                       <Route path="/register" element={<Register />} />
                       <Route
                         path="/home"
-                        element={currentUser ? <Home socket={socket} /> : <Login />}
+                        element={currentUser ? <Home /> : <Login />}
                       />
                       <Route
                         path="/like"
-                        element={currentUser ? <LikedPost socket={socket} /> : <Login />}
+                        element={currentUser ? <LikedPost /> : <Login />}
                       />
                       <Route
                         path="/profile/:userId"
@@ -306,7 +341,7 @@ function App() {
                       />
                       <Route
                         path="/chat"
-                        element={currentUser ? <Chat socket={socket} /> : <Login />}
+                        element={currentUser ? <Chat /> : <Login />}
                       />
                       <Route
                         path="/explore"
@@ -333,35 +368,13 @@ function App() {
                 <div className="bg-[#2f3549] w-[20%] h-full lg:flex hidden">
                   <div className="w-full px-2">
                     <div className="text-[#BED7F8]">
-                      <h1 className="text-xl">Groups you can join</h1>
-                      <div className="flex items-center my-6">
-                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
-                        <h1 className=" text-xl ml-2">Gaming zone</h1>
-                      </div>
-                      <div className="flex items-center">
-                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
-                        <h1 className=" text-xl ml-2">Avenger Assemble</h1>
-                      </div>
-                      <div className="flex items-center my-6">
-                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
-                        <h1 className=" text-xl ml-2">Cricket paglu</h1>
-                      </div>
-
-                    </div>
-                    <div className="text-[#BED7F8] my-2">
-                      <h1 className="text-xl">Freinds for you</h1>
-                      <div className="flex items-center my-6 ">
-                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
-                        <h1 className=" text-xl ml-2">Name</h1>
-                      </div>
-                      <div className="flex items-center">
-                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
-                        <h1 className=" text-xl ml-2">Name</h1>
-                      </div>
-                      <div className="flex items-center my-6">
-                        <img className="w-8 h-8 rounded-full" src="https://res.cloudinary.com/dj-sanghvi-college/image/upload/v1735990505/m4741xh2lsw69khbeaz9.jpg" alt="images of friends" />
-                        <h1 className=" text-xl ml-2">Name</h1>
-                      </div>
+                      <h1 className="text-xl">Suggested User</h1>
+                      {suggestedUser.map((u) => (
+                        <Link to={"/profile/" + u?._id} key={u?._id} className="flex items-center my-6">
+                          <img className="w-8 h-8 rounded-full" src={u?.profile?.url} alt="images of friends" />
+                          <h1 className=" text-xl ml-2">{u?.username}</h1>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 </div>

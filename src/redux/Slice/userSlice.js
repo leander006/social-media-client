@@ -24,7 +24,6 @@ export const UserSlice = createSlice({
       state.currentUser = null;
       state.loading = false;
       state.error = false;
-      localStorage.clear();
     },
   },
 });

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import Conversation from "../utils/Conversation";
-import Navbar from "../utils/Navbar";
 import Messages from "../utils/Mesaages";
 import NopPreview from "../utils/NopPreview";
 import { BASE_URL } from "../services/helper";
@@ -25,8 +24,9 @@ import ListItems from "../utils/ListItems";
 import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 import InputEmoji from 'react-input-emoji'
+import { getSocket } from "../redux/Slice/socketSlice";
 
-function Chat({ socket }) {
+function Chat() {
   const scrollRef = useRef();
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
@@ -34,7 +34,6 @@ function Chat({ socket }) {
   const [groupSearch, setGroupSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState([]);
   const [addUser, setAddUser] = useState([]);
-  const [name, setName] = useState("");
   const [searchResult, setSearchResult] = useState(false);
   const [addUserGroup, setAdddUserGroup] = useState(false);
   const { allChat, currentChat } = useSelector((state) => state.chat);
@@ -44,16 +43,10 @@ function Chat({ socket }) {
   const { allNoti } = useSelector((state) => state.notification);
   const [chatname, setChatname] = useState("");
   const [searchResults, setSearchResults] = useState([]); // State for search results
+  const { isConnected } = useSelector((state) => state.socket); // Get connection status from Redux
 
   const user = currentUser?.others ? currentUser?.others : currentUser;
   const dispatch = useDispatch();
-
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage?.getItem("token")}`,
-    },
-  };
   // Socket //
 
   //const [socketConnected, setSocketConnected] = useState(false);
@@ -64,18 +57,40 @@ function Chat({ socket }) {
   const max = 100;
 
   useEffect(() => {
-    socket.emit("setup", user);
-    // socket.on("connected", () => setSocketConnected(true));
-    socket.on("typing", () => setIsTyping(true));
-    socket.on("stop typing", () => setIsTyping(false));
-    // eslint-disable-next-line
-  }, []);
+    let socket;
+
+    if (isConnected && currentUser) {
+      socket = getSocket(); // Get the socket object
+
+      // Emit setup event
+      socket.emit("setup", currentUser);
+
+      // Listen for typing events
+      socket.on("typing", () => setIsTyping(true));
+      socket.on("stop typing", () => setIsTyping(false));
+      socket.on("message deleted", (newMessage) => {
+        dispatch(
+          messageSuccess(allmessage.filter((m) => m._id !== newMessage._id))
+        );
+      });
+      socket.on("message recieved", async (newMessage) => {
+        dispatch(messageSuccess([...allmessage, newMessage]));
+      });
+      // Cleanup socket listeners
+      return () => {
+        socket.off("typing");
+        socket.off("stop typing");
+        socket.off("message deleted");
+        socket.off("message recieved");
+      };
+    }
+  }, [isConnected, currentUser, allmessage, dispatch]);
 
   useEffect(() => {
     const getChat = async () => {
       try {
         dispatch(chatStart());
-        const { data } = await axios.get(`${BASE_URL}/api/chat`, config);
+        const { data } = await axios.get(`${BASE_URL}/api/chat`);
         dispatch(chatSuccess(data));
       } catch (error) {
         dispatch(chatError());
@@ -93,10 +108,13 @@ function Chat({ socket }) {
         dispatch(messageStart());
         const { data } = await axios.get(
           `${BASE_URL}/api/message/get/` + currentChat._id,
-          config
         );
         dispatch(messageSuccess(data));
-        socket.emit("join room", currentChat._id);
+
+        if (isConnected) {
+          const socket = getSocket(); // Get the socket object
+          socket.emit("join room", currentChat._id); // Join the current chat room
+        }
         setLoading(false);
       } catch (error) {
         dispatch(messageError());
@@ -111,9 +129,14 @@ function Chat({ socket }) {
   const handleDelete = async (me) => {
     try {
       dispatch(messageStart());
-      await axios.delete(`${BASE_URL}/api/message/delete/${me._id}`, config);
+      await axios.delete(`${BASE_URL}/api/message/delete/${me._id}`);
       dispatch(messageSuccess(allmessage.filter((m) => m._id !== me._id)));
-      socket.emit("new message delete", me);
+
+      if (isConnected) {
+        const socket = getSocket(); // Get the socket object
+        socket.emit("new message delete", me);
+      }
+
       setMessage(" ");
     } catch (error) {
       dispatch(messageError);
@@ -121,27 +144,12 @@ function Chat({ socket }) {
     }
   };
 
-  useEffect(() => {
-    socket.on("message recieved", async (newMessage) => {
-      dispatch(messageSuccess([...allmessage, newMessage]));
-    });
-  });
-
-  useEffect(() => {
-    socket.on("message deleted", (newMessage) => {
-      dispatch(
-        messageSuccess(allmessage.filter((m) => m._id !== newMessage._id))
-      );
-    });
-  });
-
   const groupDelete = async (e) => {
     e.preventDefault();
     try {
       dispatch(chatStart());
       await axios.delete(
-        `${BASE_URL}/api/chat/delete/` + currentChat._id,
-        config
+        `${BASE_URL}/api/chat/delete/` + currentChat._id
       );
       dispatch(chatSuccess(allChat.filter((c) => c._id !== currentChat._id)));
       dispatch(setCurrentChat(""));
@@ -181,8 +189,7 @@ function Chat({ socket }) {
     try {
       const { data } = await axios.put(
         `${BASE_URL}/api/chat/remove/` + currentChat._id,
-        { userId: deleteUser._id },
-        config
+        { userId: deleteUser._id }
       );
       dispatch(setCurrentChat(data));
       toast.success("Removed user");
@@ -196,8 +203,7 @@ function Chat({ socket }) {
       dispatch(chatStart());
       await axios.put(
         `${BASE_URL}/api/chat/remove/` + currentChat._id,
-        { userId: removeUser._id },
-        config
+        { userId: removeUser._id }
       );
       dispatch(chatSuccess(allChat.filter((c) => c._id !== currentChat._id)));
       dispatch(setCurrentChat(""));
@@ -216,8 +222,7 @@ function Chat({ socket }) {
       } else {
         const { data } = await axios.put(
           `${BASE_URL}/api/chat/add/` + currentChat._id,
-          { userId: addUser._id },
-          config
+          { userId: addUser._id }
         );
         dispatch(setCurrentChat(data));
         toast.success("New member added in group");
@@ -233,8 +238,7 @@ function Chat({ socket }) {
     try {
       const { data } = await axios.put(
         `${BASE_URL}/api/chat/rename/` + currentChat._id,
-        { chatname: chatname },
-        config
+        { chatname: chatname }
       );
       dispatch(setCurrentChat(data));
       toast.success("Renamed the group");
@@ -249,8 +253,7 @@ function Chat({ socket }) {
       dispatch(chatStart());
       const { data } = await axios.post(
         `${BASE_URL}/api/chat`,
-        { name: chatname, users: JSON.stringify(selectedUser.map((u) => u._id)) },
-        config
+        { name: chatname, users: JSON.stringify(selectedUser.map((u) => u._id)) }
       );
 
       dispatch(chatSuccess([data, ...allChat]));
@@ -278,15 +281,21 @@ function Chat({ socket }) {
       toast.error("Please enter some message")
       return;
     }
-    socket.emit("stop typing", currentChat._id);
+    if (isConnected) {
+      const socket = getSocket(); // Get the socket object
+      socket.emit("stop typing", currentChat._id);
+    }
+
     try {
       dispatch(messageStart());
       const { data } = await axios.post(
         `${BASE_URL}/api/message/` + currentChat._id,
-        { content: message },
-        config
+        { content: message }
       );
-      socket.emit("send_message", data);
+      if (isConnected) {
+        const socket = getSocket(); // Get the socket object
+        socket.emit("send_message", data);
+      }
       dispatch(messageSuccess([...allmessage, data]));
       setMessage("");
     } catch (error) {
@@ -349,7 +358,7 @@ function Chat({ socket }) {
     <>
       <div className="flex w-full">
         {/* Destop view  */}
-        <div className="hidden lg:flex w-full md:h-[calc(100vh-5.15rem)] border">
+        <div className="hidden lg:flex w-full md:h-[calc(100vh-5.5rem)] border">
           <div className=" w-[40%] border border-y-0 border-l-0">
             <div className="flex justify-between items-center p-3">
               <div>
@@ -486,7 +495,7 @@ function Chat({ socket }) {
               </div>
 
               {!loading ? (
-                <div className=" md:bg-[#BED7F8] md:h-[calc(100vh-11.65rem)] p-3 overflow-y-auto">
+                <div className=" md:bg-[#BED7F8] md:h-[calc(100vh-12.4rem)] p-3 overflow-y-auto">
                   {allmessage?.map((m) => (
                     <div key={m._id} ref={scrollRef}>
                       <Messages
@@ -629,7 +638,7 @@ function Chat({ socket }) {
               </div>
             </div>
           ) : (
-            <div className="message">
+            <div className="message w-full">
               <div className="flex justify-between items-center message bg-[#8cbeff] lg:hidden">
                 <div className="flex h-12 items-center p-3">
                   <i
@@ -737,18 +746,35 @@ function Chat({ socket }) {
                   secondaryColor="black"
                 />
               )}
-              <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
-                <div className="flex items-center w-[80%]">
-                  <InputEmoji
-                    value={comment}
-                    onChange={recalculate}
-                    cleanOnEnter
-                    onEnter={sendMessage}
-                    maxLength={max}
-                    placeholder="Type a message" />
+              <div className="w-full max-w-4xl mx-auto px-2">
+                <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full relative">
+
+                  {/* Input Section */}
+                  <div className="flex items-center flex-1 min-w-0">
+                    <InputEmoji
+                      value={comment}
+                      onChange={recalculate}
+                      cleanOnEnter
+                      onEnter={sendMessage}
+                      maxLength={max}
+                      placeholder="Type a message"
+                    // pickerStyle={{
+                    //   zIndex: 100,
+                    //   width: window.innerWidth < 640 ? "95vw" : "350px",
+                    //   maxWidth: "100%",
+                    //   bottom: "60px",
+                    // }}
+                    />
+                  </div>
+
+                  {/* Character Counter */}
+                  <p className="px-3 text-sm md:text-base text-center whitespace-nowrap">
+                    {textAreaCount}
+                  </p>
+
                 </div>
-                <p className="w-[20%] md:text-center">{textAreaCount}</p>
               </div>
+
             </div>
           )}
         </div>

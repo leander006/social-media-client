@@ -7,17 +7,15 @@ import axios from "axios";
 
 import {
   fetchNotifications,
-  notifcationError,
-  notifcationStart,
-  notifcationSuccess,
 } from "../redux/Slice/notificationSlice";
 import Notifcations from "./Notifcations";
 import { BASE_URL } from "../services/helper";
+import { getSocket } from "../redux/Slice/socketSlice";
 
 function Navbar() {
   const [search, setSearch] = useState(""); // State for search input
   const [searchResults, setSearchResults] = useState([]); // State for search results
-
+  const { isConnected } = useSelector((state) => state.socket); // Get connection status from Redux
   const navigate = useNavigate();
   const [notify, setNotify] = useState(false);
   const dispatch = useDispatch();
@@ -27,13 +25,18 @@ function Navbar() {
 
   useEffect(() => {
     dispatch(fetchNotifications()); // Dispatch the thunk to fetch notifications
-  }, [dispatch]);
+  }, [dispatch, notify]);
 
   const log = (e) => {
     e.preventDefault();
+    if (isConnected) {
+      const socket = getSocket(); // Get the socket object
+      socket.emit("removeUser", currentUser); // Join the current chat room
+    }
     dispatch(logout());
     window.open(`${BASE_URL}/api/auth/google/logout`, "_self");
     navigate("/");
+
   };
 
   const handleSearchChange = async (e) => {
