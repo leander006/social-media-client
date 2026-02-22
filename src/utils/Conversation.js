@@ -16,14 +16,14 @@ function Conversation({ chat, name, img }) {
           <h1 className="capitalize text-slate-600">{name}</h1>
 
           <div className="flex flex-col">
-            <h1 className="md:hidden lg:flex capitalize text-primary">
-              {chat?.latestMessage?.content?.length > 20
-                ? chat?.latestMessage?.content.substring(0, 20) + "..."
+            <h1 className="hidden lg:flex capitalize text-primary">
+              {chat?.latestMessage?.content?.length > 14
+                ? chat?.latestMessage?.content.substring(0, 14) + "..."
                 : chat?.latestMessage?.content}
             </h1>
-            <h1 className=" hidden md:flex lg:hidden capitalize text-primary">
-              {chat?.latestMessage?.content?.length > 20
-                ? chat?.latestMessage?.content.substring(0, 15) + "..."
+            <h1 className=" flex lg:hidden capitalize text-primary">
+              {chat?.latestMessage?.content?.length > 25
+                ? chat?.latestMessage?.content.substring(0, 25) + "..."
                 : chat?.latestMessage?.content}
             </h1>
           </div>

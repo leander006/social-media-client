@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,22 +17,12 @@ function Comment({ comment }) {
   const { allComment } = useSelector((state) => state.comment);
 
 
-  
-
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage?.getItem("token")}`,
-    },
-  };
-
   const handledelete = async (e) => {
     e.preventDefault();
     try {
       dispatch(commentStart());
       await axios.delete(
         `${BASE_URL}/api/comment/delete/${comment._id}`,
-        config
       );
       dispatch(commentSuccess(allComment.filter((c) => c._id !== comment._id)));
       toast.success("Deleted the comment");
@@ -58,30 +49,26 @@ function Comment({ comment }) {
                 : comment?.user?.profile
             }
           />
-          <Link to={"/profile/"+comment?.user?._id }>
+          <Link to={"/profile/" + comment?.user?._id}>
             <h1 className="capitalize font-bold mx-3 md:mr-3 cursor-pointer text-white">
               {comment?.user?.username}
             </h1>
           </Link>
         </div>
-        <div className="relative ml-4 group basis-[90%] text-white pb-3">
+        <div className="flex items-center ml-4 basis-[90%] text-white pb-3">
           <p
             className={
               comment?.user?._id === currentUser._id
-                ? "mt-1 cursor-pointer pr-2 mx-2 group-hover:block w-36 md:w-fit lg:w-44 xl:w-60 2xl:w-fit break-words"
-                : "mt-1 pr-2 ml-2 group-hover:block w-36 md:w-fit lg:w-44 xl:w-60 2xl:w-fit break-words"
+                ? "mt-1 pr-2 mx-2 w-36 md:w-fit lg:w-44 xl:w-60 2xl:w-fit break-words"
+                : "mt-1 pr-2 ml-2  w-36 md:w-fit lg:w-44 xl:w-60 2xl:w-fit break-words"
             }
           >
             {comment?.content}
           </p>
-          {comment?.user?._id === currentUser._id && (
-            <h1
-              className="hidden cursor-pointer group-hover:block absolute bottom-[2.5rem] bg-gray-300 rounded p-1"
-              onClick={handledelete}
-            >
-              Delete comment
-            </h1>
-          )}
+          <div className="relative group">
+            <i className="fa-solid fa-ellipsis-vertical cursor-pointer ml-3"></i>
+            <div className="hidden absolute right-0 text-[#2f3549] group-hover:block bg-white p-0.5 cursor-pointer" onClick={handledelete}>Delete</div>
+          </div>
         </div>
       </div>
     </>

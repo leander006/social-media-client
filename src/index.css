@@ -2,40 +2,73 @@
 @tailwind components;
 @tailwind utilities;
 
-/* width */
+body {
+    overflow-x: hidden;
+}
+
+.react-input-emoji--input {
+    white-space: nowrap !important;
+    /* Disable wrapping */
+    overflow-x: auto !important;
+    /* Enable horizontal scroll */
+    overflow-y: hidden !important;
+    /* Prevent vertical scroll */
+    display: block !important;
+    width: 100% !important;
+}
+
+.react-input-emoji--container {
+    width: 100% !important;
+}
+
+.react-input-emoji--picker {
+    position: fixed !important;
+    bottom: 80px !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: auto !important;
+    width: 100vw !important;
+    max-width: 420px !important;
+}
+
+/* Custom scrollbar styles */
 ::-webkit-scrollbar {
-    width: 3px;
+    width: 5px;
+    /* Set the width of the scrollbar */
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
-    background: #547bca;
-    border-radius: 5px;
+    background: #2f3549;
+    /* Background color of the scrollbar track */
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #547bca;
-    border-radius: 5px;
+    background-color: #4a5568;
+    /* Color of the scrollbar thumb */
+    border-radius: 10px;
+    /* Rounded corners for the scrollbar thumb */
+    border: 2px solid #4a5568;
+    /* Optional: Add a border around the thumb */
 }
 
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #547bca;
+
+.react-input-emoji--input::-webkit-scrollbar {
+    height: 5px;
+    /* 👈 change this value */
 }
 
-/* Styles for the input container */
-.input-container {
-    width: 100%;
-    max-width: 100px; /* Adjust this for larger screens */
-    margin: 0 auto;
-    padding: 0 10px;
-    box-sizing: border-box;
-  }
-  
-  
-/* Target the emoji picker dropdown container */
-.react-input-emoji--wrapper {
-      width: 240px;  
+/* Scrollbar track */
+.react-input-emoji--input::-webkit-scrollbar-track {
+    background: transparent;
 }
-      
+
+/* Scrollbar thumb */
+.react-input-emoji--input::-webkit-scrollbar-thumb {
+    background-color: #4a5568;
+    /* Tailwind slate-400 */
+    border-radius: 10px;
+}
+
+.react-input-emoji--input::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+}

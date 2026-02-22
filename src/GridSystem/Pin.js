@@ -21,8 +21,8 @@ function Pin({ size, img, id, display }) {
     <div
       className={
         !display
-          ? "transform transition duration-500 hover:scale-110"
-          : " animate-pulse transform transition duration-500 hover:scale-110"
+          ? "transform transition duration-500"
+          : " animate-pulse transform transition duration-500"
       }
       style={{ ...styles.pin, ...styles[size], cursor: "pointer" }}
     >

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import Conversation from "../utils/Conversation";
-import Navbar from "../utils/Navbar";
 import Messages from "../utils/Mesaages";
 import NopPreview from "../utils/NopPreview";
 import { BASE_URL } from "../services/helper";
@@ -25,9 +24,9 @@ import ListItems from "../utils/ListItems";
 import { SpinnerCircular } from "spinners-react";
 import axios from "axios";
 import InputEmoji from 'react-input-emoji'
-var selectedChatCompare;
+import { getSocket } from "../redux/Slice/socketSlice";
 
-function Chat({ socket }) {
+function Chat() {
   const scrollRef = useRef();
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
@@ -35,7 +34,6 @@ function Chat({ socket }) {
   const [groupSearch, setGroupSearch] = useState("");
   const [selectedUser, setSelectedUser] = useState([]);
   const [addUser, setAddUser] = useState([]);
-  const [name, setName] = useState("");
   const [searchResult, setSearchResult] = useState(false);
   const [addUserGroup, setAdddUserGroup] = useState(false);
   const { allChat, currentChat } = useSelector((state) => state.chat);
@@ -44,35 +42,55 @@ function Chat({ socket }) {
   const { currentUser, chatloading } = useSelector((state) => state.user);
   const { allNoti } = useSelector((state) => state.notification);
   const [chatname, setChatname] = useState("");
+  const [searchResults, setSearchResults] = useState([]); // State for search results
+  const { isConnected } = useSelector((state) => state.socket); // Get connection status from Redux
+
   const user = currentUser?.others ? currentUser?.others : currentUser;
   const dispatch = useDispatch();
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage?.getItem("token")}`,
-    },
-  };
   // Socket //
-  const [socketConnected, setSocketConnected] = useState(false);
-  const [typing, setTyping] = useState(false);
+
+  //const [socketConnected, setSocketConnected] = useState(false);
+  //const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [comment, setComment] = useState("");
   const [textAreaCount, setTextAreaCount] = useState("0/100");
   const max = 100;
 
   useEffect(() => {
-    socket.emit("setup", user);
-    socket.on("connected", () => setSocketConnected(true));
-    socket.on("typing", () => setIsTyping(true));
-    socket.on("stop typing", () => setIsTyping(false));
-    // eslint-disable-next-line
-  }, []);
-  
+    let socket;
+
+    if (isConnected && currentUser) {
+      socket = getSocket(); // Get the socket object
+
+      // Emit setup event
+      socket.emit("setup", currentUser);
+
+      // Listen for typing events
+      socket.on("typing", () => setIsTyping(true));
+      socket.on("stop typing", () => setIsTyping(false));
+      socket.on("message deleted", (newMessage) => {
+        dispatch(
+          messageSuccess(allmessage.filter((m) => m._id !== newMessage._id))
+        );
+      });
+      socket.on("message recieved", async (newMessage) => {
+        dispatch(messageSuccess([...allmessage, newMessage]));
+      });
+      // Cleanup socket listeners
+      return () => {
+        socket.off("typing");
+        socket.off("stop typing");
+        socket.off("message deleted");
+        socket.off("message recieved");
+      };
+    }
+  }, [isConnected, currentUser, allmessage, dispatch]);
+
   useEffect(() => {
     const getChat = async () => {
       try {
         dispatch(chatStart());
-        const { data } = await axios.get(`${BASE_URL}/api/chat`, config);
+        const { data } = await axios.get(`${BASE_URL}/api/chat`);
         dispatch(chatSuccess(data));
       } catch (error) {
         dispatch(chatError());
@@ -90,10 +108,13 @@ function Chat({ socket }) {
         dispatch(messageStart());
         const { data } = await axios.get(
           `${BASE_URL}/api/message/get/` + currentChat._id,
-          config
         );
         dispatch(messageSuccess(data));
-        socket.emit("join room", currentChat._id);
+
+        if (isConnected) {
+          const socket = getSocket(); // Get the socket object
+          socket.emit("join room", currentChat._id); // Join the current chat room
+        }
         setLoading(false);
       } catch (error) {
         dispatch(messageError());
@@ -101,7 +122,6 @@ function Chat({ socket }) {
       }
     };
     getMessage();
-    selectedChatCompare = currentChat;
     // eslint-disable-next-line
   }, [currentChat]);
 
@@ -109,9 +129,14 @@ function Chat({ socket }) {
   const handleDelete = async (me) => {
     try {
       dispatch(messageStart());
-      await axios.delete(`${BASE_URL}/api/message/delete/${me._id}`, config);
+      await axios.delete(`${BASE_URL}/api/message/delete/${me._id}`);
       dispatch(messageSuccess(allmessage.filter((m) => m._id !== me._id)));
-      socket.emit("new message delete", me);
+
+      if (isConnected) {
+        const socket = getSocket(); // Get the socket object
+        socket.emit("new message delete", me);
+      }
+
       setMessage(" ");
     } catch (error) {
       dispatch(messageError);
@@ -119,27 +144,12 @@ function Chat({ socket }) {
     }
   };
 
-  useEffect(() => {
-    socket.on("message recieved", async (newMessage) => {
-      dispatch(messageSuccess([...allmessage, newMessage]));
-    });
-  });
-
-  useEffect(() => {
-    socket.on("message deleted", (newMessage) => {
-      dispatch(
-        messageSuccess(allmessage.filter((m) => m._id !== newMessage._id))
-      );
-    });
-  });
-
   const groupDelete = async (e) => {
     e.preventDefault();
     try {
       dispatch(chatStart());
       await axios.delete(
-        `${BASE_URL}/api/chat/delete/` + currentChat._id,
-        config
+        `${BASE_URL}/api/chat/delete/` + currentChat._id
       );
       dispatch(chatSuccess(allChat.filter((c) => c._id !== currentChat._id)));
       dispatch(setCurrentChat(""));
@@ -150,41 +160,17 @@ function Chat({ socket }) {
   const handleGroupChat = (e) => {
     e.preventDefault();
     setSearchResult(!searchResult);
+    setSelectedUser([]);
+    setGroupSearch("");
+    setChatname("");
+    console.log(chatname);
+
+    console.log("Cancel gruop");
+
   };
   const addGroup = (e) => {
     e.preventDefault();
     setAdddUserGroup(!addUserGroup);
-  };
-
-  const handleSearch = async (query) => {
-    setGroupSearch(query);
-    if (!query) {
-      return;
-    }
-    try {
-      const { data } = await axios.get(
-        `${BASE_URL}/api/user/freind/search?name=` + groupSearch,
-        config
-      );
-      setAddUser(data);
-    } catch (error) {
-      toast.error(error.response.data.error);
-    }
-  };
-  const handleSearched = async (query) => {
-    setSearch(query);
-    if (!query) {
-      return;
-    }
-    try {
-      const { data } = await axios.get(
-        `${BASE_URL}/api/user/freind/search?name=` + search,
-        config
-      );
-      setSearched(data);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const handleGroup = (addUser) => {
@@ -192,6 +178,7 @@ function Chat({ socket }) {
       return;
     }
     setSelectedUser([...selectedUser, addUser]);
+    setGroupSearch("");
   };
 
   const handleCancel = (deleteUser) => {
@@ -202,8 +189,7 @@ function Chat({ socket }) {
     try {
       const { data } = await axios.put(
         `${BASE_URL}/api/chat/remove/` + currentChat._id,
-        { userId: deleteUser._id },
-        config
+        { userId: deleteUser._id }
       );
       dispatch(setCurrentChat(data));
       toast.success("Removed user");
@@ -217,8 +203,7 @@ function Chat({ socket }) {
       dispatch(chatStart());
       await axios.put(
         `${BASE_URL}/api/chat/remove/` + currentChat._id,
-        { userId: removeUser._id },
-        config
+        { userId: removeUser._id }
       );
       dispatch(chatSuccess(allChat.filter((c) => c._id !== currentChat._id)));
       dispatch(setCurrentChat(""));
@@ -237,8 +222,7 @@ function Chat({ socket }) {
       } else {
         const { data } = await axios.put(
           `${BASE_URL}/api/chat/add/` + currentChat._id,
-          { userId: addUser._id },
-          config
+          { userId: addUser._id }
         );
         dispatch(setCurrentChat(data));
         toast.success("New member added in group");
@@ -254,8 +238,7 @@ function Chat({ socket }) {
     try {
       const { data } = await axios.put(
         `${BASE_URL}/api/chat/rename/` + currentChat._id,
-        { chatname: chatname },
-        config
+        { chatname: chatname }
       );
       dispatch(setCurrentChat(data));
       toast.success("Renamed the group");
@@ -270,14 +253,15 @@ function Chat({ socket }) {
       dispatch(chatStart());
       const { data } = await axios.post(
         `${BASE_URL}/api/chat`,
-        { name: name, users: JSON.stringify(selectedUser.map((u) => u._id)) },
-        config
+        { name: chatname, users: JSON.stringify(selectedUser.map((u) => u._id)) }
       );
 
       dispatch(chatSuccess([data, ...allChat]));
       setCurrentChat(data);
       setSearchResult(!searchResult);
       toast.success("Group created");
+      setChatname("");
+      setSelectedUser([]);
     } catch (error) {
       console.log(error);
       dispatch(chatError());
@@ -288,23 +272,30 @@ function Chat({ socket }) {
     const currentLength = text.length;
     setTextAreaCount(`${currentLength}/${max}`);
     setMessage(text)
+    setComment(text)
   };
 
   const sendMessage = async (text) => {
     setMessage(text);
-    if(text.length == 0){
+    if (text.length === 0) {
       toast.error("Please enter some message")
       return;
     }
-    socket.emit("stop typing", currentChat._id);
+    if (isConnected) {
+      const socket = getSocket(); // Get the socket object
+      socket.emit("stop typing", currentChat._id);
+    }
+
     try {
       dispatch(messageStart());
       const { data } = await axios.post(
         `${BASE_URL}/api/message/` + currentChat._id,
-        { content: message },
-        config
+        { content: message }
       );
-      socket.emit("send_message", data);
+      if (isConnected) {
+        const socket = getSocket(); // Get the socket object
+        socket.emit("send_message", data);
+      }
       dispatch(messageSuccess([...allmessage, data]));
       setMessage("");
     } catch (error) {
@@ -313,6 +304,51 @@ function Chat({ socket }) {
     }
   };
 
+  const handleSearchChange = async (e) => {
+    const query = e.target.value;
+    setSearch(query);
+
+    if (query.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    const debounceTimeout = setTimeout(async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/user/freind/search`, {
+          params: { name: query },
+        });
+        setSearchResults(response.data);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      }
+    }, 500);
+
+    return () => clearTimeout(debounceTimeout); // Clear timeout on every new input
+  };
+
+  const handleGroupSearch = async (e) => {
+    const query = e.target.value;
+    setGroupSearch(query);
+
+    if (query.trim() === "") {
+      setAddUser([]);
+      return;
+    }
+
+    const debounceTimeout = setTimeout(async () => {
+      try {
+        const { data } = await axios.get(
+          `${BASE_URL}/api/user/freind/search?name=` + query,
+        );
+        setAddUser(data);
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      }
+    }, 500);
+
+    return () => clearTimeout(debounceTimeout); // Clear timeout on every new input
+  };
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -320,34 +356,11 @@ function Chat({ socket }) {
 
   return (
     <>
-      <Navbar socket={socket} />
-      <div className="flex mt-10 w-screen mx-auto">
+      <div className="flex w-full">
         {/* Destop view  */}
-        <div className="hidden md:flex w-screen ">
-          <div className="conversation w-[40%] border border-y-0">
+        <div className="hidden lg:flex w-full md:h-[calc(100vh-5.5rem)] border">
+          <div className=" w-[40%] border border-y-0 border-l-0">
             <div className="flex justify-between items-center p-3">
-              <div className="flex bg-[#455175] w-full h-8 mt-1 items-center rounded-md">
-                <input
-                  className="rounded-md focus:outline-[#BED7F8] w-full h-full p-1"
-                  value={search}
-                  type="text"
-                  onChange={(e) => handleSearched(e.target.value)}
-                  placeholder="search your friends"
-                ></input>
-                <div className="shadow hidden md:flex mt-24 fixed z-30 ">
-                  <div className="md:w-64 lg:w-80 xl:w-[30rem]  ">
-                    {searched?.map((s) => (
-                      <DirectMessage
-                        key={s._id}
-                        setSearched={setSearched}
-                        setSearch={setSearch}
-                        search={s}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
               <div>
                 <i
                   className="fa-solid fa-xl fa-user-plus ml-4 text-[#BED7F8] cursor-pointer"
@@ -356,14 +369,15 @@ function Chat({ socket }) {
               </div>
             </div>
             {/* {search && <ChatSearchSkeleton/>} */}
-            <div className="md:h-[calc(100vh-6.7rem)] p-3 overflow-y-scroll">
+            <div className=" p-3 h-[calc(100vh-8.6rem)] overflow-y-auto">
               {allChat ? (
                 !chatloading ? (
                   allChat?.map((c) => (
                     <div
-                      className="individual-chat"
+                      className=""
                       key={c?._id}
                       onClick={() => {
+                        setSearchResult(false)
                         dispatch(setCurrentChat(c));
                       }}
                     >
@@ -372,15 +386,15 @@ function Chat({ socket }) {
                           c?.isGroupChat
                             ? "images/noProfile.jpeg"
                             : user._id === c?.users[0]?._id
-                            ? c?.users[1]?.profile?.url
-                            : c?.users[0]?.profile?.url
+                              ? c?.users[1]?.profile?.url
+                              : c?.users[0]?.profile?.url
                         }
                         name={
                           c?.isGroupChat
                             ? c?.chatname
                             : user._id === c?.users[0]?._id
-                            ? c?.users[1]?.username
-                            : c?.users[0]?.username
+                              ? c?.users[1]?.username
+                              : c?.users[0]?.username
                         }
                         chat={c}
                         key={c?._id}
@@ -403,16 +417,16 @@ function Chat({ socket }) {
           </div>
 
           {currentChat ? (
-            <div className="message w-[60%]">
-              <div className="flex justify-between items-center message  md:bg-[#84b6f7]">
+            <div className="message h-full w-[60%]">
+              <div className="flex justify-between items-center message md:bg-[#84b6f7]">
                 <div className="flex h-12 items-center p-3">
                   <img
                     src={
                       currentChat?.isGroupChat
                         ? "images/noProfile.jpeg"
                         : user._id === currentChat?.users[0]?._id
-                        ? currentChat?.users[1]?.profile?.url
-                        : currentChat?.users[0]?.profile?.url
+                          ? currentChat?.users[1]?.profile?.url
+                          : currentChat?.users[0]?.profile?.url
                     }
                     alt="chat"
                     className="w-10 h-10  rounded-full border"
@@ -422,16 +436,16 @@ function Chat({ socket }) {
                       {currentChat?.isGroupChat
                         ? currentChat?.chatname
                         : user._id === currentChat?.users[0]?._id
-                        ? currentChat?.users[1]?.username
-                        : currentChat?.users[0]?.username}
+                          ? currentChat?.users[1]?.username
+                          : currentChat?.users[0]?.username}
                     </h1>
                     {isTyping ? (
                       <div className="flex flex-wrap ml-4">
                         {currentChat?.isGroupChat
                           ? "Someone "
                           : user._id === currentChat?.users[0]?._id
-                          ? currentChat?.users[1]?.username
-                          : currentChat?.users[0]?.username}{" "}
+                            ? currentChat?.users[1]?.username
+                            : currentChat?.users[0]?.username}{" "}
                         is typing..
                       </div>
                     ) : (
@@ -442,213 +456,7 @@ function Chat({ socket }) {
                 <div className="flex">
                   {!currentChat?.isGroupChat &&
                     currentChat.users.filter((c) => c._id === user)?.length ===
-                      1 && (
-                      <div>
-                        <i
-                          className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
-                          onClick={groupDelete}
-                        ></i>
-                      </div>
-                    )}
-                  {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id !== user && (
-                      <div>
-                        <i
-                          className="fa-solid fa-xl mr-2 fa-delete-left cursor-pointer"
-                          onClick={() => exit(user)}
-                        ></i>
-                      </div>
-                    )}
-
-                  {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id === user && (
-                      <div>
-                        <i
-                          className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
-                          onClick={groupDelete}
-                        ></i>
-                      </div>
-                    )}
-                  {currentChat?.isGroupChat &&
-                    currentChat?.groupAdmin?._id === user && (
-                      <div>
-                        <i
-                          className="fa-solid fa-xl fa-user-plus mr-4 text-black cursor-pointer"
-                          onClick={addGroup}
-                        ></i>
-                      </div>
-                    )}
-                </div>
-              </div>
-
-              {!loading ? (
-                <div className="md:h-[calc(100vh-10.2rem)] md:bg-[#BED7F8] p-3 overflow-y-scroll">
-                  {allmessage?.map((m) => (
-                    <div key={m._id} ref={scrollRef}>
-                      <Messages
-                        own={m?.sender?._id === user?._id}
-                        handleFunction={() => handleDelete(m)}
-                        messages={m}
-                        setMessage={setMessage}
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <SpinnerCircular
-                  size="90"
-                  className="bg-[#2D3B58] w-full flex items-center md:h-[calc(100vh-10.2rem)] flex-col  mx-auto"
-                  thickness="100"
-                  speed="600"
-                  color="white"
-                  secondaryColor="black"
-                />
-              )}
-            <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
-                  <div className="flex items-center w-[80%]">
-                  <InputEmoji
-                  value={comment}
-                  onChange={recalculate}
-                  cleanOnEnter
-                  onEnter={sendMessage}
-                  maxLength={max}
-                  placeholder="Type a message"/>
-                  </div>
-                  <p className="w-[20%] md:text-center">{textAreaCount}</p>
-                </div>
-            </div>
-          ) : (
-            <div className="flex m-auto items-center">
-              <NopPreview />
-            </div>
-          )}
-        </div>
-        {/* -------- */}
-
-        {/* Mobile view */}
-
-        <div className="flex md:hidden z-10 flex-col md:p-0 w-screen h-[calc(100vh-2.5rem)]">
-          {!currentChat ? (
-            <div className="conversation lg:flex-1">
-              <div className="flex justify-between items-center md:p-3">
-                <div className="flex bg-[#455175] mx-2 w-full h-8 mt-2 items-center rounded-md">
-                  <input
-                    className="rounded-md focus:outline-[#BED7F8] w-full h-full p-1"
-                    value={search}
-                    type="text"
-                    onChange={(e) => handleSearched(e.target.value)}
-                    placeholder="search your friends"
-                  />
-                </div>
-
-                <div className="flex mt-36 fixed z-30 ">
-                  <div className=" w-[92vw] p-2 ">
-                    {searched?.map((s) => (
-                      <DirectMessage
-                        key={s._id}
-                        setSearched={setSearched}
-                        setSearch={setSearch}
-                        search={s}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="h-[calc(100vh-8rem)] p-1 overflow-y-scroll">
-                {allChat ? (
-                  !chatloading ? (
-                    allChat?.map((c) => (
-                      <div
-                        className="individual-chat"
-                        key={c?._id}
-                        onClick={() => {
-                          dispatch(setCurrentChat(c));
-                        }}
-                      >
-                        <Conversation
-                          img={
-                            c?.isGroupChat
-                              ? "images/noProfile.jpeg"
-                              : user?._id === c?.users[0]._id
-                              ? c?.users[1]?.profile?.url
-                              : c?.users[0]?.profile?.url
-                          }
-                          name={
-                            c?.isGroupChat
-                              ? c?.chatname
-                              : user?._id === c?.users[0]?._id
-                              ? c?.users[1]?.username
-                              : c?.users[0]?.username
-                          }
-                          chat={c}
-                          key={c?._id}
-                        />
-                      </div>
-                    ))
-                  ) : (
-                    allChat?.map((c) => (
-                      <div key={c._id} className="">
-                        <ConversationSkeleton key={c._id} />
-                      </div>
-                    ))
-                  )
-                ) : (
-                  <div className="flex justify-center font-bold text-gray-400 text-xl">
-                    No conversation
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="message">
-              <div className="flex justify-between items-center message bg-[#8cbeff] md:hidden">
-                <div className="flex h-12 items-center p-3">
-                  <i
-                    className="fa-solid mr-2 fa-xl cursor-pointer fa-arrow-left"
-                    onClick={() => {
-                      dispatch(setCurrentChat(!currentChat));
-                    }}
-                  ></i>
-                  <Link to="/profile">
-                    <img
-                      src={
-                        currentChat?.isGroupChat
-                          ? "images/noProfile.jpeg"
-                          : currentChat?.users[0]?._id === user?._id
-                          ? currentChat?.users[1]?.profile?.url
-                          : currentChat?.users[0]?.profile?.url
-                      }
-                      alt="chat"
-                      className="w-10 h-10 rounded-full cursor-pointer border"
-                    />
-                  </Link>
-                  <div className="flex flex-col">
-                    <h1 className="capitalize text-black ml-4 font-sans ">
-                      {currentChat?.isGroupChat
-                        ? currentChat?.chatname
-                        : user?._id === currentChat?.users[0]?._id
-                        ? currentChat?.users[1]?.username
-                        : currentChat?.users[0]?.username}
-                    </h1>
-                    {isTyping ? (
-                      <div className="flex flex-wrap ml-4">
-                        {currentChat?.isGroupChat
-                          ? "Someone "
-                          : user?._id === currentChat?.users[0]?._id
-                          ? currentChat?.users[1]?.username
-                          : currentChat?.users[0]?.username}{" "}
-                        is typing..
-                      </div>
-                    ) : (
-                      <div className="flex flex-wrap ml-4"></div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex">
-                  {!currentChat?.isGroupChat &&
-                    currentChat.users.filter((c) => c._id === user)?.length ===
-                      1 && (
+                    1 && (
                       <div>
                         <i
                           className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
@@ -674,7 +482,7 @@ function Chat({ socket }) {
                         ></i>
                       </div>
                     )}
-                  {currentChat?.isGroupChat &&
+                  {/* {currentChat?.isGroupChat &&
                     currentChat?.groupAdmin?._id === user?._id && (
                       <div>
                         <i
@@ -682,11 +490,241 @@ function Chat({ socket }) {
                           onClick={addGroup}
                         ></i>
                       </div>
+                    )} */}
+                </div>
+              </div>
+
+              {!loading ? (
+                <div className=" md:bg-[#BED7F8] md:h-[calc(100vh-12.4rem)] p-3 overflow-y-auto">
+                  {allmessage?.map((m) => (
+                    <div key={m._id} ref={scrollRef}>
+                      <Messages
+                        own={m?.sender?._id === user?._id}
+                        handleFunction={() => handleDelete(m)}
+                        messages={m}
+                        setMessage={setMessage}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <SpinnerCircular
+                  size="90"
+                  className="bg-[#2D3B58] w-full flex items-center md:h-[calc(100vh-11.65rem)] flex-col  mx-auto"
+                  thickness="100"
+                  speed="600"
+                  color="white"
+                  secondaryColor="black"
+                />
+              )}
+              <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
+                <div className="flex items-center w-[80%]">
+                  <InputEmoji
+                    value={comment}
+                    onChange={recalculate}
+                    cleanOnEnter
+                    onEnter={sendMessage}
+                    maxLength={max}
+                    placeholder="Type a message" />
+                </div>
+                <p className="w-[20%] md:text-center">{textAreaCount}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex m-auto items-center">
+              <NopPreview />
+            </div>
+          )}
+        </div>
+        {/* -------- */}
+
+        {/* Mobile view */}
+
+        <div className="flex lg:hidden z-10 flex-col md:p-0 w-screen h-full">
+
+          {!currentChat ? (
+            <div className="conversation lg:flex-1">
+              <div className="flex justify-between items-center md:p-3">
+                <div className="flex md:hidden w-full items-center bg-white rounded-xl p-1">
+                  <i className="fa-solid fa-xl text-[#2f3549] fa-magnifying-glass"></i>
+                  <input value={search}
+                    onChange={handleSearchChange} className="p-0.5 m-1 w-full focus:outline-none" placeholder="Search Friends" type="text" />
+                </div>
+
+                {search && searchResults.length > 0 ? (
+                  <div className="absolute top-16 left-1/2 transform -translate-x-1/2 shadow-lg rounded-lg w-[95%] z-50">
+                    <ul>
+                      {searchResults.map((s, index) => (
+                        <DirectMessage
+                          key={index}
+                          setSearched={setSearched}
+                          setSearch={setSearch}
+                          search={s}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  search && <div className="absolute top-16 bg-[#7c8bb9] left-1/2 transform -translate-x-1/2 shadow-lg rounded-lg w-[95%] z-50">
+                    <ul>
+                      <h1 className="p-2 text-center text-white font-bold">No search result</h1>
+                    </ul>
+                  </div>)}
+                <div className="flex mt-36 fixed z-30 ">
+                  <div className=" w-[92vw] p-2 ">
+                    {searched?.map((s) => (
+                      <DirectMessage
+                        key={s._id}
+                        setSearched={setSearched}
+                        setSearch={setSearch}
+                        search={s}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <i
+                      className="fa-solid fa-xl fa-user-plus ml-4 text-[#BED7F8] cursor-pointer"
+                      onClick={handleGroupChat}
+                    ></i>
+                  </div>
+                </div>
+              </div>
+              <div className="h-[calc(100vh-9rem)] p-1 overflow-y-auto">
+                {allChat ? (
+                  !chatloading ? (
+                    allChat?.map((c) => (
+                      <div
+                        className="individual-chat"
+                        key={c?._id}
+                        onClick={() => {
+                          setSearchResult(false)
+                          dispatch(setCurrentChat(c));
+                        }}
+                      >
+                        <Conversation
+                          img={
+                            c?.isGroupChat
+                              ? "images/noProfile.jpeg"
+                              : user?._id === c?.users[0]._id
+                                ? c?.users[1]?.profile?.url
+                                : c?.users[0]?.profile?.url
+                          }
+                          name={
+                            c?.isGroupChat
+                              ? c?.chatname
+                              : user?._id === c?.users[0]?._id
+                                ? c?.users[1]?.username
+                                : c?.users[0]?.username
+                          }
+                          chat={c}
+                          key={c?._id}
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    allChat?.map((c) => (
+                      <div key={c._id} className="">
+                        <ConversationSkeleton key={c._id} />
+                      </div>
+                    ))
+                  )
+                ) : (
+                  <div className="flex justify-center font-bold text-gray-400 text-xl">
+                    No conversation
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="message w-full">
+              <div className="flex justify-between items-center message bg-[#8cbeff] lg:hidden">
+                <div className="flex h-12 items-center p-3">
+                  <i
+                    className="fa-solid mr-2 fa-xl cursor-pointer fa-arrow-left"
+                    onClick={() => {
+                      dispatch(setCurrentChat(!currentChat));
+                    }}
+                  ></i>
+                  <Link to="/profile">
+                    <img
+                      src={
+                        currentChat?.isGroupChat
+                          ? "images/noProfile.jpeg"
+                          : currentChat?.users[0]?._id === user?._id
+                            ? currentChat?.users[1]?.profile?.url
+                            : currentChat?.users[0]?.profile?.url
+                      }
+                      alt="chat"
+                      className="w-10 h-10 rounded-full cursor-pointer border"
+                    />
+                  </Link>
+                  <div className="flex flex-col">
+                    <h1 className="capitalize text-black ml-4 font-sans ">
+                      {currentChat?.isGroupChat
+                        ? currentChat?.chatname
+                        : user?._id === currentChat?.users[0]?._id
+                          ? currentChat?.users[1]?.username
+                          : currentChat?.users[0]?.username}
+                    </h1>
+                    {isTyping ? (
+                      <div className="flex flex-wrap ml-4">
+                        {currentChat?.isGroupChat
+                          ? "Someone "
+                          : user?._id === currentChat?.users[0]?._id
+                            ? currentChat?.users[1]?.username
+                            : currentChat?.users[0]?.username}{" "}
+                        is typing..
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap ml-4"></div>
                     )}
+                  </div>
+                </div>
+
+                <div className="flex">
+                  {!currentChat?.isGroupChat &&
+                    currentChat.users.filter((c) => c._id === user)?.length ===
+                    1 && (
+                      <div>
+                        <i
+                          className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
+                          onClick={groupDelete}
+                        ></i>
+                      </div>
+                    )}
+                  {currentChat?.isGroupChat &&
+                    currentChat?.groupAdmin?._id !== user?._id && (
+                      <div>
+                        <i
+                          className="fa-solid fa-xl mr-2 fa-delete-left cursor-pointer"
+                          onClick={() => exit(user)}
+                        ></i>
+                      </div>
+                    )}
+                  {currentChat?.isGroupChat &&
+                    currentChat?.groupAdmin?._id === user?._id && (
+                      <div>
+                        <i
+                          className="fa-solid fa-xl mr-2 fa-trash cursor-pointer"
+                          onClick={groupDelete}
+                        ></i>
+                      </div>
+                    )}
+                  {/* {currentChat?.isGroupChat &&
+                    currentChat?.groupAdmin?._id === user?._id && (
+                      <div>
+                        <i
+                          className="fa-solid fa-xl fa-user-plus mr-4 text-black cursor-pointer"
+                          onClick={addGroup}
+                        ></i>
+                      </div>
+                    )} */}
                 </div>
               </div>
               {!loading ? (
-                <div className="h-[calc(100vh-10rem)] bg-[#BED7F8]  p-3 overflow-y-scroll">
+                <div className="h-[calc(100vh-11.9rem)] bg-[#BED7F8]  p-3 overflow-y-auto">
                   {allmessage?.map((m) => (
                     <div key={m._id} ref={scrollRef}>
                       <Messages
@@ -701,25 +739,42 @@ function Chat({ socket }) {
               ) : (
                 <SpinnerCircular
                   size="90"
-                  className="bg-[#2D3B58] w-full flex items-center h-[calc(100vh-10.2rem)] flex-col  mx-auto"
+                  className="bg-[#2D3B58] w-full flex items-center h-[calc(100vh-11.9rem)] flex-col  mx-auto"
                   thickness="100"
                   speed="600"
                   color="white"
                   secondaryColor="black"
                 />
               )}
-            <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
-                  <div className="flex items-center w-[80%]">
-                  <InputEmoji
-                  value={comment}
-                  onChange={recalculate}
-                  cleanOnEnter
-                  onEnter={sendMessage}
-                  maxLength={max}
-                  placeholder="Type a message"/>
+              <div className="w-full max-w-4xl mx-auto px-2">
+                <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full relative">
+
+                  {/* Input Section */}
+                  <div className="flex items-center flex-1 min-w-0">
+                    <InputEmoji
+                      value={comment}
+                      onChange={recalculate}
+                      cleanOnEnter
+                      onEnter={sendMessage}
+                      maxLength={max}
+                      placeholder="Type a message"
+                    // pickerStyle={{
+                    //   zIndex: 100,
+                    //   width: window.innerWidth < 640 ? "95vw" : "350px",
+                    //   maxWidth: "100%",
+                    //   bottom: "60px",
+                    // }}
+                    />
                   </div>
-                  <p className="w-[20%] md:text-center">{textAreaCount}</p>
+
+                  {/* Character Counter */}
+                  <p className="px-3 text-sm md:text-base text-center whitespace-nowrap">
+                    {textAreaCount}
+                  </p>
+
                 </div>
+              </div>
+
             </div>
           )}
         </div>
@@ -728,12 +783,12 @@ function Chat({ socket }) {
       </div>
 
       {searchResult && (
-        <div className="fixed flex z-40 top-0 mt-24  w-screen lg:w-[32rem] xl:w-[36rem] xl:ml-96 md:w-96 md:ml-52 lg:ml-72">
+        <div className="fixed flex z-40 top-0 mt-24  w-screen lg:w-[32rem] xl:w-[36rem] md:w-96">
           <form
-            className="bg-[#1f62b9] h-full  m-auto w-11/12 "
+            className="bg-[#2D3B58] h-full  m-auto w-11/12 border"
             onSubmit={create}
           >
-            <h1 className="text-2xl font-bold text-[#153f75] text-center">
+            <h1 className="text-2xl font-bold text-white text-center">
               Create group chat
             </h1>
             <div className="h-14 w-full p-1 mt-2 ">
@@ -741,8 +796,8 @@ function Chat({ socket }) {
                 className="focus:outline-slate-900 w-full h-full p-1"
                 type="text"
                 placeholder="Enter group Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={chatname}
+                onChange={(e) => setChatname(e.target.value)}
                 required
               />
             </div>
@@ -752,7 +807,7 @@ function Chat({ socket }) {
                 type="text"
                 placeholder="Add user eg leander06"
                 value={groupSearch}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={handleGroupSearch}
               />
             </div>
             <div className="w-full ">
@@ -767,22 +822,24 @@ function Chat({ socket }) {
               </div>
             </div>
             <div className="w-full p-1.5">
-              {addUser?.slice(0, 6).map((a) => (
+              {groupSearch && addUser.length > 0 ? (addUser?.slice(0, 6).map((a) => (
                 <GroupUser
                   user={a}
                   key={a._id}
                   handleFunction={() => handleGroup(a)}
                 />
-              ))}
+              ))) : groupSearch && <ul>
+                <h1 className="p-2 text-center text-white font-bold">No search result</h1>
+              </ul>}
             </div>
             <div className=" flex justify-around mb-2  ml-2 rounded p-1">
               <input
-                className="bg-blue-500 text-white p-1 rounded text-center"
+                className=" text-white p-1 rounded text-center cursor-pointer"
                 value="Create chat"
                 type="submit"
               />
               <input
-                className="bg-blue-500 text-white p-1 rounded text-center"
+                className=" text-white p-1 rounded text-center cursor-pointer"
                 onClick={handleGroupChat}
                 value="Cancel"
                 type="button"
@@ -831,7 +888,7 @@ function Chat({ socket }) {
                 type="text"
                 placeholder="Add user eg leander06"
                 value={groupSearch}
-                onChange={(e) => handleSearch(e.target.value)}
+                onChange={handleGroupSearch}
                 required
               />
             </div>
@@ -847,13 +904,16 @@ function Chat({ socket }) {
               </div>
             </div>
             <div className="w-full p-1.5">
-              {addUser?.slice(0, 6).map((a) => (
+
+              {groupSearch && addUser.length > 0 ? (addUser?.slice(0, 6).map((a) => (
                 <GroupUser
                   user={a}
                   key={a._id}
-                  handleFunction={() => handleAdd(a)}
+                  handleFunction={() => handleGroup(a)}
                 />
-              ))}
+              ))) : groupSearch && <ul>
+                <h1 className="p-2 text-center text-white font-bold">No search result</h1>
+              </ul>}
             </div>
             <div className="bg-blue-500 mb-2 w-fit ml-2 rounded p-1">
               <input

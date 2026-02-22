@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Comment from "../utils/Comment";
@@ -15,11 +16,10 @@ import { BASE_URL } from "../services/helper";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import toast from "react-hot-toast";
 import InputEmoji from 'react-input-emoji'
-import EmojiPicker from 'emoji-picker-react';
 
 
 
-function SinglePage({ socket }) {
+function SinglePage() {
   const { postId } = useParams();
   const [post, setPost] = useState();
   const { currentUser } = useSelector((state) => state.user);
@@ -105,10 +105,9 @@ function SinglePage({ socket }) {
       dispatch(loginSuccess(data));
       localStorage.setItem("data", JSON.stringify(data));
       toast.success(
-        `${
-          !bookmark
-            ? "Post saved successfully!"
-            : "Post removed from saved posts"
+        `${!bookmark
+          ? "Post saved successfully!"
+          : "Post removed from saved posts"
         }`
       );
       setBookmark(!bookmark);
@@ -163,8 +162,8 @@ function SinglePage({ socket }) {
     try {
       setComment(text);
       dispatch(commentStart());
-      console.log("comment "+comment);
-      
+      console.log("comment " + comment);
+
       const { data } = await axios.post(
         `${BASE_URL}/api/comment/${postId}`,
         { content: comment, modelType: "Post" },
@@ -183,20 +182,22 @@ function SinglePage({ socket }) {
 
   return (
     <>
-      <Navbar socket={socket} />
-      <div className="flex w-screen pt-9 h-screen mx-auto">
+      <div className="flex flex-col z-50 lg:absolute md:top-2 left-0 w-full md:pl-4 h-[calc(100vh-16px)] lg:h-[calc(100vh-132px)]">
+        <i onClick={() => navigate(-1)} className="lg:flex hidden justify-end right-0 fa-solid fa-2xl py-5 fa-x text-white mr-10 cursor-pointer"></i>
+
         {loading ? (
-          <div className="flex flex-col py-4 lg:items-center lg:px-6 lg:justify-center lg:p-4 lg:flex-row w-full ">
-            <i onClick={() => navigate(-1)} className="flex lg:hidden fa-solid fa-arrow-left text-white ml-2 cursor-pointer"></i>
-            <div className="hidden lg:flex lg:h-5/6 lg:border border-[#BED7F8] border-x-0 border-y-0 ">
+          // <div className="flex flex-col lg:i tems-center lg:justify-center lg:flex-row w-full bg-white">
+          <div className="flex flex-col lg:flex-row w-full lg:h-[calc(100vh-176px)] h-[calc(100vh-86px)] ">
+            <i onClick={() => navigate(-1)} className="flex lg:hidden fa-solid fa-arrow-left text-white ml-2 mb-2 cursor-pointer"></i>
+            <div className="hidden lg:flex lg:border border-[#BED7F8] border-x-0 border-y-0 w-[50%]">
               <img
-                className="lg:w-fit h-full w-screen lg:object-cover object-contain"
+                className="lg:w-full h-full w-screen lg:object-cover object-contain"
                 src={post?.content?.url}
                 alt="singlePost"
               />
             </div>
-            <div className="flex flex-col justify-between lg:border border-[#BED7F8] pt-1 px-2 lg:h-5/6 xl:w-2/5 lg:w-3/5  overflow-y-scroll  ">
-              <div className="flex p-1 flex-col justify-between h-[37%]">
+            <div className="flex flex-col justify-between border border-[#BED7F8] pt-1 px-2 h-full lg:w-[50%] md:bg-[#2f3549]">
+              <div className="flex p-1 flex-col justify-between h-[30%] md:h-[40%] border-x-0 border-b-2 border-[#BED7F8]">
                 <div className="flex">
                   <div className="flex p-1 basis-10 rounded-full">
                     <img
@@ -258,13 +259,13 @@ function SinglePage({ socket }) {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col justify-between lg:h-fit h-screen lg:basis-2/3">
+              <div className="flex flex-col justify-between h-[70%] lg:h-[60%] ">
                 {allComment.length === 0 ? (
-                  <div className="border-x-0 flex items-center justify-center border-t-2 border-[#BED7F8] h-3/5 lg:h-5/6 border-b-0 ">
+                  <div className="border-x-0 flex items-center justify-center h-[80%] ">
                     <h1 className="text-slate-400">No Comments</h1>
                   </div>
                 ) : (
-                  <div className="border-x-0 border-t-2 border-[#BED7F8] mt-2 h-3/5 lg:h-5/6 border-b-0 ">
+                  <div className=" mt-2 h-[80%] border-b-0 overflow-y-scroll overflow-x-hidden">
                     {allComment?.map((c) => (
                       <Comment key={c._id} comment={c} />
                     ))}
@@ -273,19 +274,19 @@ function SinglePage({ socket }) {
 
                 <div className="flex items-center bg-[#455175] mb-1 lg:mb-2 rounded-md w-full">
                   <div className="flex items-center w-[80%]">
-                  <InputEmoji
-                  value={comment}
-                  onChange={recalculate}
-                  cleanOnEnter
-                  pickerStyle={{
-                    zIndex: 50, // Ensure it appears above other elements
-                    width: '90%', // Adjust width for mobile
-                    maxWidth: '7000px', // Optional limit for larger screens
-                    bottom: '5px', // Adjust position
-                  }}
-                  onEnter={handleComment}
-                  maxLength={max}
-                  placeholder="Type a message"/>
+                    <InputEmoji
+                      value={comment}
+                      onChange={recalculate}
+                      cleanOnEnter
+                      pickerStyle={{
+                        zIndex: 50, // Ensure it appears above other elements
+                        width: '90%', // Adjust width for mobile
+                        maxWidth: '7000px', // Optional limit for larger screens
+                        bottom: '5px', // Adjust position
+                      }}
+                      onEnter={handleComment}
+                      maxLength={max}
+                      placeholder="Type a message" />
                   </div>
                   <p className="w-[20%] md:text-center">{textAreaCount}</p>
                 </div>

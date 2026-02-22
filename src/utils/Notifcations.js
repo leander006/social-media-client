@@ -1,48 +1,28 @@
-import axios from "axios";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
-  notifcationError,
-  notifcationStart,
-  notifcationSuccess,
+  deleteNotification,
 } from "../redux/Slice/notificationSlice";
-import { BASE_URL } from "../services/helper";
 
 function Notifcations({ n, setNotify, notify }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const { allNoti } = useSelector((state) => state.notification);
-
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage?.getItem("token")}`,
-    },
+  const handleNotificationClick = async () => {
+    try {
+      // Dispatch the delete notification action
+      dispatch(deleteNotification(n._id));
+      setNotify(!notify); // Close the notification dropdown
+      navigate("/chat");
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+    }
   };
 
   return (
     <div
       className="flex py-3 cursor-pointer ml-2 border border-x-0 border-t-0 border-b-1 items-center"
-      onClick={async () => {
-        setNotify(!notify);
-        try {
-          dispatch(notifcationStart());
-          const { data } = await axios.delete(
-            `${BASE_URL}/api/notification/${n._id}`,
-            config
-          );
-          console.log(data);
-          dispatch(
-            notifcationSuccess(allNoti.filter((n) => n._id !== data._id))
-          );
-          navigate("/chat");
-        } catch (error) {
-          dispatch(notifcationError());
-          console.log(error);
-        }
-      }}
+      onClick={handleNotificationClick}
     >
       <img
         src={n?.sender?.profile?.url}

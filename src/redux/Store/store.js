@@ -6,6 +6,8 @@ import chatReducer from "../Slice/chatSlice";
 import commentReducer from "../Slice/commentSlice";
 import notificationReducer from "../Slice/notificationSlice";
 import imageReducer from "../Slice/imageSlice";
+import socketReducer from "../Slice/socketSlice";
+
 export const store = configureStore({
   reducer: {
     user: userReducer,
@@ -14,6 +16,7 @@ export const store = configureStore({
     chat: chatReducer,
     comment: commentReducer,
     notification: notificationReducer,
-    image:imageReducer
+    image: imageReducer,
+    socket: socketReducer
   },
 });

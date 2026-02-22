@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -47,6 +48,7 @@ function ExploreMore({ explore }) {
     setLike(post?.likes?.length);
     setIsLiked(user?.likedPost?.includes(explore?._id));
     setBookmark(user?.bookmarkedPost?.includes(explore?._id));
+    // eslint-disable-next-line
   }, [user, explore?._id, like]);
 
   const click = () => {
@@ -86,10 +88,9 @@ function ExploreMore({ explore }) {
       dispatch(loginSuccess(data));
       localStorage.setItem("data", JSON.stringify(data));
       toast.success(
-        `${
-          !bookmark
-            ? "Post saved successfully!"
-            : "Post removed from saved posts"
+        `${!bookmark
+          ? "Post saved successfully!"
+          : "Post removed from saved posts"
         }`
       );
       setBookmark(!bookmark);
@@ -114,7 +115,7 @@ function ExploreMore({ explore }) {
 
   return (
     <>
-      <div className="flex flex-col w-fit bg-[#38487a] hover:scale-95 duration-150 px-1.5 border my-3 rounded-lg">
+      <div className="flex flex-col bg-[#38487a] px-1.5 border my-3 rounded-lg h-[475px]">
         <div className="flex p-1 items-center">
           <img
             src={
@@ -137,11 +138,11 @@ function ExploreMore({ explore }) {
             {explore?.owner?.username}
           </h1>
         </div>
-        <div className="flex justify-center">
-          <Link to={"/singlePage/" + explore?._id}>
+        <div className="flex justify-center h-full overflow-hidden">
+          <Link to={"/singlePage/" + explore?._id} className="w-full h-full">
             <img
-              src={explore?.content?.url}
-              className="rounded-lg cursor-pointer "
+              src={explore?.content?.url || "https://via.placeholder.com/300"}
+              className="rounded-lg cursor-pointer w-full h-full object-fit"
               alt="ExploreMore"
             />
           </Link>

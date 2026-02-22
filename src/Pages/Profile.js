@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import Pin from "../GridSystem/Pin";
-import Navbar from "../utils/Navbar";
 import { SpinnerCircular } from "spinners-react";
 import Skeleton from "../Skeleton/Skeleton";
 import axios from "axios";
 import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import { BASE_URL } from "../services/helper";
-// import { Toaster } from "react-hot-toast";
 import { toast } from "react-hot-toast";
 
-function Profile({ socket }) {
+function Profile() {
   const { currentUser } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(false);
   const [sloading, setSloading] = useState(false);
@@ -73,13 +71,12 @@ function Profile({ socket }) {
   const sizeArray = ["sm", "md", "lg"];
   return (
     <>
-      <Navbar socket={socket} />
-      <div className="flex pt-9 w-screen mx-auto">
+      <div className="flex md:w-[85%] w-full">
         {!loading ? (
-          <div className="bg-[#2D3B58] h-[calc(100vh-2.5rem)] w-full flex flex-col ">
-            <div className="flex flex-col w-screen bg-[#2D3B58] md:px-16 pt-6 text-white lg:w-[95vw]">
-              <div className="flex lg:mx-36">
-                <div className="p-1 pl-2 md:w-full flex justify-center flex-col items-center">
+          <div className="bg-[#2D3B58] w-full flex flex-col h-full">
+            <div className="flex flex-col w-full bg-[#2D3B58] md:pt-6 text-white ">
+              <div className="flex w-full">
+                <div className="p-1 md:w-full flex justify-center flex-col items-center">
                   <img
                     className="rounded-full w-12 h-12 lg:w-[70px] lg:h-[70px]"
                     src={
@@ -111,9 +108,9 @@ function Profile({ socket }) {
                     </div>
                   )}
                 </div>
-                <div className="flex flex-col pt-2 pr-2 md:px-8 w-full">
+                <div className="flex flex-col pt-2 pr-2 w-full">
                   <div className="flex justify-between w-full ">
-                    <h1>{user?.postCount} post</h1>
+                    <h1 >{user?.postCount} post</h1>
                     <h1>{user?.followers.length} followers</h1>
                     <h1>{user?.following.length} following</h1>
                   </div>
@@ -122,10 +119,10 @@ function Profile({ socket }) {
               </div>
             </div>
             {user?.postCount !== 0 ? (
-              <div className="md:px-12 lg:px-12 bg-[#2D3B58] ">
-                <div className="m-0 w-[50vw] md:w-[80vw] p-9 bg-[#2D3B58] justify-center md:grid md:absolute hidden auto-rows-2fr grid-cols-8">
+              <div className="bg-[#2D3B58] h-full">
+                <div className="m-0 w-[50vw] bg-[#2D3B58] h-full justify-center md:grid hidden auto-rows-2fr grid-cols-2">
                   {post.map((p) => (
-                  <Pin
+                    <Pin
                       img={
                         p.content
                           ? p?.content
@@ -134,11 +131,11 @@ function Profile({ socket }) {
                       id={p._id}
                       key={p._id}
                       size={sizeArray[Math.floor(Math.random() * 3)]}
-                    />                                                                                             
+                    />
                   ))}
                 </div>
                 {!sloading ? (
-                  <div className="md:hidden px-4 py-2">
+                  <div className="md:hidden py-2">
                     <div className="grid grid-cols-2 gap-2">
                       {post.map((p) => (
                         <Link key={p._id} to={"/singlepage/" + p._id}>
@@ -160,8 +157,8 @@ function Profile({ socket }) {
                 )}
               </div>
             ) : (
-              <div className="h-[calc(100vh-4.3rem)] flex mt-28 m-auto font-bold text-3xl md:h-[calc(100vh-2.7rem)] text-[#547bca]">
-                No Post Available{" "}
+              <div className="flex mt-28 m-auto font-bold text-3xl text-[#547bca]">
+                No Post Available
               </div>
             )}
           </div>
