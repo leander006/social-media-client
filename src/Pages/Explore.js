@@ -16,7 +16,6 @@ function Explore() {
 
   const { allpost, loading } = useSelector((state) => state.post);
 
-
   useEffect(() => {
     const getAllPost = async () => {
       try {
