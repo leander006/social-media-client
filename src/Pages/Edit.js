@@ -6,7 +6,6 @@ import {
   loginError,
   loginStart,
   loginSuccess,
-  logout,
 } from "../redux/Slice/userSlice";
 import { SpinnerCircular } from "spinners-react";
 import toast from "react-hot-toast";
@@ -128,11 +127,6 @@ function Edit() {
     }
   };
 
-  const log = (e) => {
-    e.preventDefault();
-    dispatch(logout());
-    navigate("/home");
-  };
   return (
     <div className="flex md:w-[85%] w-full">
       {!loading ? (

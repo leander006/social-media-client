@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { postError, postStart, postSuccess } from "../redux/Slice/postSlice";
 import Pin from "../GridSystem/Pin";
-import SearchFreind from "../utils/SearchFreind";
 import axios from "axios";
 import { BASE_URL } from "../services/helper";
 import { Link } from "react-router-dom";
@@ -11,40 +10,17 @@ import Skeleton from "../Skeleton/Skeleton";
 const sizeArray = ["sm", "md", "lg"];
 
 function Explore() {
-  const [search, setSearch] = useState("");
-  const [searched, setSearched] = useState([]);
+
 
   const dispatch = useDispatch();
 
   const { allpost, loading } = useSelector((state) => state.post);
 
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage?.getItem("token")}`,
-    },
-  };
-  const handleSearch = async (query) => {
-    setSearch(query);
-    if (!query) {
-      return;
-    }
-    try {
-      const { data } = await axios.get(
-        `${BASE_URL}/api/user/oneUser?name=` + search,
-        config
-      );
-      setSearched(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     const getAllPost = async () => {
       try {
         dispatch(postStart());
-        const { data } = await axios.get(`${BASE_URL}/api/post`, config);
+        const { data } = await axios.get(`${BASE_URL}/api/post`);
         dispatch(postSuccess(data));
       } catch (error) {
         dispatch(postError());
