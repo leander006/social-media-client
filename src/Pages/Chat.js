@@ -49,8 +49,6 @@ function Chat() {
   const dispatch = useDispatch();
   // Socket //
 
-  //const [socketConnected, setSocketConnected] = useState(false);
-  //const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [comment, setComment] = useState("");
   const [textAreaCount, setTextAreaCount] = useState("0/100");
@@ -213,25 +211,25 @@ function Chat() {
     }
   };
 
-  const handleAdd = async (addUser) => {
-    const Users = currentChat?.users?.map((u) => u._id);
-    try {
-      if (Users.includes(addUser._id)) {
-        toast.error("Already included in grp ");
-        return;
-      } else {
-        const { data } = await axios.put(
-          `${BASE_URL}/api/chat/add/` + currentChat._id,
-          { userId: addUser._id }
-        );
-        dispatch(setCurrentChat(data));
-        toast.success("New member added in group");
-      }
-    } catch (error) {
-      toast.error(error.response.data.message);
-      console.log(error);
-    }
-  };
+  // const handleAdd = async (addUser) => {
+  //   const Users = currentChat?.users?.map((u) => u._id);
+  //   try {
+  //     if (Users.includes(addUser._id)) {
+  //       toast.error("Already included in grp ");
+  //       return;
+  //     } else {
+  //       const { data } = await axios.put(
+  //         `${BASE_URL}/api/chat/add/` + currentChat._id,
+  //         { userId: addUser._id }
+  //       );
+  //       dispatch(setCurrentChat(data));
+  //       toast.success("New member added in group");
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.response.data.message);
+  //     console.log(error);
+  //   }
+  // };
 
   const handleRename = async (e) => {
     e.preventDefault();

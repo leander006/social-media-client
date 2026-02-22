@@ -2,12 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  loginError,
-  loginStart,
-  loginSuccess,
-  logout,
-} from "../redux/Slice/userSlice";
+import { loginError, loginStart, loginSuccess } from "../redux/Slice/userSlice";
 import { SpinnerCircular } from "spinners-react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -128,11 +123,6 @@ function Edit() {
     }
   };
 
-  const log = (e) => {
-    e.preventDefault();
-    dispatch(logout());
-    navigate("/home");
-  };
   return (
     <div className="flex md:w-[85%] w-full">
       {!loading ? (
