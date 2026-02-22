@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Comment from "../utils/Comment";
-import Navbar from "../utils/Navbar";
 import SingleSkeleton from "../Skeleton/SingleSkeleton";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -31,12 +30,7 @@ function SinglePage() {
   const [loading, setLoading] = useState(false);
   const [like, setLike] = useState();
 
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage?.getItem("token")}`,
-    },
-  };
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [textAreaCount, setTextAreaCount] = useState("0/45");
@@ -48,7 +42,6 @@ function SinglePage() {
       try {
         const { data } = await axios.get(
           `${BASE_URL}/api/post/` + postId,
-          config
         );
         setPost(data);
         setLoading(true);
@@ -80,7 +73,6 @@ function SinglePage() {
       const { data } = await axios.post(
         `${BASE_URL}/api/like/${postId}`,
         { modelType: "Post" },
-        config
       );
       toast.success(`You ${!isLiked ? "liked" : "unliked"} the post`);
       dispatch(loginSuccess(data));
@@ -99,7 +91,6 @@ function SinglePage() {
       const { data } = await axios.put(
         `${BASE_URL}/api/post/bookmarkPost/${postId}`,
         {},
-        config
       );
       console.log(data);
       dispatch(loginSuccess(data));
@@ -123,7 +114,6 @@ function SinglePage() {
       dispatch(postStart());
       const { data } = await axios.delete(
         `${BASE_URL}/api/post/delete/${postId}`,
-        config
       );
       dispatch(postSuccess(allpost));
       dispatch(loginSuccess(data));
@@ -146,7 +136,6 @@ function SinglePage() {
         dispatch(commentStart());
         const { data } = await axios.get(
           `${BASE_URL}/api/comment/allComment/` + postId,
-          config
         );
         dispatch(commentSuccess(data));
       } catch (error) {
@@ -167,7 +156,6 @@ function SinglePage() {
       const { data } = await axios.post(
         `${BASE_URL}/api/comment/${postId}`,
         { content: comment, modelType: "Post" },
-        config
       );
       toast.success("Comment added successfully");
       dispatch(commentSuccess([data, ...allComment]));
@@ -177,8 +165,6 @@ function SinglePage() {
       console.log(error?.response?.data);
     }
   };
-
-
 
   return (
     <>
