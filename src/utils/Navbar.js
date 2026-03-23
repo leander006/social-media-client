@@ -105,7 +105,7 @@ function Navbar() {
         </div>
         <div className="mr-2 flex items-center space-x-4 text-[#BED7F8] ">
           <div className="relative">
-            <i onClick={() => setNotify(!notify)} className="fa-solid fa-xl fa-bell cursor-pointer"></i>
+            {/* <i onClick={() => setNotify(!notify)} className="fa-solid fa-xl fa-bell cursor-pointer"></i> */}
             {allNoti?.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
                 {allNoti.length}
