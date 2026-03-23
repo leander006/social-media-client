@@ -106,11 +106,11 @@ function Navbar() {
         <div className="mr-2 flex items-center space-x-4 text-[#BED7F8] ">
           <div className="relative">
             {/* <i onClick={() => setNotify(!notify)} className="fa-solid fa-xl fa-bell cursor-pointer"></i> */}
-            {allNoti?.length > 0 && (
+            {/* {allNoti?.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
                 {allNoti.length}
               </span>
-            )}
+            )} */}
             {notify &&
               <div className="absolute right-0 mt-2 w-64 bg-[#2f3549] text-white rounded-lg shadow-lg z-50 border overflow-y-auto h-56">
                 {allNoti.length > 0 ? (
