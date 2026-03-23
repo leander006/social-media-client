@@ -37,9 +37,9 @@ export const { notifcationError, notifcationStart, notifcationSuccess, deleteNot
 export const fetchNotifications = () => async (dispatch) => {
   dispatch(notifcationStart());
   try {
-    const response = await axios.get("/api/notification"); // Replace with your API endpoint
-    dispatch(notifcationSuccess(response.data));
-    console.log("Fetched notifications:", response.data);
+    const { data } = await axios.get("/api/notification"); // Replace with your API endpoint
+    dispatch(notifcationSuccess(data));
+    console.log("Fetched notifications:", data);
   } catch (err) {
     dispatch(notifcationError());
     console.error("Error fetching notifications:", err);

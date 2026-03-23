@@ -49,8 +49,6 @@ function Chat() {
   const dispatch = useDispatch();
   // Socket //
 
-  //const [socketConnected, setSocketConnected] = useState(false);
-  //const [typing, setTyping] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [comment, setComment] = useState("");
   const [textAreaCount, setTextAreaCount] = useState("0/100");

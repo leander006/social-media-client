@@ -29,6 +29,8 @@ function Navbar() {
 
   const log = (e) => {
     e.preventDefault();
+    console.log("logging out", isConnected);
+
     if (isConnected) {
       const socket = getSocket(); // Get the socket object
       socket.emit("removeUser", currentUser); // Join the current chat room
