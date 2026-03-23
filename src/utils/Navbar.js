@@ -103,6 +103,55 @@ function Navbar() {
           <input value={search}
             onChange={handleSearchChange} className="p-0.5 m-1 w-full focus:outline-none" placeholder="Search Friends" type="text" />
         </div>
+        <div className="mr-2 flex items-center space-x-4 text-[#BED7F8] ">
+          <div className="relative">
+            <i onClick={() => setNotify(!notify)} className="fa-solid fa-xl fa-bell cursor-pointer"></i>
+            {allNoti?.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {allNoti.length}
+              </span>
+            )}
+            {notify &&
+              <div className="absolute right-0 mt-2 w-64 bg-[#2f3549] text-white rounded-lg shadow-lg z-50 border overflow-y-auto h-56">
+                {allNoti.length > 0 ? (
+                  allNoti.map((n) => (
+                    <Notifcations
+                      key={n._id}
+                      n={n}
+                      setNotify={setNotify}
+                      notify={notify}
+                    />
+                  ))
+                ) : (
+                  <div className="p-4 text-center">No notifications</div>
+                )}
+              </div>
+            }
+          </div>
+          <Link to="/chat">
+            <i className="fa-solid fa-xl fa-message cursor-pointer"></i>
+          </Link>
+          <Link to={"/profile/" + current?._id}>
+            <div className="cursor-pointer">
+              <img
+                className="rounded-full w-9 h-9 p-1"
+                src={
+                  current?.profile?.url
+                    ? current?.profile?.url
+                    : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1772660598.1694933442&semt=ais"
+                }
+                alt={
+                  current?.profile?.url
+                    ? current?.profile?.url
+                    : "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=626&ext=jpg&ga=GA1.1.1772660598.1694933442&semt=ais"
+                }
+              />
+            </div>
+          </Link>
+          <div onClick={log} className="cursor-pointer">
+            <i className="fa-solid fa-xl fa-arrow-right-from-bracket"></i>
+          </div>
+        </div>
         {visible &&
           <div className="md:hidden z-50 fixed bg-[#2f3549] text-white top-0 h-full w-48">
             <div onClick={() => setVisible(!visible)} className="flex w-full items-center justify-between pt-5">
